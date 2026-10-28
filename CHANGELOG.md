@@ -19,8 +19,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.13 | 28 Oct 2026 | Agreed wording back, facts always listed, chart title, pinned footer link | [`docs/versions/v0.13/`](docs/versions/v0.13/) |
 | v0.14 | 28 Oct 2026 | One tile for the area figures, "Water reaches at", no blue numbers | [`docs/versions/v0.14/`](docs/versions/v0.14/) |
 | v0.15 | 28 Oct 2026 | Shorter answer box, "See it at" link removed | [`docs/versions/v0.15/`](docs/versions/v0.15/) |
+| v0.16 | 28 Oct 2026 | Answer box down to 92 px | [`docs/versions/v0.16/`](docs/versions/v0.16/) |
 
 ---
+
+## v0.16: 92 px (28 Oct 2026)
+
+- **The "Water reaches at" box is down to 277 × 92 px**, from 104. The designer chose this from a side-by-side preview.
+  - Padding is 8/6 px.
+  - The gap under the answer row is 4 px.
+  - The water band is 18 px.
+  - The text sizes and the 6 px above the pin labels are unchanged; any less and the blue pin runs into its label.
+  - When "Not up to +3 ft" wraps, the box is 108 px.
+- Tests: 99 unit/component tests and 17 end-to-end tests.
 
 ## v0.15: A shorter box (28 Oct 2026)
 

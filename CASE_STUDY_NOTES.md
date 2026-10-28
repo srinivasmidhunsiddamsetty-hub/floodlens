@@ -172,6 +172,7 @@ The product went through numbered versions, each tagged in git with screenshots 
   - The answer text is back to 24 px.
   - The link is removed at every level.
   - I measured the box (277 × 140 px) and offered three ways to shorten it. The designer picked the answer on the label's row, with a 24 px water band and tighter gaps: 277 × 104 px, and the card drops from 330 to 294 px.
+- **v0.15 → v0.16:** the next size down, chosen from a side-by-side preview: 277 × 92 px, with an 18 px water band and 8/6 px padding.
 
 ## 11. Known limitations
 

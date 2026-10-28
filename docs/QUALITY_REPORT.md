@@ -31,6 +31,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The card answer back to v0.11's wording ("When water reaches it · At +3 ft"), status labels and copy button dropped, height and footprint always listed, a one-line chart title, and the bottom link pinned to the panel's bottom edge (v0.13).
 - One tile for the summary and chart (they share the unit switch), "Water reaches at · +3 ft" in smaller black type, and no blue numbers anywhere (v0.14).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
+- The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**

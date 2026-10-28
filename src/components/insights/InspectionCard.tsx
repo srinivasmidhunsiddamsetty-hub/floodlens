@@ -128,12 +128,12 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
             <div aria-live="polite">
               {/* The answer, emphasised, on the label's row (label left, value right, like the facts
                   below), with every level in context under it. A long answer wraps under the label. */}
-              <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-2.5 pb-2">
+              <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-2 pb-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                   <p className="t-overline">Water reaches at</p>
                   <p className="text-[24px] leading-8 font-semibold tracking-tight text-fg tabular">{answer}</p>
                 </div>
-                <div className="mt-1.5">
+                <div className="mt-1">
                   <LevelTrack levels={hits} firstFeet={firstFeet} scenarioFt={scenarioFt} />
                 </div>
               </div>
