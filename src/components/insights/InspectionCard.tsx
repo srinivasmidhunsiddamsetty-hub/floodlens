@@ -115,11 +115,12 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
           const firstIndex = reached ? hits.findIndex((h) => h.feet === firstFeet) : -1
 
-          // Never "safe" or "dry": NOAA's map not reaching a place isn't a promise.
+          // Label and headline read as one sentence: "Water reaches it at +3 ft",
+          // "Up to +3 ft, water doesn't reach it". Never "safe" or "dry": NOAA's
+          // map not reaching a place isn't a promise, and we only map to +3 ft.
+          const label = reached ? 'Water reaches it' : `Up to ${formatScenario(top)}`
           const headline = !reached ? (
-            <>
-              Not by <span className="text-accent">{formatScenario(top)}</span>
-            </>
+            <>Water doesn’t reach it</>
           ) : firstFeet === 0 ? (
             <>
               Already, at <span className="text-accent">high tide</span>
@@ -136,7 +137,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
               <div className="relative mt-4 overflow-hidden rounded-xl border border-[#d5e6fa] bg-gradient-to-b from-[#f5faff] to-[#e3effc]">
                 <div className="relative z-10 w-[64%] px-4 pt-3.5">
                   <span className="inline-block rounded-full bg-[#d6e7fb] px-2 py-[3px] text-[10.5px] leading-none font-semibold tracking-[0.08em] text-accent-strong uppercase">
-                    Water reaches it
+                    {label}
                   </span>
                   <p className="mt-2 text-[22px] leading-7 font-semibold tracking-tight text-fg">{headline}</p>
                 </div>

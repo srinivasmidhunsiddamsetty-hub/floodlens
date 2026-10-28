@@ -11,8 +11,26 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.5 | 28 Oct 2026 | City locator, stream-per-foot card, city-limits toggle | [`docs/versions/v0.5/`](docs/versions/v0.5/) |
 | v0.6 | 28 Oct 2026 | Viridis-style palette, area chips back, resizable Insights | [`docs/versions/v0.6/`](docs/versions/v0.6/) |
 | v0.7 | 28 Oct 2026 | Blues back, human copy, Satoshi, compact answer card | [`docs/versions/v0.7/`](docs/versions/v0.7/) |
+| v0.8 | 28 Oct 2026 | Clearer answers and chart: titles, selection, no false "disabled" look | [`docs/versions/v0.8/`](docs/versions/v0.8/) |
 
 ---
+
+## v0.8: Saying it plainly (28 Oct 2026)
+
+Driven by a design review of v0.7.
+
+- **"Not by +3 ft" was unclear.** The label and headline now read as one sentence. When water reaches a place: "Water reaches it · At +3 ft". When none of the mapped levels reach it: "Up to +3 ft · Water doesn't reach it". Before, the label said "Water reaches it" even when it didn't. It still never says "safe" or "dry", because we only map up to +3 ft.
+- **No more "disabled" look for higher levels.** Levels above the slider were faded in the chart and the breakdown list, to say "not on the map yet". In review it read as a bug, and the numbers are just as true at any slider position. Every bar and row now keeps its full colour. Only the map legend still says "not shown", because that's about the map.
+- **Selection rings the bar, not the column.**
+  - Clicking a bar used to leave the browser's keyboard-focus outline round the whole column, plus a faint grey fill. Neither was designed.
+  - Now the selected level gets a 2 px accent ring with a 2 px gap round its bar, the same language as the selected area chip. Its axis label turns accent and bold.
+  - A mouse click no longer focuses the bar. Keyboard users still get the focus outline.
+- **Chart titles follow ONS and GOV.UK guidance.** The title states the finding and the subtitle says what's measured and where:
+  - Title: "Land underwater jumps at +3 ft". It's worked out from the data, not written in: it appears only when one foot adds more than half of the land and at least twice any other foot. Otherwise the title is "Land underwater at each sea level".
+  - Subtitle: "Square kilometres, City of Miami Beach".
+- **"Newly underwater" is now "Land underwater at +2 ft".** "Land" already means ground that's dry at today's high tide, so "newly" isn't needed. The level moves into the label, and the detail line becomes "About 244 acres, roughly 5% of the city's land". The mobile summary reads "0.99 km² of land underwater".
+- New screenshot `09-north-beach-not-reached.png` shows the new answer.
+- Tests: 96 unit/component tests (new: chart title rules, rows never faded) and 15 end-to-end tests. The chart test now checks the data-driven title and that a mouse click doesn't focus the bar.
 
 ## v0.7: A human voice (28 Oct 2026)
 

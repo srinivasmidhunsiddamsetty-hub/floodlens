@@ -87,7 +87,8 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           <>
             {/* Hero metric */}
             <section aria-label="Headline">
-              <p className="t-overline">{s.feet === 0 ? 'Today’s high tide' : 'Newly underwater at high tide'}</p>
+              {/* "Land" carries "newly": it means ground that is dry at today's high tide. */}
+              <p className="t-overline">{s.feet === 0 ? 'Today’s high tide' : `Land underwater at ${formatScenario(s.feet)}`}</p>
               {s.feet === 0 ? (
                 <>
                   <p className="mt-1 t-metric">Where we start</p>
@@ -100,7 +101,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                     <span className="ml-1 text-base text-fg-muted">km²</span>
                   </p>
                   <p className="mt-0.5 t-body">
-                    About {formatAcres(s.beyondBaselineM2)} acres at {formatScenario(s.feet)}
+                    About {formatAcres(s.beyondBaselineM2)} acres
                     {landM2 ? <>, roughly {formatPercent(s.beyondBaselineM2 / landM2, true)} of the city’s land</> : null}
                   </p>
                 </>
@@ -125,6 +126,8 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                 {bands
                   .filter((b) => !b.isReference)
                   .map((b) => {
+                    // Only levels on the map can be spotlighted there, but every row
+                    // stays at full strength: the numbers hold at any slider position.
                     const shown = b.feet <= state.scenarioFt
                     return (
                       <li key={b.feet}>
@@ -136,7 +139,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                           onClick={() => dispatch({ type: 'setScenario', feet: b.feet })}
                           className={`flex w-full items-center gap-3 rounded px-2 py-1.5 text-left transition-colors hover:bg-surface-2 ${
                             highlightFt === b.feet ? 'bg-surface-2' : ''
-                          } ${shown ? '' : 'opacity-50'}`}
+                          }`}
                         >
                           <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
                           <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>

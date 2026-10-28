@@ -49,6 +49,16 @@ test.describe('screenshots', () => {
     await page.mouse.move(700, 120)
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/08-south-beach-building-card.png` })
+
+    // North Beach at +3 ft, a building none of the mapped levels reach (78th Street at this viewport)
+    await page.getByRole('slider').focus()
+    await page.keyboard.press('End')
+    await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'North Beach' }).click()
+    await page.waitForTimeout(5000)
+    await page.mouse.click(753, 385)
+    await page.mouse.move(700, 120)
+    await page.waitForTimeout(2500)
+    await page.screenshot({ path: `${OUT}/09-north-beach-not-reached.png` })
   })
 
   test('mobile states', async ({ page }) => {

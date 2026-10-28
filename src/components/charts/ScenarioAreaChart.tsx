@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import { useEffect, useId, useRef, useState } from 'react'
+import { CITY_NAME } from '../../lib/constants'
 import { formatAcres, formatKm2, formatScenario, M2_PER_KM2 } from '../../lib/format'
 import type { FloodBand } from '../../lib/manifest'
 import { bandColor, colors } from '../../lib/theme'
@@ -33,7 +34,23 @@ interface Tip {
 }
 
 const HEIGHT = 156
-const M = { top: 18, right: 4, bottom: 26, left: 30 }
+const M = { top: 20, right: 4, bottom: 26, left: 30 }
+
+/**
+ * Chart titles state the main finding and the subtitle says what is measured,
+ * where (ONS / GOV.UK chart guidance). The finding is worked out from the data,
+ * never written in: when one foot adds most of the land and at least twice any
+ * other foot, that's the headline; otherwise the title just names the measure.
+ */
+export function chartTitle(bands: FloodBand[]): string {
+  const added = bands.filter((b) => !b.isReference && b.addedM2 > 0)
+  const total = added.reduce((sum, b) => sum + b.addedM2, 0)
+  const [top, next] = [...added].sort((a, b) => b.addedM2 - a.addedM2)
+  if (top && top.addedM2 > total / 2 && (!next || top.addedM2 >= 2 * next.addedM2)) {
+    return `Land underwater jumps at ${formatScenario(top.feet)}`
+  }
+  return 'Land underwater at each sea level'
+}
 
 /**
  * How the flooded area grows with each foot. Each bar is the total area beyond
@@ -134,8 +151,8 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
         g
           .selectAll<SVGTextElement, number>('.tick text')
           .attr('font-size', 11)
-          .attr('font-weight', (d) => (d === selectedFt ? 500 : 400))
-          .attr('fill', (d) => (d === selectedFt ? colors.chartLabel : colors.chartAxis)),
+          .attr('font-weight', (d) => (d === selectedFt ? 600 : 400))
+          .attr('fill', (d) => (d === selectedFt ? colors.accent : colors.chartAxis)),
       )
 
     const t = d3.transition().duration(reduced ? 0 : 400).ease(d3.easeCubicOut)
@@ -157,8 +174,11 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
       .attr('aria-label', (d) =>
         d.feet === 0
           ? 'Today: where we start. Show on the map.'
-          : `${formatScenario(d.feet)}: ${formatKm2(d.totalM2)} square kilometres newly underwater. Show on the map.`,
+          : `${formatScenario(d.feet)}: ${formatKm2(d.totalM2)} square kilometres of land underwater. Show on the map.`,
       )
+      // A mouse click selects without focusing, so the browser's focus outline
+      // (a box around the whole column) only appears for keyboard users.
+      .on('mousedown', (e: MouseEvent) => e.preventDefault())
       .on('click', (_, d) => cb.current.onSelect(d.feet))
       .on('keydown', (e: KeyboardEvent, d) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -178,15 +198,21 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
       .attr('height', innerH)
       .on('mouseenter', (_, d) => setTip({ x: (x(d.feet) ?? 0) + M.left + x.bandwidth() / 2, y: y(toKm2(d.totalM2)) + M.top, bar: d, band: null }))
 
-    // Selected-bar outline
+    // The selected level gets a 2px ring around its bar, with a 2px gap, like the
+    // selected area chip. It hugs the bar rather than boxing the whole column, and
+    // still shows as a small capsule on the baseline for near-zero bars.
     barG
       .select<SVGRectElement>('rect.sel')
-      .attr('x', -3)
-      .attr('width', x.bandwidth() + 6)
-      .attr('y', (d) => y(toKm2(d.totalM2)) - 3)
-      .attr('height', (d) => innerH - y(toKm2(d.totalM2)) + 3)
-      .attr('stroke', 'none')
-      .attr('fill', (d) => (d.feet === selectedFt && d.feet > 0 ? 'rgba(0,0,0,0.04)' : 'none'))
+      .attr('x', -4)
+      .attr('width', x.bandwidth() + 8)
+      .attr('rx', 5)
+      .attr('fill', 'none')
+      .attr('stroke', colors.accent)
+      .attr('stroke-width', 2)
+      .attr('opacity', (d) => (d.feet === selectedFt ? 1 : 0))
+      .transition(t)
+      .attr('y', (d) => y(toKm2(d.totalM2)) - 4)
+      .attr('height', (d) => innerH - y(toKm2(d.totalM2)) + 7)
 
     barG
       .selectAll<SVGRectElement, Segment>('rect.seg')
@@ -202,20 +228,18 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
       .transition(t)
       .attr('y', (s) => y(toKm2(s.y1)))
       .attr('height', (s) => Math.max(s.addedM2 > 0 ? 1.5 : 0, y(toKm2(s.y0)) - y(toKm2(s.y1))))
-      .attr('opacity', (s) => {
-        const future = s.bar.feet > selectedFt
-        const dim = highlightFt !== null && s.band !== highlightFt
-        return future ? 0.3 : dim ? 0.35 : 1
-      })
+      // Every level keeps its full colour: the data is the same whichever level
+      // the slider is on. Only hovering a band fades the others, to spotlight it.
+      .attr('opacity', (s) => (highlightFt !== null && s.band !== highlightFt ? 0.35 : 1))
 
     barG
       .select<SVGTextElement>('text.lbl')
       .attr('x', x.bandwidth() / 2)
       .text((d) => (d.feet === 0 ? '0' : formatKm2(d.totalM2)))
       .attr('fill', (d) => (d.feet === selectedFt ? colors.chartLabel : colors.chartAxis))
-      .attr('font-weight', (d) => (d.feet === selectedFt ? 500 : 400))
+      .attr('font-weight', (d) => (d.feet === selectedFt ? 600 : 400))
       .transition(t)
-      .attr('y', (d) => y(toKm2(d.totalM2)) - 6)
+      .attr('y', (d) => y(toKm2(d.totalM2)) - 10)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bands, selectedFt, highlightFt, width, reduced])
 
@@ -223,9 +247,9 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
     <figure className="m-0">
       <figcaption className="mb-2">
         <span id={titleId} className="block t-heading">
-          Each foot adds more
+          {chartTitle(bands)}
         </span>
-        <span className="block t-caption">Newly underwater, km²</span>
+        <span className="block t-caption">Square kilometres, {CITY_NAME}</span>
       </figcaption>
       <div ref={wrapRef} className="relative">
         <svg
@@ -264,11 +288,11 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
       </div>
       <div className="sr-only">
         <table id={descId}>
-          <caption>Newly underwater area, by sea level</caption>
+          <caption>Land underwater, by sea level</caption>
           <thead>
             <tr>
               <th scope="col">Sea level</th>
-              <th scope="col">Newly underwater (km²)</th>
+              <th scope="col">Land underwater (km²)</th>
               <th scope="col">Added by this foot (km²)</th>
             </tr>
           </thead>

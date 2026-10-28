@@ -32,6 +32,13 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 
 The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md): plain, calm, honest, brief and human. FloodLens never says a place is "safe" or "will flood".
 
+## Chart
+
+- **Title states the finding, subtitle the measure and place**, following the [ONS](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) and [GOV.UK](https://brand.design-system.service.gov.uk/data/charts) chart guidance. The finding is computed (`chartTitle`): it names a level only when that foot adds more than half the land and at least twice any other foot.
+- **Selection rings the bar, not the column.** The selected level gets a 2 px accent ring with a 2 px gap, matching the selected area chip, plus an accent axis label. A column-wide box reads like a card or a focus box and hides which mark is chosen; a ring on the mark ties the state to the data. Near-zero bars (today, +1 ft) still show a small capsule on the baseline, and the hit target stays the full column so they're easy to click.
+- **No fading for levels above the slider.** The numbers hold whatever the slider shows, and faded bars and rows read as disabled. Hovering a band still fades the others, to spotlight it.
+- **Mouse clicks don't focus bars.** The browser's focus outline is for keyboard users; a click selects without leaving it behind.
+
 ## Colour
 
 The selected-place card draws water as one stream per foot in the same ramp colours as the map and chart, so a building first reached at +3 ft shows three streams rising to it. The card's level gauge uses the same colours, so it doubles as a legend.

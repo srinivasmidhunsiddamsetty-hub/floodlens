@@ -64,9 +64,10 @@ describe('<InspectionCard>', () => {
     expect(onShowLevel).toHaveBeenCalledWith(3)
   })
 
-  it('says "not by +3 ft" when no mapped level reaches it, without claiming it stays dry', () => {
+  it('says water doesn’t reach it up to +3 ft, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('Water reaches it').nextSibling).toHaveTextContent('Not by +3 ft')
+    expect(screen.getByText('Up to +3 ft').nextSibling).toHaveTextContent('Water doesn’t reach it')
+    expect(screen.queryByText('Water reaches it')).toBeNull()
     expect(screen.queryByText(/dry|safe/i)).toBeNull()
   })
 

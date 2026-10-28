@@ -41,9 +41,9 @@ describe('<InsightPanel>', () => {
   it('leads with the headline metric computed from the manifest', () => {
     ready()
     // 500,000 m² beyond baseline at +2 ft in the fixture → 0.50 km², 124 acres
-    expect(screen.getByText('Newly underwater at high tide')).toBeInTheDocument()
+    expect(screen.getByText('Land underwater at +2 ft')).toBeInTheDocument()
     expect(screen.getAllByText('0.50').length).toBeGreaterThan(0)
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('About 124 acres at +2 ft')
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('About 124 acres')
   })
 
   it('relates the headline to the city’s land area when the Census boundary is known', () => {
@@ -85,6 +85,19 @@ describe('<InsightPanel>', () => {
     expect(within(list).getByText('1.80 km²')).toBeInTheDocument()
     // Units are spelled out: "acres", never the abbreviation "ac".
     expect(within(list).getByText('445 acres')).toBeInTheDocument()
+  })
+
+  it('titles the chart with its finding and names the measure and place underneath', () => {
+    ready()
+    // +3 ft adds 1.80 of 2.30 km², almost four times the +2 ft step.
+    expect(screen.getByText('Land underwater jumps at +3 ft')).toBeInTheDocument()
+    expect(screen.getByText('Square kilometres, City of Miami Beach')).toBeInTheDocument()
+  })
+
+  it('keeps levels above the slider at full strength, so they never look disabled', () => {
+    ready({ scenarioFt: 1 })
+    const row = screen.getByRole('button', { name: /\+3 ft adds/ })
+    expect(row.className).not.toMatch(/opacity/)
   })
 
   it('invites a selection in the slot where the selection card appears', () => {

@@ -42,4 +42,5 @@ export const BOOKMARK_ZOOM = 15.2
 export const MIN_ZOOM = 11.5
 export const MAX_ZOOM = 19
 
-export const LOCATION_LABEL = 'City of Miami Beach, Florida'
+export const CITY_NAME = 'City of Miami Beach'
+export const LOCATION_LABEL = `${CITY_NAME}, Florida`

@@ -10,7 +10,7 @@ test.describe('FloodLens — core flows', () => {
     await waitForMap(page)
 
     const headline = insights(page).getByRole('region', { name: 'Headline' })
-    await expect(headline).toContainText('Newly underwater at high tide')
+    await expect(headline).toContainText('Land underwater at +2 ft')
     await expect(headline).toContainText('0.99')
     await expect(headline).toContainText('of the city’s land')
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/OpenStreetMap/)
@@ -52,9 +52,13 @@ test.describe('FloodLens — core flows', () => {
     await page.goto('/')
     await waitForMap(page)
     const bar = page.getByRole('button', { name: /^\+1 ft: .*Show on the map\./ })
+    // The title is the finding from the real data: +3 ft adds 6.44 of 7.43 km².
+    await expect(insights(page).getByText('Land underwater jumps at +3 ft')).toBeVisible()
     await bar.click()
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+1 ft above MHHW')
     await expect(bar).toHaveAttribute('aria-pressed', 'true')
+    // Selection is a ring around the bar; a mouse click doesn't leave a focus box round the column.
+    await expect(bar).not.toBeFocused()
     const row = insights(page).getByRole('button', { name: /\+3 ft adds/ })
     await expect(row).toContainText('6.44 km²')
     await expect(row).toContainText('acres')

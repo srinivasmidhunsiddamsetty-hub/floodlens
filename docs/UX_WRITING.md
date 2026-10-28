@@ -8,19 +8,21 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- |
 | **Plain.** "Low spots cut off from the sea" | Technical: "hydrologically unconnected low-lying areas" |
 | **Calm.** "Water reaches it at +3 ft" | Alarming: "This building will flood" |
-| **Honest.** "Not by +3 ft" | Falsely reassuring: "Safe", "Stays dry" |
+| **Honest.** "Up to +3 ft, water doesn't reach it" | Falsely reassuring: "Safe", "Stays dry" |
 | **Brief.** The answer first, detail on demand | Wordy: caveats on every screen |
 | **Human.** "We'd rather show nothing than guess" | Robotic: "No overlay is shown rather than an estimate" |
 
 ## Rules
 
-1. **Lead with what it means for a person.** "Newly underwater at high tide", not "Area flooded beyond today's high tide (MHHW)".
+1. **Lead with what it means for a person.** "Land underwater at +2 ft", not "Area flooded beyond today's high tide (MHHW)".
 2. **Swap jargon for everyday words.** Keep the technical term once, where it's explained (the (i) panel and "About the data"): MHHW, inundation extent, hydrologic connectivity.
 3. **Never promise safety or predict damage.** Water reaching a building on NOAA's map isn't a flood forecast, and not reaching it doesn't mean "safe". So: "water reaches it", "not by +3 ft".
 4. **Sentence case, short labels, no trailing full stops on single phrases.** Buttons say what happens: "Watch the water rise", "Show all of Miami Beach".
 5. **One name for one thing.** Sea level (the slider), high tide (today's baseline), "+2 ft" (a level), low spots (unconnected areas), city limits (the boundary).
 6. **Errors say what happened and what to do, without blame.** "We couldn't reach the flood data. Check your connection and reload."
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
+8. **A label and its value read as one sentence.** "Water reaches it · At +3 ft". "Up to +3 ft · Water doesn't reach it". Never pair a label with a value that contradicts it.
+9. **Chart titles state the finding; subtitles say what's measured and where.** This follows the [ONS chart text guidance](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) and the [GOV.UK chart guidance](https://brand.design-system.service.gov.uk/data/charts): front-loaded, active, sentence case, 15 words or fewer, with no detail repeated in the subtitle. The finding must come from the data, never be written in. So "Land underwater jumps at +3 ft" appears only when the numbers show it, and otherwise the title falls back to "Land underwater at each sea level".
 
 ## Before and after (v0.6 → v0.7)
 
@@ -50,3 +52,15 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Missing data | Inundation data unavailable / FloodLens never substitutes estimated or sample data. | The flood data didn't load / We'd rather show nothing than guess, so FloodLens never fills the gap with estimates or sample data. |
 | Missing file | diff_2ft_3ft.geojson is missing (HTTP 404). The map shows no overlay for this layer rather than an estimate. | diff_2ft_3ft.geojson didn't load (HTTP 404). We'd rather leave it off the map than guess. |
 | Compass | Reset north | Point north |
+
+## Before and after (v0.7 → v0.8)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Headline label | Newly underwater at high tide | Land underwater at +2 ft |
+| Headline detail | About 244 acres at +2 ft, roughly 5% of the city's land | About 244 acres, roughly 5% of the city's land |
+| Chart title | Each foot adds more | Land underwater jumps at +3 ft (from the data; otherwise "Land underwater at each sea level") |
+| Chart subtitle | Newly underwater, km² | Square kilometres, City of Miami Beach |
+| Card, not reached | Water reaches it / Not by +3 ft | Up to +3 ft / Water doesn't reach it |
+| Mobile summary | 0.99 km² newly underwater | 0.99 km² of land underwater |
+| Chart bar (screen reader) | +2 ft: 0.99 square kilometres newly underwater | +2 ft: 0.99 square kilometres of land underwater |
