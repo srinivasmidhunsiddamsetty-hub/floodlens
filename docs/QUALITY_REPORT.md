@@ -28,6 +28,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - A compact building card and a two-block Insights layout (summary; chart and breakdown) that fits without scrolling at 1440×800 with a place selected; low spots listed only while their layer is on (v0.10).
 - A one-column card (when water reaches it, height, footprint, low spot) with a level track of pins on rising water, chips restored, the bottom "What this map can and can't tell you" link restored, and no visible Insights title; fits at 1440×850 in every state (v0.11).
 - The first-reached answer back as the card's large lead, over a level track with "Not reached / First reached / Reached" pins and water that stops at the first level that reaches the place; summary and chart on tiles; coordinate copy button; distance to street removed; fits at 1440×900 (v0.12).
+- The card answer back to v0.11's wording ("When water reaches it · At +3 ft"), status labels and copy button dropped, height and footprint always listed, a one-line chart title, and the bottom link pinned to the panel's bottom edge (v0.13).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
@@ -41,7 +42,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **12 files, 103 tests passed** |
+| Unit and component tests | `npm test` | **11 files, 99 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (16 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 20.8 MB raw across 16 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3 ft band adds 4.3 MB raw, ≈ 0.48 MB gzip) |

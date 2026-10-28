@@ -18,9 +18,8 @@ const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
 /**
  * Sea levels as pins on a baseline, with the water rising from left to right and
  * stopping, with a dashed marker, at the first level that reaches the place. When
- * no level reaches it the water runs on to the end with no marker. Each pin is
- * labelled "Not reached", "First reached" or "Reached". The water is schematic,
- * not a depth, so it's hidden from screen readers; the labelled pins are a list.
+ * no level reaches it the water runs on to the end with no marker. The water is
+ * schematic, not a depth, so it's hidden from screen readers; the pins are a list.
  */
 export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
   const gradientId = useId()
@@ -89,17 +88,13 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
       </div>
       <ol className="mt-2.5 grid text-center" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
         {levels.map((l, i) => {
-          const status = i === first ? 'First reached' : l.within ? 'Reached' : 'Not reached'
           return (
             <li key={l.feet} className="flex flex-col">
               <span className={`text-[12px] leading-4 tabular ${i === first ? 'font-semibold text-accent' : 'font-medium text-fg'}`}>
                 {levelName(l.feet)}
                 {l.feet === scenarioFt && <span className="sr-only"> (selected level)</span>}
               </span>
-              <span className={`text-[10px] leading-[14px] whitespace-nowrap ${i === first ? 'font-medium text-accent' : 'text-fg-subtle'}`}>
-                <span className="sr-only">: </span>
-                {status}
-              </span>
+              <span className="sr-only">{l.within ? 'water reaches it' : 'water doesn’t reach it'}</span>
             </li>
           )
         })}

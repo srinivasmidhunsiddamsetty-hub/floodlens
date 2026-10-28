@@ -1,7 +1,6 @@
 import * as d3 from 'd3'
 import { ChartColumnIncreasing } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { CITY_NAME } from '../../lib/constants'
 import { AREA_UNITS, formatArea, formatScenario, toUnit, type AreaUnit } from '../../lib/format'
 import type { FloodBand } from '../../lib/manifest'
 import { bandColor, colors } from '../../lib/theme'
@@ -39,22 +38,6 @@ interface Tip {
 const HEIGHT = 104
 /** Acre ticks run to "2,000", so they need a wider left margin than km². */
 const margins = (unit: AreaUnit) => ({ top: 20, right: 4, bottom: 26, left: unit === 'acres' ? 40 : 30 })
-
-/**
- * Chart titles state the main finding and the subtitle says what is measured,
- * where (ONS / GOV.UK chart guidance). The finding is worked out from the data,
- * never written in: when one foot adds most of the land and at least twice any
- * other foot, that's the headline; otherwise the title just names the measure.
- */
-export function chartTitle(bands: FloodBand[]): string {
-  const added = bands.filter((b) => !b.isReference && b.addedM2 > 0)
-  const total = added.reduce((sum, b) => sum + b.addedM2, 0)
-  const [top, next] = [...added].sort((a, b) => b.addedM2 - a.addedM2)
-  if (top && top.addedM2 > total / 2 && (!next || top.addedM2 >= 2 * next.addedM2)) {
-    return `The biggest jump comes at ${formatScenario(top.feet)}`
-  }
-  return 'How each foot adds up'
-}
 
 /**
  * How the flooded area grows with each foot. Each bar is the total area beyond
@@ -250,15 +233,11 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
 
   return (
     <figure className="m-0">
-      {/* The block's header: the finding as the title, the measure and place underneath. */}
-      <figcaption className="mb-1">
-        <span id={titleId} className="flex items-center gap-2 t-heading font-semibold">
-          <ChartColumnIncreasing className="size-4 shrink-0 text-accent" aria-hidden />
-          {chartTitle(bands)}
-        </span>
-        <span className="block pl-6 t-caption">
-          Land underwater, {AREA_UNITS[unit].short}, {CITY_NAME}
-        </span>
+      {/* One plain line, styled like the "Land underwater" tile's header; the unit is in the toggle above. */}
+      <figcaption id={titleId} className="mb-1 flex items-center gap-2 t-heading font-semibold">
+        <ChartColumnIncreasing className="size-4 shrink-0 text-accent" aria-hidden />
+        Land underwater by sea level
+        <span className="sr-only">, in {AREA_UNITS[unit].long}</span>
       </figcaption>
       <div ref={wrapRef} className="relative">
         <svg

@@ -52,8 +52,6 @@ test.describe('FloodLens — core flows', () => {
     await page.goto('/')
     await waitForMap(page)
     const bar = page.getByRole('button', { name: /^\+1 ft: .*Show on the map\./ })
-    // The title is the finding from the real data: +3 ft adds 6.44 of 7.43 km².
-    await expect(insights(page).getByText('The biggest jump comes at +3 ft')).toBeVisible()
     await bar.click()
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+1 ft above MHHW')
     await expect(bar).toHaveAttribute('aria-pressed', 'true')
@@ -89,6 +87,13 @@ test.describe('FloodLens — core flows', () => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto('/')
     await waitForMap(page)
+    // The "What this map can and can't tell you" link is pinned to the panel's bottom edge, even with little content.
+    const linkSitsAtBottom = async () => {
+      const panel = (await page.locator('aside#insight-panel').boundingBox())!
+      const link = (await insights(page).getByRole('button', { name: 'What this map can and can’t tell you' }).boundingBox())!
+      return panel.y + panel.height - (link.y + link.height)
+    }
+    expect(await linkSitsAtBottom()).toBeLessThan(20)
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
     await expect.poll(() => mapZoom(page), { timeout: 10_000 }).toBeGreaterThan(15)
     await page.locator('.maplibregl-canvas').focus()
@@ -99,6 +104,7 @@ test.describe('FloodLens — core flows', () => {
       .locator('.overflow-y-auto')
       .evaluate((el) => ({ content: el.scrollHeight, visible: el.clientHeight }))
     expect(fit.content).toBeLessThanOrEqual(fit.visible)
+    expect(await linkSitsAtBottom()).toBeLessThan(20)
   })
 
   test('in-map controls: 2D/3D keeps the level, "show all" restores the 3D city view', async ({ page }) => {

@@ -40,29 +40,12 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText(/from street/)).toBeNull()
   })
 
-  it('copies the position as "lat, lng"', async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
-    card(levels(3))
-    await userEvent.click(screen.getByRole('button', { name: 'Copy coordinates' }))
-    expect(writeText).toHaveBeenCalledWith('25.77675, -80.13466')
-    expect(await screen.findByRole('button', { name: 'Coordinates copied' })).toBeInTheDocument()
-  })
-
   it('leads with the first water level that reaches it, and shows every level in context', () => {
     card(levels(3))
-    expect(screen.getByText('Water first reaches it').nextSibling).toHaveTextContent('at +3 ft')
+    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('At +3 ft')
     const levelsList = screen.getByRole('list', { name: 'Water at this spot, by sea level' })
     expect(within(levelsList).getAllByRole('listitem')).toHaveLength(4)
-    expect(within(levelsList).getAllByText('Not reached')).toHaveLength(3)
-    expect(within(levelsList).getByText('First reached')).toBeInTheDocument()
-  })
-
-  it('marks the levels after the first one as reached', () => {
-    card(levels(1))
-    const levelsList = screen.getByRole('list', { name: 'Water at this spot, by sea level' })
-    expect(within(levelsList).getAllByText('Reached')).toHaveLength(2)
-    expect(within(levelsList).getAllByText('Not reached')).toHaveLength(1)
+    expect(within(levelsList).getAllByText('water doesn’t reach it')).toHaveLength(3)
   })
 
   it('lists height, footprint and low-lying status with approximate values', () => {
@@ -83,8 +66,7 @@ describe('<InspectionCard>', () => {
 
   it('says water doesn’t reach it up to +3 ft, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('Water doesn’t reach it').nextSibling).toHaveTextContent('up to +3 ft')
-    expect(screen.queryByText('First reached')).toBeNull()
+    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('Not up to +3 ft')
     expect(screen.queryByText(/dry|safe/i)).toBeNull()
   })
 
@@ -100,9 +82,15 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText('Water reaches it')).toBeNull()
   })
 
-  it('says water already reaches it at high tide for places it reaches today', () => {
+  it('says "already today" for places water reaches at today’s high tide', () => {
     card(levels(0))
-    expect(screen.getByText('Water already reaches it').nextSibling).toHaveTextContent('at high tide')
+    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('Already today')
+  })
+
+  it('keeps height and footprint for a spot that isn’t a building, with no value', () => {
+    card(levels(2), { selection: { ...building, building: null } })
+    expect(screen.getByText('Height').nextSibling).toHaveTextContent('no building here')
+    expect(screen.getByText('Footprint').nextSibling).toHaveTextContent('no building here')
   })
 
   it('closes from the × button', async () => {

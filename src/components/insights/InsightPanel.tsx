@@ -63,7 +63,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           and the space goes to content. Screen readers still get the heading. */}
       <h2 className="sr-only">Insights</h2>
 
-      <div ref={scrollRef} className="scrollbar-thin flex-1 overflow-y-auto px-5 pt-4 pb-3">
+      <div ref={scrollRef} className="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-5 pt-4 pb-3">
         {card}
 
         {manifestState.status === 'loading' && (
@@ -183,17 +183,21 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           </>
         )}
 
-        {manifestState.status === 'ready' && (
+      </div>
+
+      {/* Pinned footer: always at the bottom of the panel, however much content is above it. */}
+      {manifestState.status === 'ready' && (
+        <div className="shrink-0 border-t border-line px-5 py-3">
           <button
             type="button"
             onClick={() => dispatch({ type: 'openDialog', dialog: 'about' })}
-            className="mt-2.5 flex w-full items-center justify-between text-left t-label text-accent hover:text-accent-strong"
+            className="flex w-full items-center justify-between text-left t-label text-accent hover:text-accent-strong"
           >
             What this map can and can’t tell you
             <ArrowRight className="size-4" aria-hidden />
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

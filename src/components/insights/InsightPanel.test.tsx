@@ -96,7 +96,7 @@ describe('<InsightPanel>', () => {
 
     expect(screen.getByText('at +2 ft').nextSibling).toHaveTextContent('124acres')
     expect(screen.getByText('at +2 ft').nextSibling).not.toHaveTextContent('km²')
-    expect(screen.getByText('Land underwater, acres, City of Miami Beach')).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /^Land underwater by sea level ?, in acres$/ })).toBeInTheDocument()
     const list = screen.getByRole('list', { name: '' })
     // Units are spelled out: "acres", never the abbreviation "ac".
     expect(within(list).getByText('445 acres')).toBeInTheDocument()
@@ -143,11 +143,11 @@ describe('<InsightPanel>', () => {
     expect(screen.getByText('Cut off from the sea, so not counted above')).toBeInTheDocument()
   })
 
-  it('titles the chart with its finding and names the measure and place underneath', () => {
+  it('titles the chart in one plain line, without the old finding or subtitle', () => {
     ready()
-    // +3 ft adds 1.80 of 2.30 km², almost four times the +2 ft step.
-    expect(screen.getByText('The biggest jump comes at +3 ft')).toBeInTheDocument()
-    expect(screen.getByText('Land underwater, km², City of Miami Beach')).toBeInTheDocument()
+    expect(screen.getByText('Land underwater by sea level')).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /^Land underwater by sea level ?, in square kilometres$/ })).toBeInTheDocument()
+    expect(screen.queryByText(/biggest jump|City of Miami Beach/i)).toBeNull()
   })
 
   it('keeps levels above the slider at full strength, so they never look disabled', () => {

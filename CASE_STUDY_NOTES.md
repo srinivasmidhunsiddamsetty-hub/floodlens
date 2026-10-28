@@ -83,7 +83,7 @@ Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet 
 
 - **Headline metric = extent beyond the 0 ft reference.** The total extent is dominated by existing open water inside city limits (19.7 of 39.4 km²), so it barely changes. The added extent (0.04 → 0.99 → 7.43 km²) shows the non-linear growth that matters. v0.4 adds acres and "equal to N% of the city's land area" (Census land area) so the number is relatable.
 - **Bar chart, not a line.** Scenarios are discrete states, and a line would imply interpolation.
-- **Chart title = the finding, subtitle = the measure and place** (ONS / GOV.UK guidance). The finding ("The biggest jump comes at +3 ft" since v0.10; "Land underwater jumps at +3 ft" in v0.8–v0.9) is computed from the data, with a plain fallback title. The selected level gets a ring round its bar, and every bar keeps full colour whatever the slider shows (v0.8).
+- **Chart title:** v0.8–v0.12 used a computed finding as the title plus a measure-and-place subtitle (ONS / GOV.UK guidance), such as "The biggest jump comes at +3 ft". v0.13 cut it to one plain line, "Land underwater by sea level", because the tile above already carries the measure. The selected level gets a ring round its bar, and every bar keeps full colour whatever the slider shows (v0.8).
 - **Colour:** a light, ArcGIS-style geographic basemap (warm land, sage parks, pale-blue water, white roads) keeps the strongest colours for data. Saturated blue marks mapped inundation, clearly darker than the pale water; orange marks the added extent (a colour-vision-deficiency-safe pair); a purple hatch marks low-lying areas (readable without colour); and a blue ring with a white-outlined core marks the selection.
 - **Typography:** Satoshi for the interface (v0.7, friendlier and more contemporary); Roboto for map labels, which need self-hosted SDF glyphs that Satoshi's licence doesn't allow creating.
 - **Copy:** plain, calm and honest, never "safe" or "will flood". See [docs/UX_WRITING.md](docs/UX_WRITING.md).
@@ -156,6 +156,13 @@ The product went through numbered versions, each tagged in git with screenshots 
   - The summary and the chart each sit on a tile.
   - The distance to the street was dropped (the designer's call, which I agreed with), and a copy-coordinates button was added.
   - The bigger answer and the tiles cost height: everything now fits at 1440×900.
+- **v0.12 → v0.13:** v0.12 followed the reference too literally. It replaced the agreed wording, added status labels under every pin, a supporting sentence and a copy button, and appeared to drop height and footprint (they were hidden for clicks that weren't on a building). Shortening the chart also let the bottom link drift up the panel. Fixes:
+  - v0.11's wording, emphasised: "When water reaches it / **At +3 ft**".
+  - The extras lifted from the reference are gone.
+  - Height and footprint always show, with "—" when the click isn't on a building.
+  - The chart title is one plain line.
+  - The bottom link is a pinned footer.
+  Lesson: take a reference's layout, not its words, and change only what was asked.
 
 ## 11. Known limitations
 

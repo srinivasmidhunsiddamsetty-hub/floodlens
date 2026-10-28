@@ -16,8 +16,21 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.10 | 28 Oct 2026 | Compact card, two-block Insights that fits without scrolling | [`docs/versions/v0.10/`](docs/versions/v0.10/) |
 | v0.11 | 28 Oct 2026 | One-column card with a level track, chips and bottom link back | [`docs/versions/v0.11/`](docs/versions/v0.11/) |
 | v0.12 | 28 Oct 2026 | First-reached answer as the card's lead, summary and chart on tiles | [`docs/versions/v0.12/`](docs/versions/v0.12/) |
+| v0.13 | 28 Oct 2026 | Agreed wording back, facts always listed, chart title, pinned footer link | [`docs/versions/v0.13/`](docs/versions/v0.13/) |
 
 ---
+
+## v0.13: Reference, not replica (28 Oct 2026)
+
+Driven by a design review of v0.12, which followed the supplied mockup too literally.
+
+- **The answer keeps v0.11's wording**, in v0.12's emphasised layout: "WHEN WATER REACHES IT / **At +3 ft**" (or "Already today", "Not up to +3 ft"). The mockup-derived copy is gone: "Water first reaches it", the supporting sentence, and "Not reached / First reached / Reached" under every pin.
+- **The level track stays:** the water rises and stops, with a dashed marker, at the first level that reaches the place. The pins show the level only; screen readers still hear, for each level, whether water reaches it.
+- **Height and footprint always show.** They used to disappear when the click landed on open ground or water rather than a building. Now the rows stay, with "—" (and "no building here" for screen readers).
+- **The copy-coordinates button is removed.** It came from the mockup and wasn't asked for.
+- **Chart title: one plain line, "Land underwater by sea level"**, styled like the "Land underwater" tile. The computed finding ("The biggest jump comes at +3 ft") and the subtitle are gone, along with the code that worked out the finding.
+- **"What this map can and can't tell you" is pinned to the bottom of the panel.** It was the last item in the scrolling content, so when v0.13 first removed the chart's title the link rose up the panel. Now it's a footer that always sits at the bottom edge. An end-to-end test checks this with and without a selection.
+- Tests: 99 unit/component tests and 17 end-to-end tests.
 
 ## v0.12: The answer first (28 Oct 2026)
 

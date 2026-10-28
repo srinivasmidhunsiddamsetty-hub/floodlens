@@ -22,7 +22,8 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 6. **Errors say what happened and what to do, without blame.** "We couldn't reach the flood data. Check your connection and reload."
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
 8. **A label and its value read as one sentence.** "Water reaches it · At +3 ft". "Up to +3 ft · Water doesn't reach it". Never pair a label with a value that contradicts it.
-9. **Chart titles state the finding; subtitles say what's measured and where.** This follows the [ONS chart text guidance](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) and the [GOV.UK chart guidance](https://brand.design-system.service.gov.uk/data/charts): front-loaded, active, sentence case, 15 words or fewer, with no detail repeated in the subtitle. The finding must come from the data, never be written in. So "The biggest jump comes at +3 ft" appears only when the numbers show it, and otherwise the title falls back to "How each foot adds up". The subtitle carries the measure ("Land underwater, km², City of Miami Beach"), so it isn't repeated in the title or the block above.
+9. **Chart titles are one plain line that names the measure: "Land underwater by sea level".** v0.8–v0.12 followed the [ONS](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) / [GOV.UK](https://brand.design-system.service.gov.uk/data/charts) pattern of a finding as the title plus a measure-and-place subtitle. In a small tile under a "Land underwater" summary, that was more text than the reader needed, so v0.13 cut it to one line.
+10. **A reference is a reference.** When a mockup is supplied, take its layout and emphasis, not its wording. The answer keeps FloodLens's voice ("When water reaches it · At +3 ft"), not the mockup's ("First reached / at +3 ft / Within the mapped extent…").
 
 ## Before and after (v0.6 → v0.7)
 
@@ -107,3 +108,14 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Card, not reached | When water reaches it · Not up to +3 ft | WATER DOESN'T REACH IT / **up to +3 ft** / We only map up to +3 ft, so we can't say beyond that. |
 | Level pins | (level names only) | Today · Not reached, +3 ft · First reached, and "Reached" after it |
 | Card meta | 34 m from street · 25.77675° N, 80.13466° W | 25.77675° N, 80.13466° W, with a "Copy coordinates" button |
+
+## Before and after (v0.12 → v0.13)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card answer | WATER FIRST REACHES IT / at +3 ft / Once the sea rises 3 ft above today's high tide. | WHEN WATER REACHES IT / At +3 ft (v0.11's wording, emphasised) |
+| Card, today | WATER ALREADY REACHES IT / at high tide / Today, before the sea rises at all. | WHEN WATER REACHES IT / Already today |
+| Card, not reached | WATER DOESN'T REACH IT / up to +3 ft / We only map up to +3 ft, so we can't say beyond that. | WHEN WATER REACHES IT / Not up to +3 ft |
+| Level pins | Today · Not reached … +3 ft · First reached | Today, +1 ft, +2 ft, +3 ft (the first level in blue) |
+| Chart title | The biggest jump comes at +3 ft / Land underwater, km², City of Miami Beach | Land underwater by sea level |
+| Facts, not a building | (Height and Footprint rows hidden) | Height — / Footprint — |
