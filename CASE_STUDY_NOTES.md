@@ -150,6 +150,12 @@ The product went through numbered versions, each tagged in git with screenshots 
   - The bottom link is back.
   - The visible "Insights" title is dropped to make room.
   - It all fits at 1440×850 in every state, and at 800 unless a long street name and the "See it" line both show.
+- **v0.11 → v0.12:** the designer supplied an annotated reference for the answer, and asked for the summary and chart on tiles instead of loose sections. Fixes:
+  - "Water first reaches it / **at +3 ft**" leads the card again, over a level track where the water stops at the first level that reaches the place, and every pin says "Not reached", "First reached" or "Reached".
+  - The facts stay in one column.
+  - The summary and the chart each sit on a tile.
+  - The distance to the street was dropped (the designer's call, which I agreed with), and a copy-coordinates button was added.
+  - The bigger answer and the tiles cost height: everything now fits at 1440×900.
 
 ## 11. Known limitations
 

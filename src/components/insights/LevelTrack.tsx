@@ -10,82 +10,96 @@ interface Props {
   scenarioFt: number
 }
 
-/** Track geometry (px): the water area sits on a baseline, each level is a pin on a stem. */
-const BASE = 32
-const DOT = 18
-/** How much the water rises from one pin to the next. */
-const STEP = 10
-/** At the first level that reaches the place, the water stands this far above the pin's centre. */
-const OVER = 4
+/** Height (px) the water band can rise to above the baseline. */
+const FILL = 32
 
 const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
-const clamp = (y: number) => Math.min(BASE - 2, Math.max(3, y))
 
 /**
- * One pin per sea level on a rising band of water. The water is schematic, not a
- * depth: its surface meets the pin of the first level that reaches the place, so
- * the highlighted pin moves with the answer, and it stays below every pin when no
- * level reaches it. The pins are a list for screen readers; the water is hidden.
+ * Sea levels as pins on a baseline, with the water rising from left to right and
+ * stopping, with a dashed marker, at the first level that reaches the place. When
+ * no level reaches it the water runs on to the end with no marker. Each pin is
+ * labelled "Not reached", "First reached" or "Reached". The water is schematic,
+ * not a depth, so it's hidden from screen readers; the labelled pins are a list.
  */
 export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
   const gradientId = useId()
   const n = levels.length
   const first = firstFeet === null ? -1 : levels.findIndex((l) => l.feet === firstFeet)
-  // Not reached: anchor one step past the last pin, so the water stays below every pin.
-  const anchor = first >= 0 ? first : n
-  const surface = levels.map((_, i) => clamp(DOT - OVER + (anchor - i) * STEP))
-  const points: [number, number][] = [
-    [0, clamp(surface[0] + STEP / 2)],
-    ...surface.map((y, i): [number, number] => [((i + 0.5) * 100) / n, y]),
-    [100, clamp(surface[n - 1] - STEP / 2)],
-  ]
+  const x = (i: number) => ((i + 0.5) * 100) / n
+  // The surface rises a little more at each level, and is never so low that the marker hides its pin.
+  const rise = (i: number) => (FILL * (i + 2)) / (n + 1)
+
+  // A gentle S from the left edge up to where it stops: at the first level that
+  // reaches the place, or the far end when none does.
+  const endX = first >= 0 ? x(first) : 100
+  const endH = rise(first >= 0 ? first : n - 1)
+  const points = d3.range(25).map((k): [number, number] => {
+    const t = k / 24
+    return [t * endX, FILL - endH * (0.06 + 0.94 * t * t * (3 - 2 * t))]
+  })
   const area = d3
     .area<[number, number]>()
     .x((d) => d[0])
-    .y0(BASE)
+    .y0(FILL)
     .y1((d) => d[1])
     .curve(d3.curveMonotoneX)(points)
-  const line = d3
+  const surface = d3
     .line<[number, number]>()
     .x((d) => d[0])
     .y((d) => d[1])
     .curve(d3.curveMonotoneX)(points)
 
   return (
-    <div className="relative">
-      <svg className="absolute inset-x-0 top-0 w-full" style={{ height: BASE }} viewBox={`0 0 100 ${BASE}`} preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#b7d6f6" />
-            <stop offset="1" stopColor="#e4f0fc" />
-          </linearGradient>
-        </defs>
-        <path d={area ?? ''} fill={`url(#${gradientId})`} />
-        <path d={line ?? ''} fill="none" stroke="#86b9ec" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-        <line x1="0" x2="100" y1={BASE - 0.5} y2={BASE - 0.5} stroke="#b9d4ee" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-      </svg>
-      <ol className="relative grid" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
+    <div>
+      <div className="relative" style={{ height: FILL }} aria-hidden="true">
+        <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 100 ${FILL}`} preserveAspectRatio="none">
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#a9cff5" />
+              <stop offset="1" stopColor="#dcebfb" />
+            </linearGradient>
+          </defs>
+          <path d={area ?? ''} fill={`url(#${gradientId})`} />
+          <path d={surface ?? ''} fill="none" stroke="#7fb3e6" strokeWidth="1.25" vectorEffect="non-scaling-stroke" />
+        </svg>
+        <span className="absolute inset-x-0 bottom-0 h-px bg-[#c3ccd5]" />
+        {first >= 0 && (
+          <>
+            {/* Where the water first reaches the place: a dashed drop from the surface to its pin */}
+            <span
+              className="absolute w-0 -translate-x-1/2 border-l-[1.5px] border-dashed border-accent"
+              style={{ left: `${x(first)}%`, top: FILL - rise(first), height: rise(first) }}
+            />
+            <span
+              className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent"
+              style={{ left: `${x(first)}%`, top: FILL - rise(first) }}
+            />
+          </>
+        )}
+        {levels.map((l, i) => (
+          <span
+            key={l.feet}
+            className={`absolute -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-white ${
+              i === first ? 'size-3.5 bg-accent shadow-[0_0_0_1px_var(--color-accent)]' : l.within ? 'size-3 bg-[#7fb3e6]' : 'size-3 bg-[#a3adb8]'
+            }`}
+            style={{ left: `${x(i)}%`, bottom: 0 }}
+          />
+        ))}
+      </div>
+      <ol className="mt-2.5 grid text-center" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
         {levels.map((l, i) => {
-          const isFirst = i === first
+          const status = i === first ? 'First reached' : l.within ? 'Reached' : 'Not reached'
           return (
-            <li key={l.feet} className="flex flex-col items-center">
-              <span aria-hidden className="relative block w-full" style={{ height: BASE }}>
-                <span
-                  className={`absolute bottom-0 left-1/2 w-[1.5px] -translate-x-1/2 ${isFirst ? 'bg-accent' : 'bg-[#a3adb8]'}`}
-                  style={{ top: DOT }}
-                />
-                <span
-                  className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white ${
-                    isFirst ? 'size-4 bg-accent shadow-[0_0_0_1px_var(--color-accent)]' : 'size-3 bg-[#a3adb8]'
-                  }`}
-                  style={{ top: DOT }}
-                />
-              </span>
-              <span className={`mt-1 text-[12px] leading-4 tabular ${isFirst ? 'font-semibold text-fg' : 'text-fg-muted'}`}>
+            <li key={l.feet} className="flex flex-col">
+              <span className={`text-[12px] leading-4 tabular ${i === first ? 'font-semibold text-accent' : 'font-medium text-fg'}`}>
                 {levelName(l.feet)}
                 {l.feet === scenarioFt && <span className="sr-only"> (selected level)</span>}
               </span>
-              <span className="sr-only">{l.within ? 'water reaches it' : 'water doesn’t reach it'}</span>
+              <span className={`text-[10px] leading-[14px] whitespace-nowrap ${i === first ? 'font-medium text-accent' : 'text-fg-subtle'}`}>
+                <span className="sr-only">: </span>
+                {status}
+              </span>
             </li>
           )
         })}

@@ -97,3 +97,13 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Card fact | Low spot: From +2 ft | Low spot: Yes, from +2 ft |
 | Panel title | Insights | (visually hidden; still the panel's heading for screen readers) |
 | Bottom link | (removed) | What this map can and can't tell you → |
+
+## Before and after (v0.11 → v0.12)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card answer | When water reaches it · At +3 ft (a row) | WATER FIRST REACHES IT / **at +3 ft** / Once the sea rises 3 ft above today's high tide. |
+| Card, today | When water reaches it · Already today | WATER ALREADY REACHES IT / **at high tide** / Today, before the sea rises at all. |
+| Card, not reached | When water reaches it · Not up to +3 ft | WATER DOESN'T REACH IT / **up to +3 ft** / We only map up to +3 ft, so we can't say beyond that. |
+| Level pins | (level names only) | Today · Not reached, +3 ft · First reached, and "Reached" after it |
+| Card meta | 34 m from street · 25.77675° N, 80.13466° W | 25.77675° N, 80.13466° W, with a "Copy coordinates" button |

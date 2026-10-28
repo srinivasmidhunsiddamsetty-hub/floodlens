@@ -15,8 +15,29 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.9 | 28 Oct 2026 | km² / acres switch, low spots always listed | [`docs/versions/v0.9/`](docs/versions/v0.9/) |
 | v0.10 | 28 Oct 2026 | Compact card, two-block Insights that fits without scrolling | [`docs/versions/v0.10/`](docs/versions/v0.10/) |
 | v0.11 | 28 Oct 2026 | One-column card with a level track, chips and bottom link back | [`docs/versions/v0.11/`](docs/versions/v0.11/) |
+| v0.12 | 28 Oct 2026 | First-reached answer as the card's lead, summary and chart on tiles | [`docs/versions/v0.12/`](docs/versions/v0.12/) |
 
 ---
+
+## v0.12: The answer first (28 Oct 2026)
+
+Driven by a design review of v0.11, with an annotated reference for the card.
+
+- **The answer leads the card, large.** A light-blue block reads "Water first reaches it / **at +3 ft** / Once the sea rises 3 ft above today's high tide." The other states:
+  - Today: "Water already reaches it / **at high tide**".
+  - Not reached: "Water doesn't reach it / **up to +3 ft** / We only map up to +3 ft, so we can't say beyond that."
+
+  It still never says "safe" or "dry".
+- **A level track like the reference.**
+  - Pins sit on a baseline, each labelled with its level and "Not reached", "First reached" or "Reached".
+  - The water rises in a gentle S from the left and stops at the first level that reaches the place, with a dashed drop to its larger blue pin.
+  - When no level reaches it, the water runs to the end with no marker.
+  - The shape is schematic, not a depth.
+- **Facts stay in one column:** Height, Footprint, Low spot.
+- **No "N m from street".** The title already names the street, and the distance said nothing about water. The position chip gains a copy button that copies "lat, lng" and confirms with a tick.
+- **Summary and chart on tiles.** "Land underwater" and the chart with its breakdown each sit on a bordered tile with no shadow, instead of full-bleed sections with hairlines.
+- **What fits:** with a place selected, everything fits without scrolling at 1440×900. At 1440×850 there's a short scroll when the street name wraps or the "See it at +N ft" line shows. The end-to-end fit test now runs at 1440×900.
+- Tests: 103 unit/component tests (new: copy coordinates, reached labels, no distance) and 17 end-to-end tests.
 
 ## v0.11: One column (28 Oct 2026)
 

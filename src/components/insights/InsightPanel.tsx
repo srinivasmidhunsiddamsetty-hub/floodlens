@@ -84,9 +84,9 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
 
         {manifestState.status === 'ready' && s && (
           <>
-            {/* Block 1: the answer at the chosen level, with the unit switch for both blocks.
-                Blocks are full-bleed and divided by hairlines (Calcite "block" pattern), not cards. */}
-            <section aria-labelledby="summary-title" className="-mx-5 mt-3 border-t border-line px-5 py-2.5">
+            {/* Tile 1: the answer at the chosen level, with the unit switch for both tiles.
+                Each block of information sits on its own tile, like the selected-place card. */}
+            <section aria-labelledby="summary-title" className="mt-2.5 rounded-xl border border-line bg-surface p-3">
               <div className="flex items-center justify-between gap-3">
                 <h3 id="summary-title" className="flex items-center gap-2 t-heading font-semibold">
                   <Waves className="size-4 shrink-0 text-accent" aria-hidden />
@@ -118,8 +118,8 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
               )}
             </section>
 
-            {/* Block 2: every level side by side, with what each foot adds */}
-            <div className="-mx-5 border-t border-line px-5 pt-2.5">
+            {/* Tile 2: every level side by side, with what each foot adds */}
+            <div className="mt-2.5 rounded-xl border border-line bg-surface px-3 pt-3 pb-1.5">
               <ScenarioAreaChart
                 bands={bands}
                 unit={unit}
@@ -187,7 +187,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           <button
             type="button"
             onClick={() => dispatch({ type: 'openDialog', dialog: 'about' })}
-            className="-mx-5 mt-2 flex w-[calc(100%+2.5rem)] items-center justify-between border-t border-line px-5 pt-2.5 text-left t-label text-accent hover:text-accent-strong"
+            className="mt-2.5 flex w-full items-center justify-between text-left t-label text-accent hover:text-accent-strong"
           >
             What this map can and can’t tell you
             <ArrowRight className="size-4" aria-hidden />

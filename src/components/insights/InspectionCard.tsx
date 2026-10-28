@@ -1,6 +1,6 @@
-import { ArrowRight, Building2, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { formatCoord, formatMeters, formatScenario, formatSmallArea } from '../../lib/format'
+import { ArrowRight, Building2, Check, Copy, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { formatCoord, formatScenario, formatSmallArea } from '../../lib/format'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { Selection } from '../../state/reducer'
 import { LevelTrack } from './LevelTrack'
@@ -25,7 +25,34 @@ function Chip({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode 
   )
 }
 
-const TINTS = { water: '#0069b0', blue: '#1f5fd0', violet: '#5b4bd1', green: '#1d7a3e' } as const
+/** Copies "lat, lng" (what map apps paste), and says so for a moment. */
+function CopyCoords({ lng, lat }: { lng: number; lat: number }) {
+  const [copied, setCopied] = useState(false)
+  useEffect(() => {
+    if (!copied) return
+    const t = setTimeout(() => setCopied(false), 1500)
+    return () => clearTimeout(t)
+  }, [copied])
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+      setCopied(true)
+    } catch {
+      /* clipboard blocked: the coordinates are still on screen to select */
+    }
+  }
+  const label = copied ? 'Coordinates copied' : 'Copy coordinates'
+  return (
+    <button type="button" onClick={copy} className="btn-ghost size-6 justify-center px-0 text-fg-subtle" aria-label={label} title={label}>
+      {copied ? <Check className="size-3.5 text-success" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
+      <span className="sr-only" aria-live="polite">
+        {copied ? 'Copied' : ''}
+      </span>
+    </button>
+  )
+}
+
+const TINTS = { blue: '#1f5fd0', violet: '#5b4bd1', green: '#1d7a3e' } as const
 
 /** One row of the card's single column: tinted icon and label, value on the right, extras underneath. */
 function Row({
@@ -54,10 +81,10 @@ function Row({
 }
 
 /**
- * Selected building / location. Hierarchy: what and where → one column of
- * answers: when water reaches it (with a pin per level), then height, footprint
- * and low spot. Kept compact so the whole Insights panel fits without scrolling.
- * Wording never says "will flood" or "safe".
+ * Selected building / location. Hierarchy: what and where → the answer, large
+ * (the first sea level whose water reaches it, with every level in context) →
+ * height, footprint and low spot in one column. Wording never says "will flood"
+ * or "safe".
  */
 export function InspectionCard({ selection, inspection, scenarioFt, onClear, onShowLevel }: Props) {
   const { building, street, lngLat, insideStudyArea, onWater } = selection
@@ -83,9 +110,10 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           <X className="size-4" aria-hidden />
         </button>
       </div>
-      <div className="mt-1.5 flex flex-wrap gap-1">
-        {street && <Chip icon={MapPin}>{formatMeters(street.distanceM)} from street</Chip>}
+      {/* No "N m from street": the title already names the street, and the distance answers nothing about water. */}
+      <div className="mt-1.5 flex items-center gap-1">
         <Chip icon={Crosshair}>{formatCoord(lngLat[0], lngLat[1])}</Chip>
+        <CopyCoords lng={lngLat[0]} lat={lngLat[1]} />
       </div>
 
       {!insideStudyArea && (
@@ -115,54 +143,61 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           const shownOnMap = reached && firstFeet <= scenarioFt
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
 
-          // Label and value read as one sentence: "When water reaches it: at +3 ft",
-          // "already today" (at today's high tide; the Today pin says so too).
-          // Never "safe" or "dry": NOAA's map not reaching a place isn't a promise,
-          // and we only map up to +3 ft.
-          const answer = !reached ? (
-            <span className="text-fg-muted">Not up to {formatScenario(top)}</span>
-          ) : firstFeet === 0 ? (
-            <span className="text-accent">Already today</span>
-          ) : (
-            <span className="text-accent">At {formatScenario(firstFeet)}</span>
-          )
+          // Overline and headline read as one sentence: "Water first reaches it at +3 ft",
+          // "Water doesn't reach it up to +3 ft". Never "safe" or "dry": NOAA's map not
+          // reaching a place isn't a promise, and we only map up to +3 ft.
+          const answer = !reached
+            ? {
+                overline: 'Water doesn’t reach it',
+                headline: `up to ${formatScenario(top)}`,
+                support: `We only map up to ${formatScenario(top)}, so we can’t say beyond that.`,
+              }
+            : firstFeet === 0
+              ? { overline: 'Water already reaches it', headline: 'at high tide', support: 'Today, before the sea rises at all.' }
+              : { overline: 'Water first reaches it', headline: `at ${formatScenario(firstFeet)}`, support: `Once the sea rises ${firstFeet} ft above today’s high tide.` }
 
           return (
-            <dl aria-live="polite" className="mt-3 divide-y divide-line border-t border-line">
-              <Row icon={Waves} tint="water" label="When water reaches it" value={answer}>
-                <dd className="col-span-2 mt-1.5">
+            <div aria-live="polite">
+              {/* The answer: large, with every level in context */}
+              <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-3 pb-2.5">
+                <p className="t-overline">{answer.overline}</p>
+                <p className={`text-[26px] leading-8 font-semibold tracking-tight ${reached ? 'text-accent-strong' : 'text-fg'}`}>{answer.headline}</p>
+                <p className="t-caption">{answer.support}</p>
+                <div className="mt-2.5">
                   <LevelTrack levels={hits} firstFeet={firstFeet} scenarioFt={scenarioFt} />
-                </dd>
+                </div>
                 {reached && !shownOnMap && (
-                  <dd className="col-span-2 mt-1">
-                    <button
-                      type="button"
-                      onClick={() => onShowLevel(firstFeet)}
-                      className="inline-flex items-center gap-1 t-label text-accent hover:text-accent-strong"
-                    >
-                      You’re looking at {formatScenario(scenarioFt)}. See it at {formatScenario(firstFeet)}
-                      <ArrowRight className="size-3.5" aria-hidden />
-                    </button>
-                  </dd>
+                  <button
+                    type="button"
+                    onClick={() => onShowLevel(firstFeet)}
+                    className="mt-1.5 inline-flex items-center gap-1 t-label text-accent hover:text-accent-strong"
+                  >
+                    You’re looking at {formatScenario(scenarioFt)}. See it at {formatScenario(firstFeet)}
+                    <ArrowRight className="size-3.5" aria-hidden />
+                  </button>
                 )}
-              </Row>
-              {building && (
-                <>
-                  <Row
-                    icon={Ruler}
-                    tint="blue"
-                    label="Height"
-                    value={building.renderHeightM !== null ? `≈ ${Math.round(building.renderHeightM)} m` : '—'}
-                  />
-                  <Row icon={Scan} tint="violet" label="Footprint" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
-                </>
-              )}
-              <Row icon={Mountain} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'}>
-                {lowAt.length > 0 && lowPartAreaM2 !== null && (
-                  <dd className="col-span-2 pl-[26px] t-caption">{formatSmallArea(lowPartAreaM2)} of it, cut off from the sea</dd>
+              </div>
+
+              {/* Facts in one column */}
+              <dl className="mt-1 divide-y divide-line">
+                {building && (
+                  <>
+                    <Row
+                      icon={Ruler}
+                      tint="blue"
+                      label="Height"
+                      value={building.renderHeightM !== null ? `≈ ${Math.round(building.renderHeightM)} m` : '—'}
+                    />
+                    <Row icon={Scan} tint="violet" label="Footprint" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
+                  </>
                 )}
-              </Row>
-            </dl>
+                <Row icon={Mountain} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'}>
+                  {lowAt.length > 0 && lowPartAreaM2 !== null && (
+                    <dd className="col-span-2 pl-[26px] t-caption">{formatSmallArea(lowPartAreaM2)} of it, cut off from the sea</dd>
+                  )}
+                </Row>
+              </dl>
+            </div>
           )
         })()}
     </section>

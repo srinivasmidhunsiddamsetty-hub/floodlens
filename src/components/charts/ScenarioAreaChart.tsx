@@ -36,7 +36,7 @@ interface Tip {
   band: number | null
 }
 
-const HEIGHT = 112
+const HEIGHT = 104
 /** Acre ticks run to "2,000", so they need a wider left margin than km². */
 const margins = (unit: AreaUnit) => ({ top: 20, right: 4, bottom: 26, left: unit === 'acres' ? 40 : 30 })
 

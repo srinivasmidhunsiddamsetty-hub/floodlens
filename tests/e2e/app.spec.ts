@@ -85,8 +85,8 @@ test.describe('FloodLens — core flows', () => {
     await expect(insights(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
   })
 
-  test('with a place selected, every insight fits without scrolling at 1440×850', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 850 })
+  test('with a place selected, every insight fits without scrolling at 1440×900', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto('/')
     await waitForMap(page)
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
