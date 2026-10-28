@@ -46,8 +46,8 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
       onClear={() => dispatch({ type: 'select', selection: null })}
     />
   ) : manifestState.status === 'ready' ? (
-    <div className="flex items-center gap-3 rounded-xl border border-dashed border-line-strong px-4 py-3">
-      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#ffeedf] text-[#d65a00]" aria-hidden>
+    <div className="flex items-center gap-3 rounded-xl border border-dashed border-line-strong bg-surface px-4 py-3">
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#fdebe7] text-[#d03a22]" aria-hidden>
         <MousePointerClick className="size-4" />
       </span>
       <p className="t-body">
@@ -56,8 +56,9 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
     </div>
   ) : null
 
+  // A light grey canvas, so the white card and tile read as cards (v0.20).
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-canvas">
       {/* No visible title: the card and the block headers already say what this is,
           and the space goes to content. Screen readers still get the heading. */}
       <h2 className="sr-only">Insights</h2>
@@ -97,8 +98,10 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                 <p className="mt-2 t-body">None yet. Today’s high tide is where we start: raise the sea level to see what changes.</p>
               ) : (
                 // "Land" carries "newly": it means ground that is dry at today's high tide.
-                <dl className={`mt-2 grid divide-x divide-line ${landM2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                  <div className="flex flex-col-reverse pr-3">
+                // Each figure sits on its own soft stat tile: a light fill, no border, so the tiles read
+                // as one pair inside the outer tile without nesting borders.
+                <dl className={`mt-2.5 grid gap-2 ${landM2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                  <div className="flex flex-col-reverse rounded-lg bg-[#f3f6fa] px-3 py-2.5">
                     <dt className="t-caption">at {formatScenario(s.feet)}</dt>
                     <dd className="flex items-baseline gap-1">
                       <span className="text-[24px] leading-7 font-medium tracking-tight text-fg tabular">{formatArea(s.beyondBaselineM2, unit)}</span>
@@ -106,7 +109,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                     </dd>
                   </div>
                   {landM2 ? (
-                    <div className="flex flex-col-reverse pl-4">
+                    <div className="flex flex-col-reverse rounded-lg bg-[#f3f6fa] px-3 py-2.5">
                       <dt className="t-caption">of the city’s land</dt>
                       <dd className="text-[24px] leading-7 font-medium tracking-tight text-fg tabular">
                         {formatPercent(s.beyondBaselineM2 / landM2, true)}

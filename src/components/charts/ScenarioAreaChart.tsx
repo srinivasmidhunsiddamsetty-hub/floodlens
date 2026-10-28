@@ -53,6 +53,8 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
   const reduced = useReducedMotion()
   const titleId = useId()
   const descId = useId()
+  // Ids for each bar's clip path; useId's punctuation isn't safe inside url(#…).
+  const clipBase = useId().replace(/[^a-zA-Z0-9_-]/g, '')
 
   useEffect(() => {
     const el = wrapRef.current
@@ -152,6 +154,14 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
         const g = enter.append('g').attr('class', 'bar').style('cursor', 'pointer')
         g.append('rect').attr('class', 'hit').attr('fill', 'transparent')
         g.append('rect').attr('class', 'sel').attr('fill', 'none').attr('rx', 3)
+        // Segments are clipped by a rounded rectangle that runs below the baseline, so
+        // only the bar's top corners are rounded (v0.20).
+        g.append('clipPath')
+          .attr('id', (d) => `${clipBase}-bar-${d.feet}`)
+          .append('rect')
+        g.append('g')
+          .attr('class', 'segs')
+          .attr('clip-path', (d) => `url(#${clipBase}-bar-${d.feet})`)
         g.append('text').attr('class', 'lbl').attr('text-anchor', 'middle').attr('font-size', 11)
         return g
       })
@@ -202,7 +212,19 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
       .attr('y', (d) => y(toU(d.totalM2)) - 4)
       .attr('height', (d) => innerH - y(toU(d.totalM2)) + 7)
 
+    // Top of the drawn bar: near-zero bars keep a 1.5px sliver, so the clip mustn't hide it.
+    const barTop = (d: Bar) => Math.min(y(toU(d.totalM2)), innerH - (d.totalM2 > 0 ? 1.5 : 0))
     barG
+      .select<SVGRectElement>('clipPath rect')
+      .attr('x', 0)
+      .attr('width', x.bandwidth())
+      .attr('rx', (d) => Math.min(4, innerH - barTop(d)))
+      .transition(t)
+      .attr('y', barTop)
+      .attr('height', (d) => innerH - barTop(d) + 6)
+
+    barG
+      .select<SVGGElement>('g.segs')
       .selectAll<SVGRectElement, Segment>('rect.seg')
       .data((d) => d.segments.map((s) => ({ ...s, bar: d })) as (Segment & { bar: Bar })[], (s) => String((s as Segment).band))
       .join((enter) => enter.append('rect').attr('class', 'seg').attr('y', innerH).attr('height', 0))

@@ -220,7 +220,7 @@ export function addFloodLensLayers(map: MLMap) {
     source: SRC.selectedPoint,
     paint: {
       'circle-radius': 12,
-      'circle-color': 'rgba(255,138,31,0.18)',
+      'circle-color': 'rgba(232,69,44,0.16)',
       'circle-stroke-color': colors.selection,
       'circle-stroke-width': 3,
       'circle-pitch-alignment': 'map',

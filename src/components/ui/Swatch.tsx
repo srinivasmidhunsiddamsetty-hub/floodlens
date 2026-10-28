@@ -55,7 +55,7 @@ export function Swatch({ kind, size = 14 }: { kind: SwatchKind; size?: number })
     case 'selection':
       return (
         <svg {...common} viewBox="0 0 14 14">
-          <circle cx="7" cy="7" r="5.2" fill="rgba(255,138,31,0.18)" stroke={colors.selection} strokeWidth="1.6" />
+          <circle cx="7" cy="7" r="5.2" fill="rgba(232,69,44,0.16)" stroke={colors.selection} strokeWidth="1.6" />
           <circle cx="7" cy="7" r="2.2" fill={colors.selectionLine} stroke="#fff" strokeWidth="0.8" />
         </svg>
       )

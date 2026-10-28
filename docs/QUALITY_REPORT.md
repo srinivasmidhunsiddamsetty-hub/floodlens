@@ -33,6 +33,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Sea levels extended from +3 to +5 ft with NOAA's own +4 and +5 ft layers, and a six-step blue ramp (v0.17).
 - The legend shows every level in its true colour, with no "not shown" label (v0.18).
 - Only the selected level's "adds" row is listed under the chart, not all five (v0.19).
+- Vermilion selection colour, the two figures on stat tiles, a grey canvas behind both panels, the left panel in tiles, and rounded bar tops (v0.20).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

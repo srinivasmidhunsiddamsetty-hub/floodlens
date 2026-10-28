@@ -37,8 +37,11 @@ export const colors = {
   // data
   lowLying: '#6b35aa',
   accent: '#0069b0',
-  selection: '#ff7417',
-  selectionLine: '#b34700',
+  // Vermilion (v0.20): the colour farthest from everything else on the map (worst-case
+  // OKLab ΔE 21 against water, every flood band, buildings, parks and low spots, for
+  // normal and colour-blind vision). Orange, before, was 18.
+  selection: '#e8452c',
+  selectionLine: '#9e2410',
   studyArea: '#3d4655',
   mask: '#ffffff',
 

@@ -71,9 +71,9 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
   return (
     <section aria-labelledby="insp-title" className="rounded-xl border border-line bg-surface p-3 shadow-panel animate-slide-up">
-      {/* What and where. The orange icon matches the selection on the map. */}
+      {/* What and where. The vermilion icon matches the selection on the map. */}
       <div className="flex items-start gap-2">
-        <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d65a00]" aria-hidden />
+        <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d03a22]" aria-hidden />
         <h3 id="insp-title" className="min-w-0 flex-1 text-[15px] leading-5 font-semibold text-fg">
           {noun}
           {street && <> near {street.name}</>}

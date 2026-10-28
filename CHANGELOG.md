@@ -23,8 +23,28 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.17 | 28 Oct 2026 | Sea levels up to +5 ft, six-step blue ramp | [`docs/versions/v0.17/`](docs/versions/v0.17/) |
 | v0.18 | 28 Oct 2026 | Legend shows every level's true colour | [`docs/versions/v0.18/`](docs/versions/v0.18/) |
 | v0.19 | 28 Oct 2026 | One "adds" row for the selected level | [`docs/versions/v0.19/`](docs/versions/v0.19/) |
+| v0.20 | 28 Oct 2026 | Vermilion selection, stat tiles, grey canvas, tiled left panel, rounded bars | [`docs/versions/v0.20/`](docs/versions/v0.20/) |
 
 ---
+
+## v0.20: Polish (28 Oct 2026)
+
+Driven by a design review of v0.19.
+
+- **Vermilion selection** (`#e8452c`, outline `#9e2410`) instead of orange: the selected building, the point halo, the legend's "Selected" swatch and the card's icon. The designer picked it from a preview of four colours on the same building, each measured against every colour on the map for normal and colour-blind vision:
+
+  | Colour | Worst-case contrast | Note |
+  | --- | --- | --- |
+  | Vermilion | ΔE 21 | the highest |
+  | Coral red | ΔE 20 | |
+  | Orange | ΔE 18 | |
+  | Watermelon | ΔE 18 | |
+  | Magenta | ΔE 8 | dropped: looks like the +3 ft blue to people with protanopia |
+- **The two figures each sit on a soft stat tile** (light blue-grey fill, no border) inside the "Land underwater" tile: "3,770 acres at +5 ft" and "77% of the city's land".
+- **A light grey canvas behind both side panels**, so the building card and the tiles read as cards.
+- **The left panel in tiles.** "Sea level" and "On the map" each sit on a white tile, matching the Insights panel.
+- **Rounded bar tops.** The chart bars' top corners are rounded by 4 px, and the bottoms stay square on the baseline.
+- Tests: 101 unit/component tests and 17 end-to-end tests.
 
 ## v0.19: One row (28 Oct 2026)
 
