@@ -11,7 +11,7 @@ interface Props {
 }
 
 /** Height (px) the water band can rise to above the baseline. */
-const FILL = 32
+const FILL = 24
 
 const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
 
@@ -27,7 +27,7 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
   const first = firstFeet === null ? -1 : levels.findIndex((l) => l.feet === firstFeet)
   const x = (i: number) => ((i + 0.5) * 100) / n
   // The surface rises a little more at each level, and is never so low that the marker hides its pin.
-  const rise = (i: number) => (FILL * (i + 2)) / (n + 1)
+  const rise = (i: number) => Math.max(13, (FILL * (i + 2)) / (n + 1))
 
   // A gentle S from the left edge up to where it stops: at the first level that
   // reaches the place, or the far end when none does.
@@ -86,7 +86,7 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
           />
         ))}
       </div>
-      <ol className="mt-2.5 grid text-center" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
+      <ol className="mt-1.5 grid text-center" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
         {levels.map((l, i) => {
           return (
             <li key={l.feet} className="flex flex-col">

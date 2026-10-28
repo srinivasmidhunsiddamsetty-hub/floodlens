@@ -127,3 +127,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Card answer | WHEN WATER REACHES IT / At +3 ft | WATER REACHES AT / +3 ft |
 | Card, today | WHEN WATER REACHES IT / Already today | WATER REACHES AT / Today |
 | Card, not reached | WHEN WATER REACHES IT / Not up to +3 ft | WATER REACHES AT / Not up to +3 ft |
+
+## Before and after (v0.14 → v0.15)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card link | You're looking at +2 ft. See it at +3 ft → | (removed at every level) |

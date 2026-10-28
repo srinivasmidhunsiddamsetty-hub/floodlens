@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
+import { Building2, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCoord, formatScenario, formatSmallArea } from '../../lib/format'
 import type { InspectionState } from '../../hooks/useInspection'
@@ -10,8 +10,6 @@ interface Props {
   inspection: InspectionState
   scenarioFt: number
   onClear: () => void
-  /** Move the sea-level slider, e.g. to the level that first reaches the selection. */
-  onShowLevel: (feet: number) => void
 }
 
 const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
@@ -66,7 +64,7 @@ function Row({
  * height, footprint and low spot in one column. Wording never says "will flood"
  * or "safe".
  */
-export function InspectionCard({ selection, inspection, scenarioFt, onClear, onShowLevel }: Props) {
+export function InspectionCard({ selection, inspection, scenarioFt, onClear }: Props) {
   const { building, street, lngLat, insideStudyArea, onWater } = selection
   const noun = building ? 'Building' : onWater ? 'Open water' : 'Spot'
   const Icon = building ? Building2 : onWater ? Waves : MapPin
@@ -119,7 +117,6 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           const { hits, firstFeet, lowHits, lowPartAreaM2 } = inspection.result
           const top = hits.at(-1)?.feet ?? 0
           const reached = firstFeet !== null
-          const shownOnMap = reached && firstFeet <= scenarioFt
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
 
           // Label and answer: "Water reaches at +3 ft", or "Today" (today's high tide, the
@@ -129,23 +126,16 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
 
           return (
             <div aria-live="polite">
-              {/* The answer, emphasised, with every level in context below it */}
-              <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-3 pb-2.5">
-                <p className="t-overline">Water reaches at</p>
-                <p className="text-[20px] leading-7 font-semibold tracking-tight text-fg tabular">{answer}</p>
-                <div className="mt-2.5">
+              {/* The answer, emphasised, on the label's row (label left, value right, like the facts
+                  below), with every level in context under it. A long answer wraps under the label. */}
+              <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-2.5 pb-2">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <p className="t-overline">Water reaches at</p>
+                  <p className="text-[24px] leading-8 font-semibold tracking-tight text-fg tabular">{answer}</p>
+                </div>
+                <div className="mt-1.5">
                   <LevelTrack levels={hits} firstFeet={firstFeet} scenarioFt={scenarioFt} />
                 </div>
-                {reached && !shownOnMap && (
-                  <button
-                    type="button"
-                    onClick={() => onShowLevel(firstFeet)}
-                    className="mt-1.5 inline-flex items-center gap-1 t-label text-accent hover:text-accent-strong"
-                  >
-                    You’re looking at {formatScenario(scenarioFt)}. See it at {formatScenario(firstFeet)}
-                    <ArrowRight className="size-3.5" aria-hidden />
-                  </button>
-                )}
               </div>
 
               {/* Facts in one column. Height and footprint always show; "—" when the click isn't on a building. */}

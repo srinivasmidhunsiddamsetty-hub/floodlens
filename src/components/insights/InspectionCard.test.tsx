@@ -30,7 +30,7 @@ const levels = (first: number | null): InspectionState => ({
 })
 
 const card = (inspection: InspectionState, over: Partial<Parameters<typeof InspectionCard>[0]> = {}) =>
-  render(<InspectionCard selection={building} inspection={inspection} scenarioFt={3} onClear={() => {}} onShowLevel={() => {}} {...over} />)
+  render(<InspectionCard selection={building} inspection={inspection} scenarioFt={3} onClear={() => {}} {...over} />)
 
 describe('<InspectionCard>', () => {
   it('names the building and its position, without the distance to the street', () => {
@@ -57,11 +57,9 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText(/approx/i)).toBeNull()
   })
 
-  it('offers to show the level on the map when the slider is below it', async () => {
-    const onShowLevel = vi.fn()
-    card(levels(3), { scenarioFt: 1, onShowLevel })
-    await userEvent.click(screen.getByRole('button', { name: /You’re looking at \+1 ft\. See it at \+3 ft/ }))
-    expect(onShowLevel).toHaveBeenCalledWith(3)
+  it('doesn’t offer to jump to another level, whatever the slider shows', () => {
+    card(levels(3), { scenarioFt: 1 })
+    expect(screen.queryByText(/You’re looking at|See it at/)).toBeNull()
   })
 
   it('says water doesn’t reach it up to +3 ft, without claiming it stays dry', () => {

@@ -18,8 +18,25 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.12 | 28 Oct 2026 | First-reached answer as the card's lead, summary and chart on tiles | [`docs/versions/v0.12/`](docs/versions/v0.12/) |
 | v0.13 | 28 Oct 2026 | Agreed wording back, facts always listed, chart title, pinned footer link | [`docs/versions/v0.13/`](docs/versions/v0.13/) |
 | v0.14 | 28 Oct 2026 | One tile for the area figures, "Water reaches at", no blue numbers | [`docs/versions/v0.14/`](docs/versions/v0.14/) |
+| v0.15 | 28 Oct 2026 | Shorter answer box, "See it at" link removed | [`docs/versions/v0.15/`](docs/versions/v0.15/) |
 
 ---
+
+## v0.15: A shorter box (28 Oct 2026)
+
+Driven by a design review of v0.14.
+
+- **The "See it at +N ft" link is removed** ("You're looking at +2 ft. See it at +3 ft →"), at every level.
+- **The answer text is back to 24 px.** v0.14 had shrunk it to 20 px, but the request was to shorten the box, not the text.
+- **The box is shorter: 277 × 104 px, down from 277 × 140** (in the default 344 px pane).
+  - The designer chose this from three measured options.
+  - "WATER REACHES AT" and **+3 ft** now share one row (label left, value right, like Height and Footprint).
+  - The water band is 24 px instead of 32.
+  - The gaps are 6 px instead of 10.
+  - The padding is 10/8 px instead of 12/10.
+  - "Not up to +3 ft" is too wide for the row, so in that case it wraps under the label (277 × 120 px).
+- **The card** is 294 px tall instead of 330 for a building.
+- Tests: 99 unit/component tests (the link test now checks that there's no link) and 17 end-to-end tests.
 
 ## v0.14: One tile, plain numbers (28 Oct 2026)
 

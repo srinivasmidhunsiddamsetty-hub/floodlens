@@ -44,7 +44,6 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
       inspection={inspection}
       scenarioFt={state.scenarioFt}
       onClear={() => dispatch({ type: 'select', selection: null })}
-      onShowLevel={(feet) => dispatch({ type: 'setScenario', feet })}
     />
   ) : manifestState.status === 'ready' ? (
     <div className="flex items-center gap-3 rounded-xl border border-dashed border-line-strong px-4 py-3">

@@ -40,7 +40,7 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 - **One unit at a time.** A km² / acres switch at the top of the section sets the unit for the headline, chart (axis, labels, tooltips, subtitle, screen-reader table) and breakdown. It's a segmented control in the Calcite "solid" style: the chosen unit is filled with the accent. It's a radio group, so it's one Tab stop and the arrow keys switch units. The choice is remembered in the browser, and km² is the default.
 - **Low spots follow the map.** While the Low spots layer is on, a "Low spots at +N ft" row sits under the breakdown, behind a divider, with the map's purple hatch, and says they're cut off from the sea and not counted above. With the layer off (the default), the row is hidden. v0.9 showed it always; in review it was clutter for something most people leave off.
 - **One tile for the area figures (v0.14).** The summary and the chart share the km² / acres switch, so they share a tile: the figures at the chosen level, a hairline, then the chart and the per-foot breakdown. v0.12–v0.13 used two tiles. The tile has a border and no shadow, so the selected-place card above stays the one floating element.
-- **The panel fits without scrolling.** The building card and both tiles fit at 1440×900 with a place selected, in every state (checked by an end-to-end test). At 1440×850 there's a short scroll at most when the street name wraps and the "See it at +N ft" line shows.
+- **The panel fits without scrolling.** The building card and the area tile fit at 1440×900 with a place selected, in every state (checked by an end-to-end test).
 - **"What this map can and can't tell you" is a pinned footer** (v0.13). It always sits at the bottom edge of the panel, whatever is above it. Before, it was the last item in the scrolling content, so it rose up the panel whenever the content got shorter. There's no visible "Insights" title (v0.11): the card and block headers say what the panel is, and screen readers still get the heading. The summary and the chart are two blocks: full-bleed sections divided by hairlines, each with a small accent icon and a header, like Calcite's Block. They aren't cards, so they don't compete with the selected-place card above them.
   - **Block 1, "Land underwater":** two figures side by side, the area at the chosen level and the share of the city's land, plus the unit switch.
   - **Block 2, the chart:** the chart and the per-foot breakdown.
@@ -50,7 +50,8 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 ## Colour
 
 The selected-place card leads with the answer, emphasised, in a light-blue block. The layout takes cues from a reference the designer supplied, but the wording stays FloodLens's own:
-- **Answer:** "WATER REACHES AT / **+3 ft**" (v0.14), in 20 px black. The other answers are "Today" and "Not up to +3 ft". No number in the panel is blue: blue is kept for links and selection outlines.
+- **Answer:** "WATER REACHES AT" on the left and **+3 ft** (24 px, black) on the right of the same row (v0.15), like the facts below it. The other answers are "Today" and "Not up to +3 ft"; the last is too wide for the row, so it wraps under the label. No number in the panel is blue: blue is kept for links and selection outlines.
+- **Box size:** the box is 277 × 104 px in the default 344 px pane. In v0.14 it was 277 × 140 px. The rows from top to bottom: 10 px padding, the 32 px answer row, a 6 px gap, the 24 px water band, a 6 px gap, 16 px pin labels and 8 px padding.
 - **Level track:** below the answer (see below).
 - **Facts:** Height, Footprint and Low spot follow in one column. Height and footprint always show, with "—" when the click isn't on a building (v0.13); before, those rows disappeared for open ground and water.
 - **Position:** a chip with the position. The distance to the street was dropped in v0.12: the title already names the street, and the distance says nothing about water.
@@ -59,7 +60,6 @@ The **level track** works like this:
 - **Pins and labels:** one pin per sea level on a baseline, labelled with the level. The first level that reaches the place has a larger blue pin and a bold label; later levels the water also reaches have light-blue pins.
 - **Water:** a light-blue band rises in a gentle S from the left and stops at the first level that reaches the place. A dashed line drops from its surface to that level's larger blue pin. When no level reaches the place, the water runs to the end with no marker.
 - **Schematic:** the shape is not a depth, so it's hidden from screen readers; the pins are a list that says, for each level, whether water reaches the place.
-- **"See it" link:** if the slider is below the answer, "You're looking at +2 ft. See it at +3 ft →" closes the block.
 
 v0.4–v0.10 drew a house on rising streams of water instead. v0.11 put the answer in a row with a simpler pin track. v0.12 made it the large lead again. v0.13 kept that layout but went back to v0.11's wording and dropped the details lifted straight from the reference (status labels under every pin, a supporting sentence and a copy button).
 

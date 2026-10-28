@@ -168,6 +168,10 @@ The product went through numbered versions, each tagged in git with screenshots 
   - "Water reaches at · +3 ft".
   - A smaller answer (20 px).
   - Every number in black.
+- **v0.14 → v0.15:** the review had asked for a shorter *box*, not smaller text, and the "You're looking at +2 ft. See it at +3 ft" link wasn't wanted. Fixes:
+  - The answer text is back to 24 px.
+  - The link is removed at every level.
+  - I measured the box (277 × 140 px) and offered three ways to shorten it. The designer picked the answer on the label's row, with a 24 px water band and tighter gaps: 277 × 104 px, and the card drops from 330 to 294 px.
 
 ## 11. Known limitations
 
