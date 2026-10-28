@@ -21,8 +21,18 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.15 | 28 Oct 2026 | Shorter answer box, "See it at" link removed | [`docs/versions/v0.15/`](docs/versions/v0.15/) |
 | v0.16 | 28 Oct 2026 | Answer box down to 92 px | [`docs/versions/v0.16/`](docs/versions/v0.16/) |
 | v0.17 | 28 Oct 2026 | Sea levels up to +5 ft, six-step blue ramp | [`docs/versions/v0.17/`](docs/versions/v0.17/) |
+| v0.18 | 28 Oct 2026 | Legend shows every level's true colour | [`docs/versions/v0.18/`](docs/versions/v0.18/) |
 
 ---
+
+## v0.18: True colours in the legend (28 Oct 2026)
+
+- **Legend levels above the slider are no longer faded.**
+  - Every level shows its real colour, from today's light blue to the +5 ft navy.
+  - The text stays black, and the "not shown" label is gone.
+  - Hovering one of those levels still doesn't spotlight anything, because it isn't on the map until the slider gets there.
+- **The local dev server can run on 5173 again**, the usual address, as well as 5179 (`.claude/launch.json`).
+- Tests: 101 unit/component tests (new: the legend shows true colours and no "not shown") and 17 end-to-end tests.
 
 ## v0.17: Up to +5 ft (28 Oct 2026)
 

@@ -31,6 +31,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The card answer back to v0.11's wording ("When water reaches it · At +3 ft"), status labels and copy button dropped, height and footprint always listed, a one-line chart title, and the bottom link pinned to the panel's bottom edge (v0.13).
 - One tile for the summary and chart (they share the unit switch), "Water reaches at · +3 ft" in smaller black type, and no blue numbers anywhere (v0.14).
 - Sea levels extended from +3 to +5 ft with NOAA's own +4 and +5 ft layers, and a six-step blue ramp (v0.17).
+- The legend shows every level in its true colour, with no "not shown" label (v0.18).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -46,7 +47,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **11 files, 99 tests passed** |
+| Unit and component tests | `npm test` | **12 files, 101 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (16 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |

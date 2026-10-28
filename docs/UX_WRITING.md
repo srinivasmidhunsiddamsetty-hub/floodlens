@@ -133,3 +133,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Card link | You're looking at +2 ft. See it at +3 ft → | (removed at every level) |
+
+## Before and after (v0.17 → v0.18)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Legend, levels above the slider | +4 ft · not shown (faded swatch, grey text) | +4 ft (true colour, no label) |

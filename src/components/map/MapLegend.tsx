@@ -19,8 +19,8 @@ interface Props {
 
 /**
  * Compact, collapsible legend. The flood ramp reads like a weather-radar key:
- * one swatch per water level, dimmed for levels above the current scenario.
- * Hovering a level emphasises that band on the map.
+ * one swatch per water level, every one in its true colour whatever the slider
+ * shows. Hovering a level that's on the map emphasises that band.
  */
 export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuildings, showStudyArea, highlightFt, onHighlight, defaultOpen = true }: Props) {
   const [open, setOpen] = useState(defaultOpen)
@@ -43,6 +43,7 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
               <p className="t-overline mb-1">Water first reaches</p>
               <ul className="mb-2" onMouseLeave={() => onHighlight(null)}>
                 {bands.map((b) => {
+                  // Levels above the slider aren't drawn yet, so there's nothing to spotlight.
                   const shown = b.feet <= scenarioFt
                   return (
                     <li key={b.feet}>
@@ -53,16 +54,15 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
                         onFocus={() => shown && onHighlight(b.feet)}
                         onBlur={() => onHighlight(null)}
                         className={`flex w-full items-center gap-2 rounded px-1 py-0.5 text-left t-caption transition-colors ${
-                          shown ? 'text-fg hover:bg-surface-3' : 'cursor-default text-fg-subtle/70'
+                          shown ? 'text-fg hover:bg-surface-3' : 'cursor-default text-fg'
                         } ${highlightFt === b.feet ? 'bg-surface-3' : ''}`}
                       >
                         <span
                           aria-hidden
                           className="h-3 w-5 shrink-0 rounded-sm"
-                          style={{ background: bandColor(b.feet), opacity: shown ? 1 : 0.3 }}
+                          style={{ background: bandColor(b.feet) }}
                         />
                         {b.isReference ? 'Today’s high tide' : formatScenario(b.feet)}
-                        {!shown && <span className="ml-auto text-[11px]">not shown</span>}
                       </button>
                     </li>
                   )
