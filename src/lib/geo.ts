@@ -171,6 +171,29 @@ export function outsideMask(area: AreaFeature): Feature<MultiPolygon> {
   }
 }
 
+/**
+ * The bookmark closest to the view centre, if the view is zoomed in (≥ minZoom)
+ * and within maxKm of it. Distance-based on purpose: the named areas have no
+ * official boundaries.
+ */
+export function nearestBookmark(
+  center: LngLat,
+  zoom: number,
+  bookmarks: readonly { id: string; center: readonly [number, number] }[],
+  { minZoom = 13.5, maxKm = 2.5 } = {},
+): string | null {
+  if (zoom < minZoom) return null
+  const kmPerDeg = 111.32
+  const cos = Math.cos((center[1] * Math.PI) / 180)
+  let best: string | null = null
+  let bestKm = maxKm
+  for (const b of bookmarks) {
+    const km = Math.hypot((b.center[0] - center[0]) * kmPerDeg * cos, (b.center[1] - center[1]) * kmPerDeg)
+    if (km < bestKm) [best, bestKm] = [b.id, km]
+  }
+  return best
+}
+
 export function isInsideArea(pt: LngLat, area: AreaFeature) {
   return bboxContains(featureBBox(area), pt) && booleanPointInPolygon(pt, area)
 }

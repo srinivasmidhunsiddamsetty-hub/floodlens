@@ -1,7 +1,7 @@
 import type { Feature, Polygon } from 'geojson'
 import { describe, expect, it } from 'vitest'
 import type { ExtentCollection } from '../types/data'
-import { collectionAreaM2, distanceToLineM, featureAtPoint, featureIntersecting, isInsideArea, outsideMask, probeScenarios } from './geo'
+import { collectionAreaM2, distanceToLineM, featureAtPoint, featureIntersecting, isInsideArea, nearestBookmark, outsideMask, probeScenarios } from './geo'
 
 /** Axis-aligned square in lon/lat degrees. */
 function square(w: number, s: number, size: number, props = {}): Feature<Polygon> {
@@ -76,6 +76,21 @@ describe('distanceToLineM', () => {
   it('clamps to segment endpoints', () => {
     const d = distanceToLineM([0.002, 0], [[-0.01, 0], [0.001, 0]])
     expect(d).toBeCloseTo(111.2, 0)
+  })
+})
+
+describe('nearestBookmark', () => {
+  const marks = [
+    { id: 'south', center: [-80.1345, 25.7835] as [number, number] },
+    { id: 'north', center: [-80.1225, 25.86] as [number, number] },
+  ]
+  it('picks the closest bookmark when zoomed in', () => {
+    expect(nearestBookmark([-80.133, 25.785], 15, marks)).toBe('south')
+    expect(nearestBookmark([-80.123, 25.855], 15, marks)).toBe('north')
+  })
+  it('stays quiet at city scale or far from every bookmark', () => {
+    expect(nearestBookmark([-80.133, 25.785], 12, marks)).toBeNull()
+    expect(nearestBookmark([-80.2, 25.82], 15, marks)).toBeNull()
   })
 })
 

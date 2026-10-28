@@ -7,12 +7,14 @@ import { InsightPanel } from './components/insights/InsightPanel'
 import { TopBar } from './components/layout/TopBar'
 import { MapLegend } from './components/map/MapLegend'
 import { MapView } from './components/map/MapView'
+import { ResizeHandle } from './components/ui/ResizeHandle'
 import { formatKm2, formatScenario } from './lib/format'
 import { scenarioByFeet } from './lib/manifest'
 import { useInspection } from './hooks/useInspection'
 import { useManifest } from './hooks/useManifest'
 import { useMapData } from './hooks/useMapData'
 import { useIsDesktop } from './hooks/useMediaQuery'
+import { INSIGHTS_WIDTH, usePanelWidth } from './hooks/usePanelWidth'
 import { useAppDispatch, useAppState } from './state/AppState'
 
 export default function App() {
@@ -25,6 +27,7 @@ export default function App() {
   const inspection = useInspection(state.selection, manifest, state.scenarioFt)
   /** Water level spotlighted on the map while hovering the chart, breakdown or legend. */
   const [highlightFt, setHighlightFt] = useState<number | null>(null)
+  const insightsWidth = usePanelWidth('floodlens.insightsWidth', INSIGHTS_WIDTH)
 
   // Drawers start closed on small screens so the map is visible first.
   useEffect(() => {
@@ -102,7 +105,7 @@ export default function App() {
         <main id="map-region" tabIndex={-1} className="relative min-w-0 flex-1 outline-none">
           <MapView data={mapData} studyBbox={manifest?.studyArea.bbox ?? null} highlightFt={highlightFt} />
 
-          <div className={`pointer-events-none absolute left-3 z-10 ${isDesktop ? 'bottom-12' : 'bottom-[120px]'}`}>
+          <div className={`pointer-events-none absolute left-4 z-10 ${isDesktop ? 'bottom-12' : 'bottom-[120px]'}`}>
             <MapLegend
               key={isDesktop ? 'd' : 'm'}
               defaultOpen={isDesktop}
@@ -146,7 +149,16 @@ export default function App() {
         {/* ---------------- Right: insights (docked on desktop, bottom sheet below 1024px) */}
         {isDesktop ? (
           insightsOpen && (
-            <aside id="insight-panel" aria-label="Insights" className="panel w-[328px] shrink-0 border-l xl:w-[344px]">
+            <aside id="insight-panel" aria-label="Insights" className="panel relative shrink-0 border-l" style={{ width: insightsWidth.width }}>
+              <ResizeHandle
+                width={insightsWidth.width}
+                min={insightsWidth.min}
+                max={insightsWidth.max}
+                onChange={insightsWidth.setWidth}
+                onReset={insightsWidth.reset}
+                controls="insight-panel"
+                label="Resize insights panel"
+              />
               <InsightPanel {...insightProps} />
             </aside>
           )

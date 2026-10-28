@@ -9,8 +9,18 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.3 | 27 Oct 2026 | Flood bands, in-map controls, redesigned panels | [`docs/versions/v0.3/`](docs/versions/v0.3/) |
 | v0.4 | 28 Oct 2026 | Whole City of Miami Beach, new ramp, illustrated building card | [`docs/versions/v0.4/`](docs/versions/v0.4/) |
 | v0.5 | 28 Oct 2026 | City locator, stream-per-foot card, city-limits toggle | [`docs/versions/v0.5/`](docs/versions/v0.5/) |
+| v0.6 | 28 Oct 2026 | Viridis-style palette, area chips back, resizable Insights | [`docs/versions/v0.6/`](docs/versions/v0.6/) |
 
 ---
+
+## v0.6: Colour and room (28 Oct 2026)
+
+Driven by a design review of v0.5.
+
+- **Area chips are back.** The v0.5 locator mini-map was less clear than the South Beach / Mid-Beach / North Beach chips, so the chips return, with more padding (16 × 6 px, 13 px text; a little tighter on phones so all three fit) and a 16 px gap from the map edge. The map controls and legend now share that 16 px gutter. When you're zoomed in, the chip for the nearest area is highlighted, which keeps the locator's useful "you are here" cue.
+- **A flood palette that isn't all blue.** The bands now follow a viridis-style ramp: lime (today), green (+1 ft), teal (+2 ft), indigo (+3 ft). It still darkens as the water rises, so the order reads in greyscale. Changing hue as well as lightness makes neighbouring levels easier to tell apart than the single blue (worst adjacent OKLab ΔE 16.5 vs 14.4), including for colour-vision deficiencies. Map, legend, chart, slider track and the card's water streams all use it. The card's level gauge now wears these colours too, so it doubles as a legend.
+- **Resizable Insights pane.** Drag its left edge, or focus the divider and use the arrow keys (Shift for bigger steps, Home/End for the limits). Double-click resets it. The width stays between 300 and 560 px and never squeezes the map below about 420 px. It is remembered in this browser.
+- Tests: 90 unit/component tests (new: width limits, nearest-area logic); 15 end-to-end tests (new: resizing, chip highlight).
 
 ## v0.5: Less text, more place (28 Oct 2026)
 

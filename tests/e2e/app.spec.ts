@@ -142,15 +142,52 @@ test.describe('FloodLens — core flows', () => {
     await expect(legend).not.toContainText('Low-lying')
   })
 
-  test('the city locator shows where the view is and flies to named areas', async ({ page }) => {
+  test('area chips highlight the area you are in once zoomed in', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    const locator = page.getByRole('navigation', { name: 'Go to area' })
-    await expect(locator.locator('svg polygon')).toHaveCount(0) // whole city on screen: no viewport outline
-    await locator.getByRole('button', { name: 'Mid-Beach' }).click()
-    await expect(locator.getByRole('button', { name: 'Mid-Beach' })).toHaveAttribute('aria-current', 'location', { timeout: 10_000 })
-    await expect(locator.locator('svg polygon')).toHaveCount(1)
-    await expect(locator.getByRole('button', { name: 'South Beach' })).not.toHaveAttribute('aria-current', 'location')
+    const chips = page.getByRole('navigation', { name: 'Go to area' })
+    await expect(chips.locator('[aria-current="location"]')).toHaveCount(0) // city overview: nowhere in particular
+    await chips.getByRole('button', { name: 'Mid-Beach' }).click()
+    await expect(chips.getByRole('button', { name: 'Mid-Beach' })).toHaveAttribute('aria-current', 'location', { timeout: 10_000 })
+    await expect(chips.locator('[aria-current="location"]')).toHaveCount(1)
+  })
+
+  test('the insights panel resizes by drag and keyboard within its limits', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const panel = page.locator('aside#insight-panel')
+    const handle = page.getByRole('separator', { name: 'Resize insights panel' })
+    const width = async () => Math.round((await panel.boundingBox())!.width)
+    expect(await width()).toBe(344)
+    await expect(handle).toHaveAttribute('aria-valuemin', '300')
+    await expect(handle).toHaveAttribute('aria-valuemax', '560')
+
+    // Drag the divider 120 px to the left: the panel grows by 120 px and the chart follows.
+    const box = (await handle.boundingBox())!
+    await page.mouse.move(box.x + box.width / 2, box.y + 300)
+    await page.mouse.down()
+    await page.mouse.move(box.x + box.width / 2 - 120, box.y + 300, { steps: 6 })
+    await page.mouse.up()
+    expect(await width()).toBe(464)
+
+    // Limits hold however far you drag or press.
+    await handle.focus()
+    await page.keyboard.press('End')
+    expect(await width()).toBe(560)
+    await page.keyboard.press('ArrowLeft')
+    expect(await width()).toBe(560)
+    await page.keyboard.press('Home')
+    expect(await width()).toBe(300)
+    await page.keyboard.press('ArrowLeft')
+    expect(await width()).toBe(316)
+
+    // Double-click restores the default; the width is remembered across reloads.
+    await handle.dblclick()
+    expect(await width()).toBe(344)
+    await page.keyboard.press('Shift+ArrowLeft')
+    await page.reload()
+    await waitForMap(page)
+    expect(await width()).toBe(408)
   })
 
   test('data dialogs open, show provenance, and close with Escape', async ({ page }) => {

@@ -5,9 +5,9 @@ import type { LineString, MultiLineString, Position } from 'geojson'
 import maplibregl, { type MapGeoJSONFeature, type Map as MLMap, type PointLike, type StyleSpecification } from 'maplibre-gl'
 import { useEffect, useRef, useState } from 'react'
 import { expandFootprint, firstPrismHit, rejoinTileSplit, unionPieces, type Prism } from '../../lib/buildingPick'
-import { BOOKMARK_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
+import { AREA_BOOKMARKS, BOOKMARK_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
 import { formatScenario, formatSmallArea } from '../../lib/format'
-import { distanceToLineM, isInsideArea, outsideMask, type LngLat } from '../../lib/geo'
+import { distanceToLineM, isInsideArea, nearestBookmark, outsideMask, type LngLat } from '../../lib/geo'
 import {
   addFloodLensLayers,
   bandOpacity,
@@ -19,13 +19,12 @@ import {
   SRC,
 } from '../../lib/mapLayers'
 import { FALLBACK_STYLE, loadBasemapStyle } from '../../lib/mapStyle'
-import { useMediaQuery, useReducedMotion } from '../../hooks/useMediaQuery'
+import { useReducedMotion } from '../../hooks/useMediaQuery'
 import type { MapData } from '../../hooks/useMapData'
 import { useAppDispatch, useAppState } from '../../state/AppState'
 import type { BuildingInfo, Selection } from '../../state/reducer'
 import type { Feature, MultiPolygon, Polygon } from 'geojson'
 import { AreaBookmarks } from './AreaBookmarks'
-import { AreaLocator } from './AreaLocator'
 import { MapControls } from './MapControls'
 import { MapStatus } from './MapStatus'
 
@@ -198,19 +197,16 @@ function overviewCamera(map: MLMap, bbox: [number, number, number, number] | nul
   const spanX = Math.max(...rotated.map((r) => r[0])) - Math.min(...rotated.map((r) => r[0]))
   const spanY = Math.max(...rotated.map((r) => r[1])) - Math.min(...rotated.map((r) => r[1]))
   const pad = Math.max(16, Math.min(w, h) * 0.05)
-  // From 768px the city locator occupies the top-left corner of the map.
-  const locator = window.innerWidth >= 768 ? 190 : 0
   // Below 1024px the insights sheet (64px peek) and legend overlap the bottom of the map.
   const sheet = window.innerWidth < 1024 ? 96 : 0
-  const availW = Math.max(100, w - 2 * pad - 48 - locator) // room for the map controls and locator
-  const availH = Math.max(100, h - 2 * pad - 40 - sheet) // room for the area bookmarks
+  const availW = Math.max(100, w - 2 * pad - 48) // room for the map controls
+  const availH = Math.max(100, h - 2 * pad - 52 - sheet) // room for the area bookmarks
   // A tilted view foreshortens the north–south extent (≈ cos 40° ≈ 0.77), so it can zoom in a little.
   const zoom = Math.log2(Math.min(availW / (spanX * 512), availH / (spanY * 512))) + (pitch > 0 ? 0.3 : 0)
   // Nudge the centre toward the near (south) end, which a tilted camera magnifies.
   const tilt = pitch > 0 ? 0.08 * (Math.max(...corners.map((c) => c.y)) - Math.min(...corners.map((c) => c.y))) : 0
   const lift = sheet / 2 / (512 * 2 ** zoom)
-  const shift = locator / 2 / (512 * 2 ** zoom)
-  const center = new maplibregl.MercatorCoordinate(cx - shift, cy + tilt + lift).toLngLat()
+  const center = new maplibregl.MercatorCoordinate(cx, cy + tilt + lift).toLngLat()
   return { center: [center.lng, center.lat], zoom: Math.min(Math.max(zoom, MIN_ZOOM), 16), pitch, bearing }
 }
 
@@ -220,7 +216,6 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
   const reduced = useReducedMotion()
-  const roomForLocator = useMediaQuery('(min-width: 768px)')
 
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MLMap | null>(null)
@@ -228,7 +223,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
   const [fatal, setFatal] = useState<string | null>(null)
   const [basemapWarning, setBasemapWarning] = useState<string | null>(null)
   const [hover, setHover] = useState<HoverInfo | null>(null)
-  const [camera, setCamera] = useState({ bearing: INITIAL_CAMERA.bearing, pitch: INITIAL_CAMERA.pitch, zoom: INITIAL_CAMERA.zoom })
+  const [camera, setCamera] = useState({ bearing: INITIAL_CAMERA.bearing, pitch: INITIAL_CAMERA.pitch, zoom: INITIAL_CAMERA.zoom, center: INITIAL_CAMERA.center })
   const [keyboardFocus, setKeyboardFocus] = useState(false)
 
   // Values read inside long-lived map event handlers.
@@ -355,7 +350,11 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       let camFrame = 0
       map.on('move', () => {
         cancelAnimationFrame(camFrame)
-        camFrame = requestAnimationFrame(() => map && setCamera({ bearing: map.getBearing(), pitch: map.getPitch(), zoom: map.getZoom() }))
+        camFrame = requestAnimationFrame(() => {
+          if (!map) return
+          const c = map.getCenter()
+          setCamera({ bearing: map.getBearing(), pitch: map.getPitch(), zoom: map.getZoom(), center: [c.lng, c.lat] })
+        })
       })
 
       // Keep the 2D/3D control honest when users tilt the map directly (right-drag, two-finger drag).
@@ -524,11 +523,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       {/* maplibre-gl.css forces `position: relative` on the container, so size it explicitly. */}
       <div ref={containerRef} className="h-full w-full" />
 
-      {ready && mapRef.current && studyFeature && roomForLocator ? (
-        <AreaLocator map={mapRef.current} area={studyFeature} flood={data.flood} showFlood={state.layers.inundation} onGo={goTo} />
-      ) : (
-        ready && <AreaBookmarks onGo={goTo} />
-      )}
+      {ready && <AreaBookmarks onGo={goTo} active={nearestBookmark(camera.center, camera.zoom, AREA_BOOKMARKS)} />}
       {ready && (
         <MapControls
           viewMode={viewMode}

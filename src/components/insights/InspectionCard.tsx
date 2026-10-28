@@ -1,6 +1,7 @@
 import { ArrowRight, Building2, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCoord, formatMeters, formatScenario, formatSmallArea } from '../../lib/format'
+import { bandColor } from '../../lib/theme'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { Selection } from '../../state/reducer'
 import { FloodIllustration } from './FloodIllustration'
@@ -161,8 +162,12 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                 {firstIndex >= 0 && firstIndex < hits.length - 1 && (
                   <span
                     aria-hidden
-                    className="absolute top-[9px] h-0.5 rounded-full bg-accent"
-                    style={{ left: `${((firstIndex + 0.5) * 100) / hits.length}%`, right: `${50 / hits.length}%` }}
+                    className="absolute top-[9px] h-0.5 rounded-full"
+                    style={{
+                      left: `${((firstIndex + 0.5) * 100) / hits.length}%`,
+                      right: `${50 / hits.length}%`,
+                      background: `linear-gradient(to right, ${hits.slice(firstIndex).map((h) => bandColor(h.feet)).join(', ')})`,
+                    }}
                   />
                 )}
                 {hits.map((h, i) => {
@@ -171,13 +176,20 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                   return (
                     <li key={h.feet} className="relative flex flex-col items-center gap-2">
                       <span className="grid size-5 place-items-center" aria-hidden>
+                        {/* Dots wear the map's colour for that level, so the gauge doubles as a legend. */}
                         {isFirst ? (
-                          <span className="size-5 rounded-full bg-accent ring-4 ring-accent/15" />
+                          <span
+                            className="size-5 rounded-full border border-black/15"
+                            style={{ background: bandColor(h.feet), boxShadow: `0 0 0 4px ${bandColor(h.feet)}33` }}
+                          />
                         ) : (
-                          <span className={`size-3.5 rounded-full ${within ? 'bg-accent' : 'bg-[#c9d0d8]'}`} />
+                          <span
+                            className={`size-3.5 rounded-full ${within ? 'border border-black/15' : 'bg-[#c9d0d8]'}`}
+                            style={within ? { background: bandColor(h.feet) } : undefined}
+                          />
                         )}
                       </span>
-                      <span className={`text-[13px] tabular ${isFirst ? 'font-semibold text-accent' : 'text-fg-muted'}`}>
+                      <span className={`text-[13px] tabular ${isFirst ? 'font-semibold text-fg' : 'text-fg-muted'}`}>
                         {levelName(h.feet)}
                         {h.feet === scenarioFt && <span className="sr-only"> (selected level)</span>}
                       </span>

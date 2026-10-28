@@ -4,7 +4,7 @@ A log of the product, visual and engineering choices in FloodLens and why each w
 
 ## Layout
 
-- **Three docked regions on desktop** (left 288–304 px, right 320–340 px). Both side panels collapse with edge tabs, giving the map the full width when users want it.
+- **Three docked regions on desktop.** The left panel is 280 px. The Insights pane is resizable: drag its left edge or focus the divider and use the arrow keys (Shift for bigger steps, Home/End for the limits, double-click to reset). It stays between 300 px (the chart and card stay readable) and 560 px, and never squeezes the map below about 420 px. The width is remembered in the browser. Both side panels collapse with edge tabs.
 - **Below 1024 px** the controls become a left drawer with a scrim (inert when closed). The insights become a bottom sheet with a 64 px peek showing the scenario and headline number. Selecting a location opens the sheet automatically.
 - **The legend floats over the map** (bottom-left) and lists only what is currently drawn.
 
@@ -22,7 +22,7 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 - **Buildings:** extrusions in 3D, translucent footprints and outlines in 2D, so overlays under buildings stay visible from above.
 - **Labels** stay above every overlay and use a white halo for legibility on the blue bands.
 - **Map controls live in the map** (top-right): zoom, compass / show all of Miami Beach, then 2D/3D. The full-extent control uses a frame (focus) icon, not a house: it fits the whole city into view rather than going "home".
-- **City locator** (top-left, from 768 px): a mini-map of the city with the current viewport outlined, the flood bands at the current level, and South Beach / Mid-Beach / North Beach as labelled jump targets. It answers "where am I in a 12.6 km city?" while zoomed to street level, the job of an ArcGIS Overview Map widget. The nearest named area is highlighted when zoomed in (by distance to its bookmark, not by a boundary, since none is official). Phones get a chip row instead.
+- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. When zoomed in, the nearest area's chip is highlighted (by distance to its bookmark, not a boundary, since none is official). v0.5 tried a locator mini-map here; the chips read more clearly, so v0.6 returned to them with roomier padding and a 16 px map gutter shared with the map controls and legend.
 - **Bottom edge:** attribution runs along the very bottom with the scale bar above it on the right, and the legend sits above both on the left, so the three never overlap. Below 1024 px the controls lift above the insights sheet.
 - **The opening view fits the city** to the viewport in Web Mercator (tilted 40°, looking north-north-west), accounting for the mobile bottom sheet. Camera controls act on the map, so they belong on it (ArcGIS, komoot, Google Maps). The header keeps only app-level actions (about, sources).
 - **Selection highlight** is drawn 0.4 m wider and 0.6 m taller than the clicked building. Coincident faces z-fight (flicker) while zooming.
@@ -30,12 +30,12 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 
 ## Colour
 
-The selected-place card draws water as one stream per foot in the same ramp colours as the map and chart, so a building first reached at +3 ft shows three streams rising to it.
+The selected-place card draws water as one stream per foot in the same ramp colours as the map and chart, so a building first reached at +3 ft shows three streams rising to it. The card's level gauge uses the same colours, so it doubles as a legend.
 
 | Role | Colour | Notes |
 | --- | --- | --- |
 | Basemap | land `#f1eee8`, parks `#d5e7c6`, water `#a8dcea`, roads white | Light "streets / topographic" palette in the spirit of ArcGIS basemaps. Water is a fresh light aqua: livelier than grey-blue, and greener in hue than the azure flood ramp so it stays distinct (OKLab ΔE 22 from the +1 ft band) |
-| Flood bands ("first reached at") | today `#9ec5f4` · +1 `#5598e7` · +2 `#256abf` · +3 `#104281`, 85% | One blue hue, light → dark as the water rises: more water reads as darker. Evenly spaced steps (200/350/500/650) of a validated sequential blue scale, so lightness alone carries the order (greyscale and colour-vision safe). v0.3 ran the other way (darker = reached sooner); v0.4 reversed it because depth isn't shown, so the intuitive "higher water, darker blue" mapping wins |
+| Flood bands ("first reached at") | today `#bddf26` · +1 `#36b874` · +2 `#108b9b` · +3 `#3f4aa0`, 85% | Multi-hue sequential after matplotlib's viridis: lime → green → teal → indigo, darker as the water rises. Lightness carries the order (greyscale-safe); the hue change separates neighbouring levels better than v0.4–v0.5's single blue (worst adjacent OKLab ΔE 16.5 vs 14.4, colour-vision checks pass). Teal and green are a little more saturated than viridis so they don't read grey. Today's lime is light against land, but it sits mostly under water and is always labelled |
 | Buildings | sandstone `#f0e6d6` → `#e3d3bb` by height | A light, warm stone colour (a nod to Miami Beach's Art Deco stucco): the complementary hue to the blue ramp, so buildings read clearly on every band without the heaviness of grey |
 | Low-lying (unconnected) | `#6b35aa`, diagonal hatch + dashed outline | Pattern carries the meaning without colour |
 | Selection | orange `#ff7417` building / ring | A colour no data layer uses, so the selection is unmistakable; the card's icon tile repeats it to link card and map |

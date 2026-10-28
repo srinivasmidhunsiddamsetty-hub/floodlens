@@ -21,15 +21,15 @@ Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md)
 - **Real NOAA data.** Ocean-connected inundation polygons from the NOAA Office for Coastal Management Sea Level Rise Viewer data (FL_SE GeoPackage) for 0 ft (current MHHW), +1 ft, +2 ft and +3 ft, clipped to the City of Miami Beach boundary (US Census Bureau TIGER/Line; 39.4 km² including Biscayne Bay waters inside city limits). Nothing is simulated.
 - **3D map (MapLibre GL JS).** A light, ArcGIS-style geographic basemap (OpenFreeMap Positron, restyled) with Roboto labels. Buildings are extruded from OpenStreetMap heights, and the overlay draws beneath basemap water so mapped inundation reads as "water reaching land".
 - **Sea-level control.** A keyboard-operable slider (native range input) whose track is painted with the map's colour ramp, plus **Play the rise** to animate today → +3 ft. Levels swap in place, so the camera and app state are preserved.
-- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, in one blue hue that darkens as the water rises (lightest = today, darkest navy = +3 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
+- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, on a viridis-style ramp that darkens as the water rises (lime = today → green → teal → indigo = +3 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
 - **In-map controls.** Zoom, compass, **Show all of Miami Beach** (fits the whole city back into view) and 2D/3D sit together inside the map, ArcGIS-style. Tilting the map by hand keeps 2D/3D in sync.
-- **City locator.** A mini-map of the whole city (top-left) shows where the current view is, how flooding spreads at the current level, and which named area you're in. Click South Beach, Mid-Beach or North Beach (or anywhere on the mini-map) to fly there, keeping the current 2D/3D mode. On phones it becomes a row of chips. The named areas are camera positions only; no statistics are invented for these unofficial areas.
+- **Area chips.** South Beach, Mid-Beach and North Beach chips (top-left) fly the camera along the 12.6 km city, keeping the current 2D/3D mode. When you're zoomed in, the chip for the nearest area is highlighted. The named areas are camera positions only; no statistics are invented for these unofficial areas.
 - **Insights.** A headline number (area flooded beyond today's high tide, in km² and acres, and as a share of the city's Census land area), a stacked D3 chart of growth per foot, and a breakdown of what each foot adds, with tooltips, keyboard focus and a screen-reader table.
 - **Building and location inspection.** Click any building (3D-accurate picking) or place, or focus the map and press Enter. A card shows the first water level that reaches it, illustrated as one stream of water per foot rising to the building, a level-by-level gauge, OSM height and footprint, and whether it sits in a low-lying area. If the slider is below that level, one click shows it on the map. Esc clears it.
 - **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate purple-hatched layer and are never merged with ocean-connected extents.
 - **City limits layer.** The dashed city boundary and the dimmed area outside it can be turned off for a clean map.
 - **Honest states.** Loading, missing-file and missing-manifest states are explicit. If data are unavailable, FloodLens shows nothing rather than an estimate.
-- **Responsive and accessible.** Three columns on desktop. Below 1024 px the controls become a drawer and the insights a bottom sheet. Keyboard operable throughout, with visible focus, reduced-motion support and text alternatives.
+- **Responsive and accessible.** Three columns on desktop, with a resizable Insights pane (drag or arrow keys; 300–560 px, remembered per browser). Below 1024 px the controls become a drawer and the insights a bottom sheet. Keyboard operable throughout, with visible focus, reduced-motion support and text alternatives.
 
 ## Tech stack
 
@@ -80,8 +80,8 @@ src/
     charts/       ScenarioAreaChart (D3)
     dialogs/      AboutDataDialog, DataSourcesDialog
     layout/       TopBar, BrandMark
-    ui/           Switch, Segmented, Dialog, Swatch
-  hooks/          useManifest, useCollection, useMapData, useInspection, useMediaQuery
+    ui/           Switch, Segmented, Dialog, Swatch, ResizeHandle
+  hooks/          useManifest, useCollection, useMapData, useInspection, useMediaQuery, usePanelWidth
   lib/            manifest parsing, GeoJSON loading, geo maths, map style + layers, formatting, theme
   state/          reducer + context (scenario, layers, view mode, comparison, selection)
   types/          data-manifest types
