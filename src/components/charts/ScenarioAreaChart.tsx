@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import { ChartColumnIncreasing } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { CITY_NAME } from '../../lib/constants'
 import { AREA_UNITS, formatArea, formatScenario, toUnit, type AreaUnit } from '../../lib/format'
@@ -35,7 +36,7 @@ interface Tip {
   band: number | null
 }
 
-const HEIGHT = 156
+const HEIGHT = 120
 /** Acre ticks run to "2,000", so they need a wider left margin than km². */
 const margins = (unit: AreaUnit) => ({ top: 20, right: 4, bottom: 26, left: unit === 'acres' ? 40 : 30 })
 
@@ -50,9 +51,9 @@ export function chartTitle(bands: FloodBand[]): string {
   const total = added.reduce((sum, b) => sum + b.addedM2, 0)
   const [top, next] = [...added].sort((a, b) => b.addedM2 - a.addedM2)
   if (top && top.addedM2 > total / 2 && (!next || top.addedM2 >= 2 * next.addedM2)) {
-    return `Land underwater jumps at ${formatScenario(top.feet)}`
+    return `The biggest jump comes at ${formatScenario(top.feet)}`
   }
-  return 'Land underwater at each sea level'
+  return 'How each foot adds up'
 }
 
 /**
@@ -249,12 +250,14 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
 
   return (
     <figure className="m-0">
-      <figcaption className="mb-2">
-        <span id={titleId} className="block t-heading">
+      {/* The block's header: the finding as the title, the measure and place underneath. */}
+      <figcaption className="mb-1">
+        <span id={titleId} className="flex items-center gap-2 t-heading font-semibold">
+          <ChartColumnIncreasing className="size-4 shrink-0 text-accent" aria-hidden />
           {chartTitle(bands)}
         </span>
-        <span className="block t-caption">
-          {AREA_UNITS[unit].title}, {CITY_NAME}
+        <span className="block pl-6 t-caption">
+          Land underwater, {AREA_UNITS[unit].short}, {CITY_NAME}
         </span>
       </figcaption>
       <div ref={wrapRef} className="relative">

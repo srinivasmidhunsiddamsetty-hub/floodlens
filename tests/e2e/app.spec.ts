@@ -9,8 +9,8 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByText('City of Miami Beach, Florida')).toBeVisible()
     await waitForMap(page)
 
-    const headline = insights(page).getByRole('region', { name: 'Headline' })
-    await expect(headline).toContainText('Land underwater at +2 ft')
+    const headline = insights(page).getByRole('region', { name: 'Land underwater' })
+    await expect(headline).toContainText('at +2 ft')
     await expect(headline).toContainText('0.99')
     await expect(headline).toContainText('of the city’s land')
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/OpenStreetMap/)
@@ -30,12 +30,12 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('ArrowRight')
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
-    await expect(insights(page).getByRole('region', { name: 'Headline' })).toContainText('7.43')
+    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('7.43')
     await expect(page.getByRole('region', { name: 'Map legend' }).getByRole('button', { name: '+3 ft' })).toBeEnabled()
 
     await page.keyboard.press('Home')
     await expect(slider).toHaveAttribute('aria-valuetext', 'Current MHHW (0 ft)')
-    await expect(insights(page).getByRole('region', { name: 'Headline' })).toContainText('Where we start')
+    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('None yet')
     expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1)
   })
 
@@ -53,7 +53,7 @@ test.describe('FloodLens — core flows', () => {
     await waitForMap(page)
     const bar = page.getByRole('button', { name: /^\+1 ft: .*Show on the map\./ })
     // The title is the finding from the real data: +3 ft adds 6.44 of 7.43 km².
-    await expect(insights(page).getByText('Land underwater jumps at +3 ft')).toBeVisible()
+    await expect(insights(page).getByText('The biggest jump comes at +3 ft')).toBeVisible()
     await bar.click()
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+1 ft above MHHW')
     await expect(bar).toHaveAttribute('aria-pressed', 'true')
@@ -71,15 +71,34 @@ test.describe('FloodLens — core flows', () => {
     await waitForMap(page)
     const panel = insights(page)
     await panel.getByRole('radio', { name: 'Acres' }).click()
-    await expect(panel.getByRole('region', { name: 'Headline' })).toContainText('244acres')
-    await expect(panel.getByRole('region', { name: 'Headline' })).not.toContainText('km²')
+    const area = panel.getByText('at +2 ft').locator('xpath=following-sibling::dd')
+    await expect(area).toHaveText('244acres')
     await expect(panel.getByRole('button', { name: /\+3 ft adds/ })).toContainText('1,592 acres')
     await expect(panel.getByRole('button', { name: /^\+3 ft: 1,837 acres of land underwater/ })).toBeVisible()
-    // Low spots are listed even though their map layer is off by default.
+    // Low spots are listed only while their map layer is on.
+    await expect(panel.getByText('Low spots at +2 ft')).toHaveCount(0)
+    await page.getByRole('switch', { name: /Low spots/ }).click()
     await expect(panel.getByText('Low spots at +2 ft')).toBeVisible()
+    await expect(panel.getByText('Low spots at +2 ft').locator('xpath=following-sibling::span')).toHaveText('232 acres')
     await page.reload()
     await waitForMap(page)
     await expect(insights(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
+  })
+
+  test('with a place selected, every insight fits without scrolling at 1440×800', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 800 })
+    await page.goto('/')
+    await waitForMap(page)
+    await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
+    await expect.poll(() => mapZoom(page), { timeout: 10_000 }).toBeGreaterThan(15)
+    await page.locator('.maplibregl-canvas').focus()
+    await page.keyboard.press('Enter')
+    await expect(insights(page).getByRole('list', { name: 'Water at this spot, by sea level' })).toBeVisible()
+    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toBeVisible()
+    const fit = await insights(page)
+      .locator('.overflow-y-auto')
+      .evaluate((el) => ({ content: el.scrollHeight, visible: el.clientHeight }))
+    expect(fit.content).toBeLessThanOrEqual(fit.visible)
   })
 
   test('in-map controls: 2D/3D keeps the level, "show all" restores the 3D city view', async ({ page }) => {
@@ -221,7 +240,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('Escape')
     await expect(dlg).toBeHidden()
 
-    await page.getByRole('button', { name: 'What this map can and can’t tell you' }).click()
+    await page.getByRole('button', { name: 'About the data', exact: true }).click()
     const about = page.getByRole('dialog', { name: 'About the data' })
     await expect(about).toContainText('Mean Higher High Water')
     await expect(about).toContainText('not affiliated with')

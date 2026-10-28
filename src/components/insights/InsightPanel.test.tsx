@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { bandsFor } from '../../lib/manifest'
@@ -41,10 +41,11 @@ describe('<InsightPanel>', () => {
   it('leads with the headline metric computed from the manifest', () => {
     ready()
     // 500,000 m² beyond baseline at +2 ft in the fixture → 0.50 km², 124 acres
-    expect(screen.getByText('Land underwater at +2 ft')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Land underwater' })).toBeInTheDocument()
+    expect(screen.getByText('at +2 ft').nextSibling).toHaveTextContent('0.50km²')
     expect(screen.getAllByText('0.50').length).toBeGreaterThan(0)
     // One unit at a time: no acres alongside the km² figure.
-    expect(screen.getByRole('region', { name: 'Headline' })).not.toHaveTextContent('acres')
+    expect(screen.getByText('at +2 ft').nextSibling).not.toHaveTextContent('acres')
   })
 
   it('relates the headline to the city’s land area when the Census boundary is known', () => {
@@ -75,7 +76,7 @@ describe('<InsightPanel>', () => {
       </AppStateProvider>,
     )
     // 500,000 m² of 10 km² land → 5.0%
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('Roughly 5% of the city’s land')
+    expect(screen.getByText('of the city’s land').nextSibling).toHaveTextContent('5%')
   })
 
   it('breaks the total down by the area each foot adds, in one unit', () => {
@@ -93,9 +94,9 @@ describe('<InsightPanel>', () => {
     expect(km2).toHaveAttribute('aria-checked', 'true')
     await userEvent.click(screen.getByRole('radio', { name: 'Acres' }))
 
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('124acres')
-    expect(screen.getByRole('region', { name: 'Headline' })).not.toHaveTextContent('km²')
-    expect(screen.getByText('Acres, City of Miami Beach')).toBeInTheDocument()
+    expect(screen.getByText('at +2 ft').nextSibling).toHaveTextContent('124acres')
+    expect(screen.getByText('at +2 ft').nextSibling).not.toHaveTextContent('km²')
+    expect(screen.getByText('Land underwater, acres, City of Miami Beach')).toBeInTheDocument()
     const list = screen.getByRole('list', { name: '' })
     // Units are spelled out: "acres", never the abbreviation "ac".
     expect(within(list).getByText('445 acres')).toBeInTheDocument()
@@ -108,7 +109,7 @@ describe('<InsightPanel>', () => {
     expect(km2).toHaveFocus()
   })
 
-  it('reports low spots even when their map layer is off', () => {
+  it('lists low spots only while their map layer is on', async () => {
     const withLow = makeManifest({
       comparisons: manifest.comparisons,
       lowLying: [{ id: 'low_2ft', feet: 2, kind: 'low', sourceLayer: 'FL_SE_low_2_0ft', file: 'low_2ft.geojson', areaM2: 940_000, bytes: 1, featureCount: 1, vertexCount: 1 }],
@@ -124,7 +125,19 @@ describe('<InsightPanel>', () => {
         />
       </AppStateProvider>,
     )
-    expect(initialState.layers.lowLying).toBe(false)
+    expect(screen.queryByText('Low spots at +2 ft')).toBeNull()
+    cleanup()
+    render(
+      <AppStateProvider initial={{ ...initialState, available: [0, 1, 2, 3], scenarioFt: 2, layers: { ...initialState.layers, lowLying: true } }}>
+        <InsightPanel
+          manifestState={{ status: 'ready', manifest: withLow, error: null }}
+          inspection={{ status: 'idle' }}
+          bands={bandsFor(withLow)}
+          highlightFt={null}
+          onHighlight={() => {}}
+        />
+      </AppStateProvider>,
+    )
     expect(screen.getByText('Low spots at +2 ft')).toBeInTheDocument()
     expect(screen.getByText('0.94 km²')).toBeInTheDocument()
     expect(screen.getByText('Cut off from the sea, so not counted above')).toBeInTheDocument()
@@ -133,8 +146,8 @@ describe('<InsightPanel>', () => {
   it('titles the chart with its finding and names the measure and place underneath', () => {
     ready()
     // +3 ft adds 1.80 of 2.30 km², almost four times the +2 ft step.
-    expect(screen.getByText('Land underwater jumps at +3 ft')).toBeInTheDocument()
-    expect(screen.getByText('Square kilometres, City of Miami Beach')).toBeInTheDocument()
+    expect(screen.getByText('The biggest jump comes at +3 ft')).toBeInTheDocument()
+    expect(screen.getByText('Land underwater, km², City of Miami Beach')).toBeInTheDocument()
   })
 
   it('keeps levels above the slider at full strength, so they never look disabled', () => {
@@ -157,8 +170,7 @@ describe('<InsightPanel>', () => {
 
   it('describes today as the starting point', () => {
     ready({ scenarioFt: 0 })
-    expect(screen.getByText('Where we start')).toBeInTheDocument()
-    expect(screen.getByText('Today’s high tide')).toBeInTheDocument()
+    expect(screen.getByText(/None yet\. Today’s high tide is where we start/)).toBeInTheDocument()
   })
 
   it('renders a missing-data state without any numbers', () => {

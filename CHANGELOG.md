@@ -13,8 +13,27 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.7 | 28 Oct 2026 | Blues back, human copy, Satoshi, compact answer card | [`docs/versions/v0.7/`](docs/versions/v0.7/) |
 | v0.8 | 28 Oct 2026 | Clearer answers and chart: titles, selection, no false "disabled" look | [`docs/versions/v0.8/`](docs/versions/v0.8/) |
 | v0.9 | 28 Oct 2026 | km² / acres switch, low spots always listed | [`docs/versions/v0.9/`](docs/versions/v0.9/) |
+| v0.10 | 28 Oct 2026 | Compact card, two-block Insights that fits without scrolling | [`docs/versions/v0.10/`](docs/versions/v0.10/) |
 
 ---
+
+## v0.10: Everything at a glance (28 Oct 2026)
+
+Driven by a design review of v0.9: the card took too much room, and the summary text felt scattered.
+
+- **The whole panel fits without scrolling.** With a building selected, the card, summary, chart and breakdown fit in a 1440×800 window (before: 459 px of scrolling). A new end-to-end test checks this.
+- **A compact building card** (576 → about 300 px):
+  - **Header:** a small orange icon (matching the map selection) instead of the large tile, and distance and position on one line. Position is now shown to 4 decimals (about 11 m).
+  - **Answer:** the answer block is shorter, with a 56 px scene. "See it at +3 ft →" moves into the block's top-right corner instead of taking its own line; screen readers still hear "You're looking at +2 ft. See it at +3 ft".
+  - **Levels:** the dot-and-line gauge is now a slim strip, one segment per level, in the map's colours.
+  - **Facts:** height, footprint and low spot sit in one row instead of three.
+- **Two blocks instead of loose text.** Full-bleed sections divided by hairlines, each with an accent icon and a header (Calcite's Block pattern, not cards):
+  - **Land underwater**, with the unit switch: the area at the chosen level and the share of the city's land, side by side.
+  - **The chart and the per-foot breakdown.** The title is now "The biggest jump comes at +3 ft" (still computed from the data) and the subtitle "Land underwater, km², City of Miami Beach", so "Land underwater" isn't repeated in two headers.
+- **Low spots only while their layer is on**, as before v0.9. The row's caption now runs full width, so it stays on one line.
+- **The bottom "What this map can and can't tell you" link is gone.** "About the data" in the top bar opens the same dialog.
+- **One radio-group component.** The unit switch now reuses the existing `Segmented` component, restyled to the Calcite "solid" look with no shadow, instead of duplicating its keyboard handling.
+- Tests: 100 unit/component tests and 17 end-to-end tests. The new end-to-end test checks the panel fits without scrolling at 1440×800.
 
 ## v0.9: One unit at a time (28 Oct 2026)
 

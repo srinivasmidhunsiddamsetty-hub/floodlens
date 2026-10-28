@@ -25,6 +25,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Blue palette restored, flat chips with instant selection, a compact answer card, a human-voice copy pass (docs/UX_WRITING.md) and Satoshi as the interface font (v0.7).
 - Clearer card answer when water doesn't reach a place, a data-driven chart title, a ring round the selected bar, and no faded "disabled" look for levels above the slider (v0.8).
 - A km² / acres switch for the Insights section, remembered in the browser, and low spots always listed under the breakdown (v0.9).
+- A compact building card and a two-block Insights layout (summary; chart and breakdown) that fits without scrolling at 1440×800 with a place selected; low spots listed only while their layer is on (v0.10).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
@@ -39,7 +40,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
 | Unit and component tests | `npm test` | **12 files, 100 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **16 passed** (15 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (16 desktop at 1440×900 or 1440×800, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 20.8 MB raw across 16 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3 ft band adds 4.3 MB raw, ≈ 0.48 MB gzip) |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage; all 6 difference validations passed |

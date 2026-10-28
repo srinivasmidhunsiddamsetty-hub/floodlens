@@ -74,6 +74,8 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/05-mobile-map.png` })
     await page.getByRole('button', { name: /Insights ·/ }).click()
+    // Park the pointer on the header so no row is left hovered (which spotlights a band)
+    await page.mouse.move(200, 20)
     await page.waitForTimeout(600)
     await page.screenshot({ path: `${OUT}/06-mobile-insights.png` })
     await page.getByRole('button', { name: /Insights ·/ }).click()

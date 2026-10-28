@@ -83,7 +83,7 @@ Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet 
 
 - **Headline metric = extent beyond the 0 ft reference.** The total extent is dominated by existing open water inside city limits (19.7 of 39.4 km²), so it barely changes. The added extent (0.04 → 0.99 → 7.43 km²) shows the non-linear growth that matters. v0.4 adds acres and "equal to N% of the city's land area" (Census land area) so the number is relatable.
 - **Bar chart, not a line.** Scenarios are discrete states, and a line would imply interpolation.
-- **Chart title = the finding, subtitle = the measure and place** (ONS / GOV.UK guidance). The finding ("Land underwater jumps at +3 ft") is computed from the data, with a plain fallback title. The selected level gets a ring round its bar, and every bar keeps full colour whatever the slider shows (v0.8).
+- **Chart title = the finding, subtitle = the measure and place** (ONS / GOV.UK guidance). The finding ("The biggest jump comes at +3 ft" since v0.10; "Land underwater jumps at +3 ft" in v0.8–v0.9) is computed from the data, with a plain fallback title. The selected level gets a ring round its bar, and every bar keeps full colour whatever the slider shows (v0.8).
 - **Colour:** a light, ArcGIS-style geographic basemap (warm land, sage parks, pale-blue water, white roads) keeps the strongest colours for data. Saturated blue marks mapped inundation, clearly darker than the pale water; orange marks the added extent (a colour-vision-deficiency-safe pair); a purple hatch marks low-lying areas (readable without colour); and a blue ring with a white-outlined core marks the selection.
 - **Typography:** Satoshi for the interface (v0.7, friendlier and more contemporary); Roboto for map labels, which need self-hosted SDF glyphs that Satoshi's licence doesn't allow creating.
 - **Copy:** plain, calm and honest, never "safe" or "will flood". See [docs/UX_WRITING.md](docs/UX_WRITING.md).
@@ -138,6 +138,11 @@ The product went through numbered versions, each tagged in git with screenshots 
 - **v0.6 → v0.7:** the viridis colours didn't read as water, the chips had a shadow and only lit up after the camera arrived, the card's answer was oversized, and the wording sounded like a GIS report. Fixes: the blues are back; flat chips that highlight on click with a 2 px border; a compact answer block; a full copy pass in a plain, human voice (docs/UX_WRITING.md); and Satoshi as the interface font.
 - **v0.7 → v0.8:** "Not by +3 ft" was unclear in design review, and its label said "Water reaches it" even when it didn't. Levels above the slider were faded and looked like a bug. Clicking a bar left a box round the whole column. "Newly underwater" and "Each foot adds more" didn't say what was measured. Fixes: label and answer read as one sentence ("Up to +3 ft · Water doesn't reach it"); full colour at every level; a ring round the selected bar; and chart titles that follow ONS/GOV.UK guidance, with the finding computed from the data.
 - **v0.8 → v0.9:** showing km² and acres side by side made the Insights section busy, and the low-spots line only appeared when the Low spots map layer was on (off by default), so it looked removed. Fixes: a km² / acres switch, so every figure shows in one unit; and a "Low spots at +N ft" row under the breakdown, shown whatever the map layers are.
+- **v0.9 → v0.10:** the building card took over half the panel, so the summary and chart sat below the fold, and the summary text felt scattered. Fixes:
+  - A compact card, 576 → about 300 px.
+  - Two clear blocks: "Land underwater" with two side-by-side figures, and the chart with its breakdown.
+  - The redundant bottom link is gone, and low spots show only while their layer is on.
+  - Everything now fits at 1440×800 with a place selected, and an end-to-end test checks it.
 
 ## 11. Known limitations
 

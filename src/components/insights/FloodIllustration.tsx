@@ -16,14 +16,16 @@ interface Props {
  * runs further to the left.
  */
 const W = 600
-const H = 88
+const H = 64
 /** One stream of water per foot; today's high tide is a thinner band. */
-const STREAM = 10
-const TODAY = 6
-const HOUSE_X = W - 80
+const STREAM = 8
+const TODAY = 5
+/** House and pin are drawn at 70 units tall; this keeps them inside the 64-unit scene. */
+const FIGURE_SCALE = 0.46
+const HOUSE_X = W - 64
 
 /** A gentle swell across the full width starting at height y. */
-const crest = (y: number, phase: number, len = 40, amp = 3.5) => {
+const crest = (y: number, phase: number, len = 36, amp = 3) => {
   let d = `M${-len + phase} ${y}`
   for (let x = -len + phase; x < W + len; x += len) d += ` q ${len / 4} ${-amp} ${len / 2} 0 t ${len / 2} 0`
   return d
@@ -41,7 +43,7 @@ export function FloodIllustration({ kind, firstFeet, topFeet, className }: Props
   const reached = firstFeet !== null
   const today = kind === 'water' || firstFeet === 0
   const streams = today
-    ? [{ feet: 0, h: kind === 'water' ? 18 : TODAY }]
+    ? [{ feet: 0, h: kind === 'water' ? 14 : TODAY }]
     : Array.from({ length: reached ? firstFeet : topFeet }, (_, i) => ({ feet: i + 1, h: STREAM }))
 
   // Stack streams from the bottom edge up, remembering each stream's top.
@@ -52,25 +54,25 @@ export function FloodIllustration({ kind, firstFeet, topFeet, className }: Props
   })
   const waterTop = y
   // The place stands on ground whose height decides which stream first reaches it.
-  const g = reached ? waterTop + 4 : waterTop - 10
+  const g = reached ? waterTop + 3 : waterTop - 6
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMaxYMax slice" className={className} aria-hidden="true" focusable="false">
       <g fill="#d6e8fb">
-        <ellipse cx={W - 34} cy="13" rx="16" ry="5.5" />
-        <ellipse cx={W - 48} cy="15" rx="10" ry="5" />
+        <ellipse cx={W - 30} cy="9" rx="13" ry="4.5" />
+        <ellipse cx={W - 42} cy="11" rx="8" ry="4" />
       </g>
 
       {kind !== 'water' && (
         <g>
           <path d={`M${W - 170} ${H} C ${W - 150} ${g}, ${W - 142} ${g}, ${W - 124} ${g} H ${W} V ${H} Z`} fill="#ece2d0" />
           <path d={`M${W - 170} ${H} C ${W - 150} ${g}, ${W - 142} ${g}, ${W - 124} ${g} H ${W}`} fill="none" stroke="#dccfb6" strokeWidth="1.2" />
-          <circle cx={W - 22} cy={g - 8} r="8" fill="#cfe3d2" />
+          <circle cx={W - 20} cy={g - 6} r="6" fill="#cfe3d2" />
         </g>
       )}
 
       {kind === 'building' && (
-        <g transform={`translate(${HOUSE_X} ${g}) scale(0.64) translate(-224 -96)`}>
+        <g transform={`translate(${HOUSE_X} ${g}) scale(${FIGURE_SCALE}) translate(-224 -96)`}>
           <rect x="236" y="30" width="9" height="16" fill="#6f84a3" />
           <path d="M196 54 L224 28 L252 54 Z" fill="#8094b2" />
           <path d="M191 56 L224 26 L257 56" fill="none" stroke="#5c7193" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -87,7 +89,7 @@ export function FloodIllustration({ kind, firstFeet, topFeet, className }: Props
       )}
 
       {kind === 'location' && (
-        <g transform={`translate(${HOUSE_X} ${g}) scale(0.64) translate(-222 -96)`}>
+        <g transform={`translate(${HOUSE_X} ${g}) scale(${FIGURE_SCALE}) translate(-222 -96)`}>
           <ellipse cx="222" cy="96" rx="12" ry="3" fill="#d8cdb8" />
           <path d="M222 95 C 212 78, 208 70, 208 62 a14 14 0 0 1 28 0 c0 8 -4 16 -14 33 z" fill="#ff7417" />
           <circle cx="222" cy="62" r="5" fill="#ffffff" />

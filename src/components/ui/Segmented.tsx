@@ -14,13 +14,14 @@ interface Props<T extends string | number> {
   onChange: (value: T) => void
   /** Accessible group label. */
   label: string
-  size?: 'sm' | 'md'
+  size?: 'xs' | 'sm' | 'md'
   className?: string
 }
 
 /**
  * Segmented control implemented as an ARIA radio group: Tab focuses the
  * checked option, arrow keys move & select (with wrap), Home/End jump.
+ * Calcite "solid" look: the checked option is filled with the accent; no shadows.
  */
 export function Segmented<T extends string | number>({ options, value, onChange, label, size = 'md', className = '' }: Props<T>) {
   const refs = useRef<(HTMLButtonElement | null)[]>([])
@@ -40,13 +41,13 @@ export function Segmented<T extends string | number>({ options, value, onChange,
     refs.current[options.indexOf(opt)]?.focus()
   }
 
-  const h = size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]'
+  const h = size === 'xs' ? 'h-[22px] min-w-11 text-[12px] leading-none' : size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]'
   return (
     <div
       role="radiogroup"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={`flex rounded-md border border-line bg-surface-3 p-0.5 ${className}`}
+      className={`flex rounded-md border border-line-strong bg-surface p-0.5 ${className}`}
     >
       {options.map((o, idx) => {
         const checked = o.value === value
@@ -64,7 +65,7 @@ export function Segmented<T extends string | number>({ options, value, onChange,
             tabIndex={checked ? 0 : -1}
             onClick={() => onChange(o.value)}
             className={`${h} flex flex-1 items-center justify-center gap-1.5 rounded px-2 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-              checked ? 'bg-surface text-accent shadow-sm ring-1 ring-line-strong' : 'text-fg-muted hover:text-fg'
+              checked ? 'bg-accent text-white' : 'text-fg-muted hover:bg-surface-3 hover:text-fg'
             }`}
           >
             {o.label}

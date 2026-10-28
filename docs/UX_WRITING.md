@@ -22,7 +22,7 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 6. **Errors say what happened and what to do, without blame.** "We couldn't reach the flood data. Check your connection and reload."
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
 8. **A label and its value read as one sentence.** "Water reaches it · At +3 ft". "Up to +3 ft · Water doesn't reach it". Never pair a label with a value that contradicts it.
-9. **Chart titles state the finding; subtitles say what's measured and where.** This follows the [ONS chart text guidance](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) and the [GOV.UK chart guidance](https://brand.design-system.service.gov.uk/data/charts): front-loaded, active, sentence case, 15 words or fewer, with no detail repeated in the subtitle. The finding must come from the data, never be written in. So "Land underwater jumps at +3 ft" appears only when the numbers show it, and otherwise the title falls back to "Land underwater at each sea level".
+9. **Chart titles state the finding; subtitles say what's measured and where.** This follows the [ONS chart text guidance](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) and the [GOV.UK chart guidance](https://brand.design-system.service.gov.uk/data/charts): front-loaded, active, sentence case, 15 words or fewer, with no detail repeated in the subtitle. The finding must come from the data, never be written in. So "The biggest jump comes at +3 ft" appears only when the numbers show it, and otherwise the title falls back to "How each foot adds up". The subtitle carries the measure ("Land underwater, km², City of Miami Beach"), so it isn't repeated in the title or the block above.
 
 ## Before and after (v0.6 → v0.7)
 
@@ -73,3 +73,15 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Breakdown row | +3 ft adds · 6.44 km² · 1,592 acres | +3 ft adds · 6.44 km² (or 1,592 acres) |
 | Low spots | Plus 0.29 km² of low spots cut off from the sea, not counted above (only with the layer on) | Low spots at +3 ft · 0.29 km² · Cut off from the sea, so not counted above (always) |
 | Unit switch | (none) | km² / acres. Screen readers hear "Area unit: Square kilometres / Acres" |
+
+## Before and after (v0.9 → v0.10)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Summary | LAND UNDERWATER AT +3 FT / 7.43 km² / Roughly 37% of the city's land | Land underwater: **7.43 km²** at +3 ft │ **37%** of the city's land |
+| Summary, today | Today's high tide / Where we start / This is how far high tide reaches today… | None yet. Today's high tide is where we start: raise the sea level to see what changes. |
+| Chart title | Land underwater jumps at +3 ft | The biggest jump comes at +3 ft |
+| Chart subtitle | Square kilometres, City of Miami Beach | Land underwater, km², City of Miami Beach |
+| Card link | You're looking at +2 ft. See it at +3 ft → (own line) | See it at +3 ft → (in the answer block; the full sentence is its accessible name) |
+| Card fact | In a low spot: Yes, from +2 ft | Low spot: From +2 ft |
+| Bottom link | What this map can and can't tell you | (removed; "About the data" in the top bar opens the same dialog) |

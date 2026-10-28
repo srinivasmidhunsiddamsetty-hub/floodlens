@@ -30,7 +30,7 @@ test.describe('FloodLens — small screens', () => {
     await expect(sheetToggle).toContainText('7.43 km² of land underwater')
     await expect(sheetToggle).toHaveAttribute('aria-expanded', 'false')
     await sheetToggle.click()
-    await expect(page.getByRole('region', { name: 'Headline' })).toContainText('Land underwater at +3 ft')
+    await expect(page.getByRole('region', { name: 'Land underwater' })).toContainText('at +3 ft')
     expect(errors).toEqual([])
   })
 })

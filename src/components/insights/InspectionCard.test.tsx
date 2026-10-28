@@ -37,7 +37,7 @@ describe('<InspectionCard>', () => {
     card(levels(3))
     expect(screen.getByRole('heading', { name: 'Building near Euclid Avenue' })).toBeInTheDocument()
     expect(screen.getByText('34 m from street')).toBeInTheDocument()
-    expect(screen.getByText('25.77675° N, 80.13466° W')).toBeInTheDocument()
+    expect(screen.getByText('25.7767° N, 80.1347° W')).toBeInTheDocument()
   })
 
   it('leads with the first water level that reaches it', () => {
@@ -53,7 +53,7 @@ describe('<InspectionCard>', () => {
     // "≈" already says approximate, so the labels don't repeat it.
     expect(screen.getByText('Height').nextSibling).toHaveTextContent('≈ 5 m')
     expect(screen.getByText('Footprint').nextSibling).toHaveTextContent('≈ 2,001 m²')
-    expect(screen.getByText('In a low spot').nextSibling).toHaveTextContent('No')
+    expect(screen.getByText('Low spot').nextSibling).toHaveTextContent('No')
     expect(screen.queryByText(/approx/i)).toBeNull()
   })
 

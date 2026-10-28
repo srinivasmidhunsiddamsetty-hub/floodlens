@@ -50,10 +50,11 @@ export function formatPercent(fraction: number, round = false): string {
   return `${pct.toFixed(pct < 10 ? 1 : 0)}%`
 }
 
-export function formatCoord(lng: number, lat: number): string {
+/** Degrees with hemisphere letters. 4 decimals is about 11 m, plenty to find a building again. */
+export function formatCoord(lng: number, lat: number, digits = 5): string {
   const ns = lat >= 0 ? 'N' : 'S'
   const ew = lng >= 0 ? 'E' : 'W'
-  return `${Math.abs(lat).toFixed(5)}° ${ns}, ${Math.abs(lng).toFixed(5)}° ${ew}`
+  return `${Math.abs(lat).toFixed(digits)}° ${ns}, ${Math.abs(lng).toFixed(digits)}° ${ew}`
 }
 
 export function formatBytes(bytes: number): string {
