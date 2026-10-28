@@ -43,7 +43,7 @@ export function Swatch({ kind, size = 14 }: { kind: SwatchKind; size?: number })
     case 'water':
       return (
         <svg {...common} viewBox="0 0 14 14">
-          <rect x=".5" y=".5" width="13" height="13" rx="3" fill={colors.water} stroke="#86acd0" />
+          <rect x=".5" y=".5" width="13" height="13" rx="3" fill={colors.water} stroke="#7bbcd0" />
         </svg>
       )
     case 'land':

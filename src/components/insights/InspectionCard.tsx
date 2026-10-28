@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Crosshair, Info, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Building2, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCoord, formatMeters, formatScenario, formatSmallArea } from '../../lib/format'
 import type { InspectionState } from '../../hooks/useInspection'
@@ -88,7 +88,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
 
       {!insideStudyArea && (
         <p className="mt-4 rounded-lg bg-surface-2 px-3 py-2.5 t-body">
-          Outside the study area. NOAA data were only processed inside the City of Miami Beach boundary (dashed line).
+          Outside the City of Miami Beach. FloodLens only processes NOAA data inside the city boundary.
         </p>
       )}
 
@@ -125,13 +125,6 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
               at <span className="text-accent">{formatScenario(firstFeet)}</span>
             </>
           )
-          const detail = !reached
-            ? `Outside NOAA’s mapped extent at every level up to ${levelName(top)}.`
-            : firstFeet === 0
-              ? 'Within the mapped extent at today’s high tide.'
-              : firstFeet === top
-                ? `Within the mapped extent at ${formatScenario(firstFeet)}.`
-                : `Within the mapped extent from ${formatScenario(firstFeet)} upward.`
 
           return (
             <div aria-live="polite">
@@ -142,14 +135,13 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                     First reached
                   </span>
                   <p className="mt-2.5 text-[30px] leading-[34px] font-bold tracking-tight text-fg">{headline}</p>
-                  <p className="mt-2 text-[13px] leading-[18px] text-fg-muted">{detail}</p>
                 </div>
                 <FloodIllustration
                   key={`${lngLat.join(',')}-${firstFeet}`}
                   kind={kind}
-                  reached={reached}
-                  levelLabel={levelName(reached ? firstFeet : top)}
-                  className="pointer-events-none -mt-9 block h-auto w-full"
+                  firstFeet={firstFeet}
+                  topFeet={top}
+                  className="pointer-events-none -mt-6 block h-auto w-full"
                 />
               </div>
               {reached && !shownOnMap && (
@@ -202,10 +194,10 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                     <Fact
                       icon={Ruler}
                       tint="blue"
-                      label="Height (approx.)"
+                      label="Height"
                       value={building.renderHeightM !== null ? `≈ ${Math.round(building.renderHeightM)} m` : '—'}
                     />
-                    <Fact icon={Scan} tint="violet" label="Footprint (approx.)" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
+                    <Fact icon={Scan} tint="violet" label="Footprint" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
                   </>
                 )}
                 <Fact
@@ -217,13 +209,6 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                 />
               </dl>
 
-              <p className="mt-3 flex gap-2 t-caption leading-4">
-                <Info className="mt-px size-3.5 shrink-0" aria-hidden />
-                <span>
-                  Screening indicator from NOAA’s mapped extents, not a flood prediction.
-                  {building && ' Height and footprint from OpenStreetMap, approximate.'}
-                </span>
-              </p>
             </div>
           )
         })()}

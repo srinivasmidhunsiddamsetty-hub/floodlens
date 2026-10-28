@@ -46,7 +46,7 @@ describe('scenario selection', () => {
 
 describe('view state', () => {
   it('starts with flood extent, buildings and labels on, low-lying off', () => {
-    expect(initialState.layers).toEqual({ inundation: true, buildings: true, labels: true, lowLying: false })
+    expect(initialState.layers).toEqual({ inundation: true, buildings: true, labels: true, lowLying: false, studyArea: true })
   })
 
   it('toggles layers independently', () => {

@@ -11,6 +11,7 @@ interface Props {
   showFlood: boolean
   showLowLying: boolean
   showBuildings: boolean
+  showStudyArea: boolean
   highlightFt: number | null
   onHighlight: (ft: number | null) => void
   defaultOpen?: boolean
@@ -21,7 +22,7 @@ interface Props {
  * one swatch per water level, dimmed for levels above the current scenario.
  * Hovering a level emphasises that band on the map.
  */
-export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuildings, highlightFt, onHighlight, defaultOpen = true }: Props) {
+export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuildings, showStudyArea, highlightFt, onHighlight, defaultOpen = true }: Props) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <section aria-label="Map legend" className="pointer-events-auto w-52 overflow-hidden rounded border border-line bg-surface/95 shadow-float backdrop-blur-sm">
@@ -86,9 +87,11 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
             <li className="flex items-center gap-2">
               <Swatch kind="selection" size={13} /> Selected
             </li>
-            <li className="flex items-center gap-2">
-              <Swatch kind="study" size={13} /> Study area
-            </li>
+            {showStudyArea && (
+              <li className="flex items-center gap-2">
+                <Swatch kind="study" size={13} /> City limits
+              </li>
+            )}
           </ul>
         </div>
       )}

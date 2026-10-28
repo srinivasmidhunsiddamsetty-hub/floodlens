@@ -77,7 +77,7 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
           <output htmlFor={id} className="block t-display" aria-live="polite">
             {formatScenario(value)}
           </output>
-          <p className="mt-1 t-caption">above today’s high tide (MHHW)</p>
+          <p className="mt-1 t-caption">above today’s high tide</p>
         </div>
         <button
           type="button"

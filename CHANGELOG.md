@@ -8,8 +8,34 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.2 | 23 Oct 2026 | Light ArcGIS-style UI, Roboto | [`docs/versions/v0.2-light/`](docs/versions/v0.2-light/) |
 | v0.3 | 27 Oct 2026 | Flood bands, in-map controls, redesigned panels | [`docs/versions/v0.3/`](docs/versions/v0.3/) |
 | v0.4 | 28 Oct 2026 | Whole City of Miami Beach, new ramp, illustrated building card | [`docs/versions/v0.4/`](docs/versions/v0.4/) |
+| v0.5 | 28 Oct 2026 | City locator, stream-per-foot card, city-limits toggle | [`docs/versions/v0.5/`](docs/versions/v0.5/) |
 
 ---
+
+## v0.5: Less text, more place (28 Oct 2026)
+
+Driven by a design review of v0.4.
+
+**Building card**
+- **The answer stands alone.** Removed the caption under "First reached at +3 ft" (it repeated the headline) and the caveat line at the bottom (the limits are one click away in "Data sources & limitations" and "About the data").
+- **"≈" says approximate.** "Height (approx.)" and "Footprint (approx.)" are now "Height" and "Footprint".
+- **One stream of water per foot.** The dashed level line and "+3 ft" badge are gone. The illustration shows one wave per foot in the map's colour for that foot. A building first reached at +3 ft sits on higher ground with three streams rising to it; one reached at +1 ft gets one stream. Places above +3 ft stand clear of all three. The streams rise one after another when the card opens (off with reduced motion).
+
+**Map**
+- **Livelier water.** Basemap water is a light aqua `#a8dcea` instead of a dull grey-blue. Its hue is greener than the azure flood ramp, so the two stay distinct.
+- **No more overlap at the bottom edge.** The credits line runs along the very bottom, the scale bar sits above it on the right, and the legend sits above both on the left. On phones the controls lift above the insights sheet.
+- **City locator replaces the "Go to" chips** (from 768 px; phones keep the chips, minus the "Go to" label). It is a mini-map of the whole city that shows:
+  - the current view as an outline;
+  - the flood bands at the current level;
+  - South Beach, Mid-Beach and North Beach as labelled jump targets, with the nearest one highlighted when zoomed in.
+
+  Click a name or anywhere on the mini-map to fly there.
+- **City limits toggle is back** (from v0.2). It hides the dashed boundary and the dimmed area outside it. The legend row follows.
+
+**Sea level**
+- The caption under the level reads "above today's high tide", without the "(MHHW)" jargon. The (i) button still explains Mean Higher High Water, and screen readers still hear "above MHHW".
+
+**Tests:** 85 unit/component tests; 14 end-to-end tests (new: city locator, city-limits toggle).
 
 ## v0.4: The whole city (28 Oct 2026)
 

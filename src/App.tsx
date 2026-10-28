@@ -102,7 +102,7 @@ export default function App() {
         <main id="map-region" tabIndex={-1} className="relative min-w-0 flex-1 outline-none">
           <MapView data={mapData} studyBbox={manifest?.studyArea.bbox ?? null} highlightFt={highlightFt} />
 
-          <div className={`pointer-events-none absolute left-3 z-10 ${isDesktop ? 'bottom-12' : 'bottom-[112px]'}`}>
+          <div className={`pointer-events-none absolute left-3 z-10 ${isDesktop ? 'bottom-12' : 'bottom-[120px]'}`}>
             <MapLegend
               key={isDesktop ? 'd' : 'm'}
               defaultOpen={isDesktop}
@@ -111,6 +111,7 @@ export default function App() {
               showFlood={state.layers.inundation}
               showLowLying={state.layers.lowLying}
               showBuildings={state.layers.buildings}
+              showStudyArea={state.layers.studyArea}
               highlightFt={highlightFt}
               onHighlight={setHighlightFt}
             />

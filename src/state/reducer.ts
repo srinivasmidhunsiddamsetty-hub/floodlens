@@ -2,7 +2,7 @@ import type { Feature, MultiPolygon, Polygon } from 'geojson'
 import type { LngLat } from '../lib/geo'
 
 export type ViewMode = '3d' | '2d'
-export type LayerKey = 'inundation' | 'buildings' | 'labels' | 'lowLying'
+export type LayerKey = 'inundation' | 'buildings' | 'labels' | 'lowLying' | 'studyArea'
 export type DialogKey = 'sources' | 'about' | null
 
 export interface BuildingInfo {
@@ -58,7 +58,7 @@ export const DEFAULT_SCENARIO_FT = 2
 export const initialState: AppState = {
   available: [],
   scenarioFt: DEFAULT_SCENARIO_FT,
-  layers: { inundation: true, buildings: true, labels: true, lowLying: false },
+  layers: { inundation: true, buildings: true, labels: true, lowLying: false, studyArea: true },
   viewMode: '3d',
   selection: null,
   dialog: null,

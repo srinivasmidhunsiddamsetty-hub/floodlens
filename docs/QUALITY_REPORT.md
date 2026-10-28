@@ -20,6 +20,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Flood bands by water level (today / +1 / +2 / +3 ft) from validated, precomputed polygon differences, with spotlight on hover (v0.3; replaced the v0.2 compare mode).
 - In-map camera controls (zoom, compass, Home, 2D/3D) and 3D-accurate building picking (v0.3).
 - City-wide study area, area bookmarks, a "show all of Miami Beach" control, a single-hue flood ramp and an illustrated building card (v0.4).
+- City locator mini-map, stream-per-foot card illustration, city-limits toggle, aqua water and a non-overlapping map edge (v0.5).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
@@ -34,13 +35,13 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
 | Unit and component tests | `npm test` | **10 files, 85 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **13 passed** (12 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **14 passed** (13 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 20.8 MB raw across 16 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3 ft band adds 4.3 MB raw, ≈ 0.48 MB gzip) |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage; all 6 difference validations passed |
 | Contrast (computed) | WCAG formula on design tokens | All text tokens ≥ 4.7:1 on every surface (accent blue 5.0–5.8:1); unselected switch border 3.5:1; map place labels 9.5:1, road labels 5.9:1 |
 
-What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Play the rise stepping to +3 ft and stopping; chart bars and breakdown rows selecting levels; in-map 2D/3D (pitch read from the control stack) and "Show all of Miami Beach" restoring the 3D city view, with no duplicate reset buttons; area bookmarks flying the camera and keeping 2D/3D; keyboard inspection (Enter on the map) with a 4-step ladder; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
+What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Play the rise stepping to +3 ft and stopping; chart bars and breakdown rows selecting levels; in-map 2D/3D (pitch read from the control stack) and "Show all of Miami Beach" restoring the 3D city view, with no duplicate reset buttons; area bookmarks flying the camera and keeping 2D/3D; the city locator's viewport outline and "you are here" state; the city-limits toggle and legend; keyboard inspection (Enter on the map) with a 4-step ladder; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
 
 Geographic calculations are verified by `src/lib/dataIntegrity.test.ts`. Turf areas match the manifest's ellipsoidal areas within 0.5% for all 10 extent and difference files. Difference area ≈ change in totals within 1%. Areas grow monotonically. All coordinates fall inside the study area. A point inside the +1 → +2 ft added extent is outside the 1 ft extent and inside the 2 ft extent.
 

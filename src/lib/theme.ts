@@ -3,7 +3,7 @@
  * legend, D3 chart and MapLibre layers always agree.
  *
  * Basemap: a soft "streets / topographic" palette (warm land, sage parks,
- * muted grey-blue water, white roads) so data overlays carry the strongest colour.
+ * fresh light-aqua water, white roads) so data overlays carry the strongest colour.
  */
 export const colors = {
   // basemap
@@ -11,9 +11,9 @@ export const colors = {
   landResidential: '#ebe7e0',
   landPark: '#d5e7c6',
   landWood: '#c8dfb6',
-  // Desaturated so the saturated flood blues never read as "just water".
-  water: '#c5d4e0',
-  waterLine: '#c5d4e0',
+  // Light aqua: livelier than grey-blue, and greener in hue than the azure flood ramp.
+  water: '#a8dcea',
+  waterLine: '#a8dcea',
   roadMinor: '#ffffff',
   roadMajor: '#ffffff',
   roadCasing: '#d8d1c5',
@@ -25,7 +25,7 @@ export const colors = {
   aeroway: '#e4e0d8',
   label: '#333333',
   labelMinor: '#555555',
-  labelWater: '#2f5d8f',
+  labelWater: '#1d5f7a',
   halo: '#ffffff',
   // Warm sandstone buildings (a nod to Miami Beach's Art Deco stucco): the
   // complementary hue to the blue flood ramp, so they stay legible on every band.

@@ -14,6 +14,7 @@ const LAYERS: { key: LayerKey; label: string; description: string; swatch: Swatc
   { key: 'lowLying', label: 'Low-lying areas', description: 'Below the water level, not connected', swatch: 'lowLying', needsLowLying: true },
   { key: 'buildings', label: 'Buildings', description: 'OpenStreetMap footprints & heights', swatch: 'building' },
   { key: 'labels', label: 'Labels', description: 'Streets and places', swatch: 'labels' },
+  { key: 'studyArea', label: 'City limits', description: 'Boundary of the data, dims outside it', swatch: 'study' },
 ]
 
 export function ControlPanel({ manifest }: Props) {

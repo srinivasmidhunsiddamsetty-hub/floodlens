@@ -43,7 +43,7 @@ describe('<InspectionCard>', () => {
   it('leads with the first water level that reaches it', () => {
     card(levels(3))
     expect(screen.getByText('First reached')).toBeInTheDocument()
-    expect(screen.getByText('Within the mapped extent at +3 ft.')).toBeInTheDocument()
+    expect(screen.getByText('First reached').nextSibling).toHaveTextContent('at +3 ft')
     const gauge = screen.getByRole('list', { name: 'Within NOAA’s mapped extent, by water level' })
     expect(within(gauge).getAllByRole('listitem')).toHaveLength(4)
     expect(within(gauge).getAllByText('outside mapped extent')).toHaveLength(3)
@@ -51,10 +51,11 @@ describe('<InspectionCard>', () => {
 
   it('lists height, footprint and low-lying status with approximate values', () => {
     card(levels(1))
-    expect(screen.getByText('Height (approx.)').nextSibling).toHaveTextContent('≈ 5 m')
-    expect(screen.getByText('Footprint (approx.)').nextSibling).toHaveTextContent('≈ 2,001 m²')
+    // "≈" already says approximate, so the labels don't repeat it.
+    expect(screen.getByText('Height').nextSibling).toHaveTextContent('≈ 5 m')
+    expect(screen.getByText('Footprint').nextSibling).toHaveTextContent('≈ 2,001 m²')
     expect(screen.getByText('Low-lying area').nextSibling).toHaveTextContent('No')
-    expect(screen.getByText('Within the mapped extent from +1 ft upward.')).toBeInTheDocument()
+    expect(screen.queryByText(/approx/i)).toBeNull()
   })
 
   it('offers to show the level on the map when the slider is below it', async () => {
@@ -66,13 +67,13 @@ describe('<InspectionCard>', () => {
 
   it('says "above +3 ft" when no mapped level reaches it, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('Outside NOAA’s mapped extent at every level up to +3 ft.')).toBeInTheDocument()
+    expect(screen.getByText('First reached').nextSibling).toHaveTextContent('Above +3 ft')
     expect(screen.queryByText(/dry|safe/i)).toBeNull()
   })
 
   it('explains places outside the city boundary instead of showing results', () => {
     card(levels(2), { selection: { ...building, insideStudyArea: false } })
-    expect(screen.getByText(/Outside the study area/)).toBeInTheDocument()
+    expect(screen.getByText(/Outside the City of Miami Beach/)).toBeInTheDocument()
     expect(screen.queryByText('First reached')).toBeNull()
   })
 

@@ -126,10 +126,31 @@ test.describe('FloodLens — core flows', () => {
     await expect(low).toHaveAttribute('aria-checked', 'true')
     const legend = page.getByRole('region', { name: 'Map legend' })
     await expect(legend).toContainText('Low-lying')
+    // City limits can be hidden (and shown again), and the legend follows.
+    const limits = page.getByRole('switch', { name: 'City limits' })
+    await expect(limits).toHaveAttribute('aria-checked', 'true')
+    await expect(legend).toContainText('City limits')
+    await limits.click()
+    await expect(limits).toHaveAttribute('aria-checked', 'false')
+    await expect(legend).not.toContainText('City limits')
+    await limits.click()
+    await expect(legend).toContainText('City limits')
+
     const toggle = legend.getByRole('button', { name: 'Legend' })
     await toggle.click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'false')
     await expect(legend).not.toContainText('Low-lying')
+  })
+
+  test('the city locator shows where the view is and flies to named areas', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const locator = page.getByRole('navigation', { name: 'Go to area' })
+    await expect(locator.locator('svg polygon')).toHaveCount(0) // whole city on screen: no viewport outline
+    await locator.getByRole('button', { name: 'Mid-Beach' }).click()
+    await expect(locator.getByRole('button', { name: 'Mid-Beach' })).toHaveAttribute('aria-current', 'location', { timeout: 10_000 })
+    await expect(locator.locator('svg polygon')).toHaveCount(1)
+    await expect(locator.getByRole('button', { name: 'South Beach' })).not.toHaveAttribute('aria-current', 'location')
   })
 
   test('data dialogs open, show provenance, and close with Escape', async ({ page }) => {
