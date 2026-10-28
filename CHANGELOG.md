@@ -14,8 +14,29 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.8 | 28 Oct 2026 | Clearer answers and chart: titles, selection, no false "disabled" look | [`docs/versions/v0.8/`](docs/versions/v0.8/) |
 | v0.9 | 28 Oct 2026 | km² / acres switch, low spots always listed | [`docs/versions/v0.9/`](docs/versions/v0.9/) |
 | v0.10 | 28 Oct 2026 | Compact card, two-block Insights that fits without scrolling | [`docs/versions/v0.10/`](docs/versions/v0.10/) |
+| v0.11 | 28 Oct 2026 | One-column card with a level track, chips and bottom link back | [`docs/versions/v0.11/`](docs/versions/v0.11/) |
 
 ---
+
+## v0.11: One column (28 Oct 2026)
+
+Driven by a design review of v0.10.
+
+- **The card is one column.** The rows are When water reaches it, Height, Footprint and Low spot. Each has a tinted icon, its label on the left and its value on the right, replacing v0.10's three-across facts strip. The answer reads as a sentence: "When water reaches it · At +3 ft", "Already today", or "Not up to +3 ft". It still never says "safe" or "dry".
+- **A level track instead of the house picture**, modelled on the designer's reference:
+  - **Pins:** one per sea level on a baseline. The first level that reaches the place gets a larger blue pin.
+  - **Water:** a light-blue band rises behind the pins. Its surface meets the blue pin, stays below the earlier pins, and covers the later ones. It's schematic, not a depth.
+  - **Not reached:** the water stays below every pin.
+  - **"See it" link:** "You're looking at +2 ft. See it at +3 ft →" is back on its own line under the track.
+- **Chips are back** for distance and position, as in v0.4–v0.9, with position to 5 decimals again.
+- **"What this map can and can't tell you" is back** at the bottom of the panel.
+- **No visible "Insights" title.** The card and the two block headers already say what the panel is, so the 40 px go to content. Screen readers still get the heading.
+- **What fits:**
+  - At 1440×850, everything fits without scrolling with a place selected, in every state.
+  - At 1440×800, it fits unless a long street name wraps and the "See it at +N ft" line shows (then about 24 px of scrolling).
+  - The end-to-end fit test now runs at 1440×850.
+- The house illustration and its CSS animation are removed (they're in git history at v0.10).
+- Tests: 101 unit/component tests (new: the one-column order) and 17 end-to-end tests.
 
 ## v0.10: Everything at a glance (28 Oct 2026)
 

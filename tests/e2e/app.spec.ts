@@ -85,8 +85,8 @@ test.describe('FloodLens — core flows', () => {
     await expect(insights(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
   })
 
-  test('with a place selected, every insight fits without scrolling at 1440×800', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 800 })
+  test('with a place selected, every insight fits without scrolling at 1440×850', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 850 })
     await page.goto('/')
     await waitForMap(page)
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
@@ -240,7 +240,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('Escape')
     await expect(dlg).toBeHidden()
 
-    await page.getByRole('button', { name: 'About the data', exact: true }).click()
+    await page.getByRole('button', { name: 'What this map can and can’t tell you' }).click()
     const about = page.getByRole('dialog', { name: 'About the data' })
     await expect(about).toContainText('Mean Higher High Water')
     await expect(about).toContainText('not affiliated with')

@@ -39,21 +39,23 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 - **No fading for levels above the slider.** The numbers hold whatever the slider shows, and faded bars and rows read as disabled. Hovering a band still fades the others, to spotlight it.
 - **One unit at a time.** A km² / acres switch at the top of the section sets the unit for the headline, chart (axis, labels, tooltips, subtitle, screen-reader table) and breakdown. It's a segmented control in the Calcite "solid" style: the chosen unit is filled with the accent. It's a radio group, so it's one Tab stop and the arrow keys switch units. The choice is remembered in the browser, and km² is the default.
 - **Low spots follow the map.** While the Low spots layer is on, a "Low spots at +N ft" row sits under the breakdown, behind a divider, with the map's purple hatch, and says they're cut off from the sea and not counted above. With the layer off (the default), the row is hidden. v0.9 showed it always; in review it was clutter for something most people leave off.
-- **The panel fits without scrolling.** The building card, the summary and the chart all fit at 1440×800 with a place selected (checked by an end-to-end test). The summary and the chart are two blocks: full-bleed sections divided by hairlines, each with a small accent icon and a header, like Calcite's Block. They aren't cards, so they don't compete with the selected-place card above them.
+- **The panel fits without scrolling.** The building card, the summary, the chart and the "What this map can and can't tell you" link fit at 1440×850 with a place selected, in every state (checked by an end-to-end test). They fit at 1440×800 too, unless the street name wraps and the "See it at +N ft" line shows. There's no visible "Insights" title (v0.11): the card and block headers say what the panel is, and screen readers still get the heading. The summary and the chart are two blocks: full-bleed sections divided by hairlines, each with a small accent icon and a header, like Calcite's Block. They aren't cards, so they don't compete with the selected-place card above them.
   - **Block 1, "Land underwater":** two figures side by side, the area at the chosen level and the share of the city's land, plus the unit switch.
   - **Block 2, the chart:** the chart and the per-foot breakdown.
-  - The old "What this map can and can't tell you" link at the bottom is gone, because "About the data" in the top bar opens the same dialog.
+  - The "What this map can and can't tell you" link stays at the bottom, as the contextual way into the limitations (v0.10 removed it; v0.11 brought it back).
 - **Mouse clicks don't focus bars.** The browser's focus outline is for keyboard users; a click selects without leaving it behind.
 
 ## Colour
 
-The selected-place card draws water as one stream per foot in the same ramp colours as the map and chart, so a building first reached at +3 ft shows three streams rising to it. The card's level strip (one segment per level) uses the same colours, so it doubles as a legend.
+The selected-place card (v0.11) is one column of rows: **When water reaches it**, **Height**, **Footprint** and **Low spot**, each with a tinted icon, its label on the left and its value on the right. The distance and position chips sit under the title, as in v0.4–v0.9.
 
-The card was compacted in v0.10 from 576 to about 300 px tall:
-- **Header:** an orange icon matching the map selection, and distance and position on one line (position to 4 decimals, about 11 m).
-- **Answer:** a 56 px scene, with the "See it at +3 ft" jump in the answer block's free corner.
-- **Level strip:** a segmented strip instead of the dot ladder.
-- **Facts:** height, footprint and low spot in one row.
+Under "When water reaches it" is a **level track**, modelled on a reference the designer supplied:
+- **Pins:** one per sea level, on a baseline. The first level that reaches the place gets a larger accent-blue pin; the rest are grey.
+- **Water:** a light-blue band rises from left to right behind the pins. Its surface is schematic, not a depth. It meets the blue pin, stays below the pins before it, and covers the ones after. When no level reaches the place, it stays below every pin.
+- **Accessibility:** the pins are a list for screen readers ("water reaches it" / "doesn't").
+- **"See it" link:** if the slider is below the answer, "You're looking at +2 ft. See it at +3 ft →" sits under the track.
+
+v0.4–v0.10 drew a house on rising streams of water instead. It was dropped in v0.11 to free space for the one-column layout.
 
 | Role | Colour | Notes |
 | --- | --- | --- |

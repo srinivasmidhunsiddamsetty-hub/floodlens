@@ -143,6 +143,13 @@ The product went through numbered versions, each tagged in git with screenshots 
   - Two clear blocks: "Land underwater" with two side-by-side figures, and the chart with its breakdown.
   - The redundant bottom link is gone, and low spots show only while their layer is on.
   - Everything now fits at 1440×800 with a place selected, and an end-to-end test checks it.
+- **v0.10 → v0.11:** the facts strip and the plain-text position line felt cramped and unlike the earlier card, and the bottom link was missed. Fixes:
+  - A one-column card: when water reaches it, height, footprint, low spot.
+  - The chips are back.
+  - A level track replaces the house illustration, modelled on the designer's reference: pins on rising water, with the first level that reaches the place in blue.
+  - The bottom link is back.
+  - The visible "Insights" title is dropped to make room.
+  - It all fits at 1440×850 in every state, and at 800 unless a long street name and the "See it" line both show.
 
 ## 11. Known limitations
 

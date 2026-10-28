@@ -85,3 +85,15 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Card link | You're looking at +2 ft. See it at +3 ft → (own line) | See it at +3 ft → (in the answer block; the full sentence is its accessible name) |
 | Card fact | In a low spot: Yes, from +2 ft | Low spot: From +2 ft |
 | Bottom link | What this map can and can't tell you | (removed; "About the data" in the top bar opens the same dialog) |
+
+## Before and after (v0.10 → v0.11)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card answer | WATER REACHES IT / At +3 ft (headline over a picture) | When water reaches it · At +3 ft (a row, with a pin track) |
+| Card, today | Already, at high tide | Already today (the Today pin is highlighted too) |
+| Card, not reached | UP TO +3 FT / Water doesn't reach it | When water reaches it · Not up to +3 ft |
+| Card link | See it at +3 ft → (corner of the answer block) | You're looking at +2 ft. See it at +3 ft → (under the track) |
+| Card fact | Low spot: From +2 ft | Low spot: Yes, from +2 ft |
+| Panel title | Insights | (visually hidden; still the panel's heading for screen readers) |
+| Bottom link | (removed) | What this map can and can't tell you → |

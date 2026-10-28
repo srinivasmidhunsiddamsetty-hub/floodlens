@@ -1,4 +1,4 @@
-import { AlertTriangle, Loader2, MousePointerClick, Waves } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Loader2, MousePointerClick, Waves } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { AREA_UNITS, formatArea, formatPercent, formatScenario } from '../../lib/format'
 import { lowLyingByFeet, scenarioByFeet, type FloodBand } from '../../lib/manifest'
@@ -17,11 +17,9 @@ interface Props {
   bands: FloodBand[]
   highlightFt: number | null
   onHighlight: (ft: number | null) => void
-  /** The mobile bottom sheet supplies its own header. */
-  showHeader?: boolean
 }
 
-export function InsightPanel({ manifestState, inspection, bands, highlightFt, onHighlight, showHeader = true }: Props) {
+export function InsightPanel({ manifestState, inspection, bands, highlightFt, onHighlight }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
   const manifest = manifestState.manifest
@@ -61,15 +59,11 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
 
   return (
     <div className="flex h-full flex-col">
-      {showHeader ? (
-        <div className="px-5 pt-3.5">
-          <h2 className="t-title">Insights</h2>
-        </div>
-      ) : (
-        <h2 className="sr-only">Insights</h2>
-      )}
+      {/* No visible title: the card and the block headers already say what this is,
+          and the space goes to content. Screen readers still get the heading. */}
+      <h2 className="sr-only">Insights</h2>
 
-      <div ref={scrollRef} className={`scrollbar-thin flex-1 overflow-y-auto px-5 pb-3 ${showHeader ? 'pt-3' : 'pt-4'}`}>
+      <div ref={scrollRef} className="scrollbar-thin flex-1 overflow-y-auto px-5 pt-4 pb-3">
         {card}
 
         {manifestState.status === 'loading' && (
@@ -92,7 +86,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           <>
             {/* Block 1: the answer at the chosen level, with the unit switch for both blocks.
                 Blocks are full-bleed and divided by hairlines (Calcite "block" pattern), not cards. */}
-            <section aria-labelledby="summary-title" className="-mx-5 mt-3.5 border-t border-line px-5 py-3">
+            <section aria-labelledby="summary-title" className="-mx-5 mt-3 border-t border-line px-5 py-2.5">
               <div className="flex items-center justify-between gap-3">
                 <h3 id="summary-title" className="flex items-center gap-2 t-heading font-semibold">
                   <Waves className="size-4 shrink-0 text-accent" aria-hidden />
@@ -125,7 +119,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
             </section>
 
             {/* Block 2: every level side by side, with what each foot adds */}
-            <div className="-mx-5 border-t border-line px-5 pt-3">
+            <div className="-mx-5 border-t border-line px-5 pt-2.5">
               <ScenarioAreaChart
                 bands={bands}
                 unit={unit}
@@ -187,6 +181,17 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
               </section>
             </div>
           </>
+        )}
+
+        {manifestState.status === 'ready' && (
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'openDialog', dialog: 'about' })}
+            className="-mx-5 mt-2 flex w-[calc(100%+2.5rem)] items-center justify-between border-t border-line px-5 pt-2.5 text-left t-label text-accent hover:text-accent-strong"
+          >
+            What this map can and can’t tell you
+            <ArrowRight className="size-4" aria-hidden />
+          </button>
         )}
       </div>
     </div>

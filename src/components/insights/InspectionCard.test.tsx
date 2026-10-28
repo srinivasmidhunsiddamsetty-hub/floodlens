@@ -37,12 +37,12 @@ describe('<InspectionCard>', () => {
     card(levels(3))
     expect(screen.getByRole('heading', { name: 'Building near Euclid Avenue' })).toBeInTheDocument()
     expect(screen.getByText('34 m from street')).toBeInTheDocument()
-    expect(screen.getByText('25.7767° N, 80.1347° W')).toBeInTheDocument()
+    expect(screen.getByText('25.77675° N, 80.13466° W')).toBeInTheDocument()
   })
 
   it('leads with the first water level that reaches it', () => {
     card(levels(3))
-    expect(screen.getByText('Water reaches it').nextSibling).toHaveTextContent('At +3 ft')
+    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('At +3 ft')
     const gauge = screen.getByRole('list', { name: 'Water at this spot, by sea level' })
     expect(within(gauge).getAllByRole('listitem')).toHaveLength(4)
     expect(within(gauge).getAllByText('water doesn’t reach it')).toHaveLength(3)
@@ -66,9 +66,14 @@ describe('<InspectionCard>', () => {
 
   it('says water doesn’t reach it up to +3 ft, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('Up to +3 ft').nextSibling).toHaveTextContent('Water doesn’t reach it')
-    expect(screen.queryByText('Water reaches it')).toBeNull()
+    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('Not up to +3 ft')
     expect(screen.queryByText(/dry|safe/i)).toBeNull()
+  })
+
+  it('lists every answer in one column: when water reaches it, height, footprint, low spot', () => {
+    card(levels(2))
+    const labels = screen.getAllByRole('term').map((t) => t.textContent)
+    expect(labels).toEqual(['When water reaches it', 'Height', 'Footprint', 'Low spot'])
   })
 
   it('explains places outside the city boundary instead of showing results', () => {
@@ -77,9 +82,9 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText('Water reaches it')).toBeNull()
   })
 
-  it('says "already, at high tide" for places water reaches today', () => {
+  it('says "already today" for places water reaches at today’s high tide', () => {
     card(levels(0))
-    expect(screen.getByText('Water reaches it').nextSibling).toHaveTextContent('Already, at high tide')
+    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('Already today')
   })
 
   it('closes from the × button', async () => {

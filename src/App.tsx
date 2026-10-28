@@ -184,7 +184,7 @@ export default function App() {
               <ChevronUp className={`size-4 text-fg-subtle transition-transform ${insightsOpen ? 'rotate-180' : ''}`} aria-hidden />
             </button>
             <div id="insight-sheet-body" className="min-h-0 flex-1 border-t border-line" hidden={!insightsOpen}>
-              <InsightPanel {...insightProps} showHeader={false} />
+              <InsightPanel {...insightProps} />
             </div>
           </aside>
         )}
