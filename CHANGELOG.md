@@ -12,8 +12,25 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.6 | 28 Oct 2026 | Viridis-style palette, area chips back, resizable Insights | [`docs/versions/v0.6/`](docs/versions/v0.6/) |
 | v0.7 | 28 Oct 2026 | Blues back, human copy, Satoshi, compact answer card | [`docs/versions/v0.7/`](docs/versions/v0.7/) |
 | v0.8 | 28 Oct 2026 | Clearer answers and chart: titles, selection, no false "disabled" look | [`docs/versions/v0.8/`](docs/versions/v0.8/) |
+| v0.9 | 28 Oct 2026 | km² / acres switch, low spots always listed | [`docs/versions/v0.9/`](docs/versions/v0.9/) |
 
 ---
+
+## v0.9: One unit at a time (28 Oct 2026)
+
+Driven by a design review of the v0.8 Insights section.
+
+- **km² / acres switch.** Showing both units side by side made the section busy. A segmented switch now sits at the top right of the headline and sets one unit for everything in the section:
+  - The headline: "1,837 acres", then "Roughly 37% of the city's land".
+  - The chart: axis, bar labels, tooltips, subtitle ("Acres, City of Miami Beach") and screen-reader table.
+  - The breakdown rows.
+  - The low-spots row.
+  - The mobile summary.
+
+  It's a radio group, so it's one Tab stop and the arrow keys switch units. The choice is remembered in this browser, and km² is the default. The acre axis uses round ticks (0, 1,000, 2,000) with a wider margin.
+- **Low spots are back in Insights.** They were never deleted: the line only appeared when the Low spots map layer was on, and that layer is off by default. Now a "Low spots at +2 ft" row always sits under the breakdown, with the map's purple hatch, its area, and "Cut off from the sea, so not counted above". The figure is NOAA's unconnected low-lying area at the current level. It isn't added per foot like the rows above, and it can shrink at higher levels as low spots join the sea.
+- New screenshot `10-insights-acres.png`.
+- Tests: 100 unit/component tests and 16 end-to-end tests. New tests cover the unit switch (including the arrow keys and remembering the choice after a reload) and low spots being listed with their layer off.
 
 ## v0.8: Saying it plainly (28 Oct 2026)
 

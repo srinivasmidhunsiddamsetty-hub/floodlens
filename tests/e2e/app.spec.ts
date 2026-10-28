@@ -61,9 +61,25 @@ test.describe('FloodLens — core flows', () => {
     await expect(bar).not.toBeFocused()
     const row = insights(page).getByRole('button', { name: /\+3 ft adds/ })
     await expect(row).toContainText('6.44 km²')
-    await expect(row).toContainText('acres')
+    await expect(row).not.toContainText('acres')
     await row.click()
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
+  })
+
+  test('area unit switches everything to acres and is remembered', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const panel = insights(page)
+    await panel.getByRole('radio', { name: 'Acres' }).click()
+    await expect(panel.getByRole('region', { name: 'Headline' })).toContainText('244acres')
+    await expect(panel.getByRole('region', { name: 'Headline' })).not.toContainText('km²')
+    await expect(panel.getByRole('button', { name: /\+3 ft adds/ })).toContainText('1,592 acres')
+    await expect(panel.getByRole('button', { name: /^\+3 ft: 1,837 acres of land underwater/ })).toBeVisible()
+    // Low spots are listed even though their map layer is off by default.
+    await expect(panel.getByText('Low spots at +2 ft')).toBeVisible()
+    await page.reload()
+    await waitForMap(page)
+    await expect(insights(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('in-map controls: 2D/3D keeps the level, "show all" restores the 3D city view', async ({ page }) => {

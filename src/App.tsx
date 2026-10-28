@@ -8,7 +8,7 @@ import { TopBar } from './components/layout/TopBar'
 import { MapLegend } from './components/map/MapLegend'
 import { MapView } from './components/map/MapView'
 import { ResizeHandle } from './components/ui/ResizeHandle'
-import { formatKm2, formatScenario } from './lib/format'
+import { AREA_UNITS, formatArea, formatScenario } from './lib/format'
 import { scenarioByFeet } from './lib/manifest'
 import { useInspection } from './hooks/useInspection'
 import { useManifest } from './hooks/useManifest'
@@ -56,7 +56,7 @@ export default function App() {
     if (!manifest) return manifestState.status === 'error' ? 'Data unavailable' : 'Loading…'
     const s = scenarioByFeet(manifest, state.scenarioFt)
     if (!s) return '—'
-    return s.feet === 0 ? 'Today’s high tide' : `${formatKm2(s.beyondBaselineM2)} km² of land underwater`
+    return s.feet === 0 ? 'Today’s high tide' : `${formatArea(s.beyondBaselineM2, state.areaUnit)} ${AREA_UNITS[state.areaUnit].short} of land underwater`
   })()
 
   const insightProps = { manifestState, inspection, bands: mapData.bands, highlightFt, onHighlight: setHighlightFt }

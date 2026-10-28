@@ -1,12 +1,14 @@
 import { AlertTriangle, ArrowRight, Loader2, MousePointerClick } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { formatAcres, formatKm2, formatPercent, formatScenario } from '../../lib/format'
+import { AREA_UNITS, formatArea, formatPercent, formatScenario } from '../../lib/format'
 import { lowLyingByFeet, scenarioByFeet, type FloodBand } from '../../lib/manifest'
 import { bandColor } from '../../lib/theme'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { ManifestState } from '../../hooks/useManifest'
 import { useAppDispatch, useAppState } from '../../state/AppState'
 import { ScenarioAreaChart } from '../charts/ScenarioAreaChart'
+import { AreaUnitToggle } from '../ui/AreaUnitToggle'
+import { Swatch } from '../ui/Swatch'
 import { InspectionCard } from './InspectionCard'
 
 interface Props {
@@ -24,7 +26,10 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
   const dispatch = useAppDispatch()
   const manifest = manifestState.manifest
   const s = manifest ? scenarioByFeet(manifest, state.scenarioFt) : undefined
-  const low = manifest && state.layers.lowLying ? lowLyingByFeet(manifest, state.scenarioFt) : undefined
+  // Low spots are reported whether or not their map layer is on: they're part of the answer.
+  const low = manifest ? lowLyingByFeet(manifest, state.scenarioFt) : undefined
+  const unit = state.areaUnit
+  const unitShort = AREA_UNITS[unit].short
   const landM2 = manifest?.studyArea.boundary?.censusLandM2
 
   // A new selection is the user's latest question: bring its answer into view.
@@ -85,32 +90,35 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
 
         {manifestState.status === 'ready' && s && (
           <>
-            {/* Hero metric */}
-            <section aria-label="Headline">
-              {/* "Land" carries "newly": it means ground that is dry at today's high tide. */}
-              <p className="t-overline">{s.feet === 0 ? 'Today’s high tide' : `Land underwater at ${formatScenario(s.feet)}`}</p>
-              {s.feet === 0 ? (
-                <>
-                  <p className="mt-1 t-metric">Where we start</p>
-                  <p className="mt-1 t-body">This is how far high tide reaches today. Raise the sea level to see what changes.</p>
-                </>
-              ) : (
-                <>
-                  <p className="mt-1">
-                    <span className="t-metric">{formatKm2(s.beyondBaselineM2)}</span>
-                    <span className="ml-1 text-base text-fg-muted">km²</span>
-                  </p>
-                  <p className="mt-0.5 t-body">
-                    About {formatAcres(s.beyondBaselineM2)} acres
-                    {landM2 ? <>, roughly {formatPercent(s.beyondBaselineM2 / landM2, true)} of the city’s land</> : null}
-                  </p>
-                </>
-              )}
-            </section>
+            {/* Hero metric, with the unit switch for everything in this section */}
+            <div className="flex items-start justify-between gap-3">
+              <section aria-label="Headline" className="min-w-0 flex-1">
+                {/* "Land" carries "newly": it means ground that is dry at today's high tide. */}
+                <p className="t-overline">{s.feet === 0 ? 'Today’s high tide' : `Land underwater at ${formatScenario(s.feet)}`}</p>
+                {s.feet === 0 ? (
+                  <>
+                    <p className="mt-1 t-metric">Where we start</p>
+                    <p className="mt-1 t-body">This is how far high tide reaches today. Raise the sea level to see what changes.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-1">
+                      <span className="t-metric">{formatArea(s.beyondBaselineM2, unit)}</span>
+                      <span className="ml-1 text-base text-fg-muted">{unitShort}</span>
+                    </p>
+                    {landM2 ? (
+                      <p className="mt-0.5 t-body">Roughly {formatPercent(s.beyondBaselineM2 / landM2, true)} of the city’s land</p>
+                    ) : null}
+                  </>
+                )}
+              </section>
+              <AreaUnitToggle value={unit} onChange={(u) => dispatch({ type: 'setAreaUnit', unit: u })} />
+            </div>
 
             {/* Chart */}
             <ScenarioAreaChart
               bands={bands}
+              unit={unit}
               selectedFt={state.scenarioFt}
               highlightFt={highlightFt}
               onHighlight={onHighlight}
@@ -143,18 +151,27 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                         >
                           <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
                           <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
-                          <span className="text-[13px] text-fg tabular">{formatKm2(b.addedM2)} km²</span>
-                          <span className="w-[74px] text-right t-caption tabular">{formatAcres(b.addedM2)} acres</span>
+                          <span className="text-[13px] text-fg tabular">
+                            {formatArea(b.addedM2, unit)} {unitShort}
+                          </span>
                         </button>
                       </li>
                     )
                   })}
               </ul>
               {low && (
-                <p className="mt-2 flex items-center gap-2 t-caption">
-                  <span className="h-3 w-3 shrink-0 rounded-sm border border-dashed border-lowlying bg-lowlying/20" aria-hidden />
-                  Plus {formatKm2(low.areaM2)} km² of low spots cut off from the sea, not counted above
-                </p>
+                <div className="mt-2 flex items-start gap-3 border-t border-line pt-3">
+                  <span className="mt-1 shrink-0" aria-hidden>
+                    <Swatch kind="lowLying" size={12} />
+                  </span>
+                  <p className="min-w-0 flex-1">
+                    <span className="block t-label text-fg">Low spots {low.feet === 0 ? 'today' : `at ${formatScenario(low.feet)}`}</span>
+                    <span className="block t-caption">Cut off from the sea, so not counted above</span>
+                  </p>
+                  <span className="text-[13px] text-fg tabular">
+                    {formatArea(low.areaM2, unit)} {unitShort}
+                  </span>
+                </div>
               )}
             </section>
           </>

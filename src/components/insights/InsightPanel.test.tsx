@@ -43,7 +43,8 @@ describe('<InsightPanel>', () => {
     // 500,000 m² beyond baseline at +2 ft in the fixture → 0.50 km², 124 acres
     expect(screen.getByText('Land underwater at +2 ft')).toBeInTheDocument()
     expect(screen.getAllByText('0.50').length).toBeGreaterThan(0)
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('About 124 acres')
+    // One unit at a time: no acres alongside the km² figure.
+    expect(screen.getByRole('region', { name: 'Headline' })).not.toHaveTextContent('acres')
   })
 
   it('relates the headline to the city’s land area when the Census boundary is known', () => {
@@ -74,17 +75,59 @@ describe('<InsightPanel>', () => {
       </AppStateProvider>,
     )
     // 500,000 m² of 10 km² land → 5.0%
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('roughly 5% of the city’s land')
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('Roughly 5% of the city’s land')
   })
 
-  it('breaks the total down by the area each foot adds', () => {
+  it('breaks the total down by the area each foot adds, in one unit', () => {
     ready()
     const list = screen.getByRole('list', { name: '' }) // breakdown list
     expect(within(list).getByText('+1 ft adds')).toBeInTheDocument()
     expect(within(list).getByText('0.48 km²')).toBeInTheDocument()
     expect(within(list).getByText('1.80 km²')).toBeInTheDocument()
+    expect(within(list).queryByText(/acres/)).toBeNull()
+  })
+
+  it('switches the headline, chart and breakdown between km² and acres', async () => {
+    ready()
+    const km2 = screen.getByRole('radio', { name: 'Square kilometres' })
+    expect(km2).toHaveAttribute('aria-checked', 'true')
+    await userEvent.click(screen.getByRole('radio', { name: 'Acres' }))
+
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('124acres')
+    expect(screen.getByRole('region', { name: 'Headline' })).not.toHaveTextContent('km²')
+    expect(screen.getByText('Acres, City of Miami Beach')).toBeInTheDocument()
+    const list = screen.getByRole('list', { name: '' })
     // Units are spelled out: "acres", never the abbreviation "ac".
     expect(within(list).getByText('445 acres')).toBeInTheDocument()
+    expect(within(list).queryByText(/km²/)).toBeNull()
+
+    // Arrow keys move within the group, like any radio group.
+    screen.getByRole('radio', { name: 'Acres' }).focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(km2).toHaveAttribute('aria-checked', 'true')
+    expect(km2).toHaveFocus()
+  })
+
+  it('reports low spots even when their map layer is off', () => {
+    const withLow = makeManifest({
+      comparisons: manifest.comparisons,
+      lowLying: [{ id: 'low_2ft', feet: 2, kind: 'low', sourceLayer: 'FL_SE_low_2_0ft', file: 'low_2ft.geojson', areaM2: 940_000, bytes: 1, featureCount: 1, vertexCount: 1 }],
+    })
+    render(
+      <AppStateProvider initial={{ ...initialState, available: [0, 1, 2, 3], scenarioFt: 2 }}>
+        <InsightPanel
+          manifestState={{ status: 'ready', manifest: withLow, error: null }}
+          inspection={{ status: 'idle' }}
+          bands={bandsFor(withLow)}
+          highlightFt={null}
+          onHighlight={() => {}}
+        />
+      </AppStateProvider>,
+    )
+    expect(initialState.layers.lowLying).toBe(false)
+    expect(screen.getByText('Low spots at +2 ft')).toBeInTheDocument()
+    expect(screen.getByText('0.94 km²')).toBeInTheDocument()
+    expect(screen.getByText('Cut off from the sea, so not counted above')).toBeInTheDocument()
   })
 
   it('titles the chart with its finding and names the measure and place underneath', () => {

@@ -17,6 +17,17 @@ export function formatAcres(m2: number): string {
   return Math.round(ac).toLocaleString('en-US')
 }
 
+/** The area unit the Insights panel shows. One at a time, so each figure has a single clear reading. */
+export type AreaUnit = 'km2' | 'acres'
+
+export const AREA_UNITS: Record<AreaUnit, { short: string; long: string; title: string }> = {
+  km2: { short: 'km²', long: 'square kilometres', title: 'Square kilometres' },
+  acres: { short: 'acres', long: 'acres', title: 'Acres' },
+}
+
+export const formatArea = (m2: number, unit: AreaUnit) => (unit === 'km2' ? formatKm2(m2) : formatAcres(m2))
+export const toUnit = (m2: number, unit: AreaUnit) => m2 / (unit === 'km2' ? M2_PER_KM2 : M2_PER_ACRE)
+
 /** Small polygon areas read better in m² */
 export function formatSmallArea(m2: number): string {
   if (m2 < 10_000) return `${Math.round(m2).toLocaleString('en-US')} m²`

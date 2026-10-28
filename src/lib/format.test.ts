@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatAcres, formatCoord, formatKm2, formatPercent, formatScenario, formatScenarioLong, formatSmallArea } from './format'
+import { formatAcres, formatArea, formatCoord, formatKm2, formatPercent, formatScenario, formatScenarioLong, formatSmallArea, toUnit } from './format'
 
 describe('format', () => {
   it('formats km² with magnitude-aware precision', () => {
@@ -27,5 +27,12 @@ describe('format', () => {
     expect(formatPercent(0.0004)).toBe('<0.1%')
     expect(formatPercent(0.598)).toBe('60%')
     expect(formatCoord(-80.1342, 25.7811)).toBe('25.78110° N, 80.13420° W')
+  })
+
+  it('formats an area in the chosen unit only', () => {
+    expect(formatArea(7_432_662.7, 'km2')).toBe('7.43')
+    expect(formatArea(7_432_662.7, 'acres')).toBe('1,837')
+    expect(toUnit(4046.8564224, 'acres')).toBeCloseTo(1)
+    expect(toUnit(2_000_000, 'km2')).toBe(2)
   })
 })

@@ -64,3 +64,12 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Card, not reached | Water reaches it / Not by +3 ft | Up to +3 ft / Water doesn't reach it |
 | Mobile summary | 0.99 km² newly underwater | 0.99 km² of land underwater |
 | Chart bar (screen reader) | +2 ft: 0.99 square kilometres newly underwater | +2 ft: 0.99 square kilometres of land underwater |
+
+## Before and after (v0.8 → v0.9)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Headline detail | About 1,837 acres, roughly 37% of the city's land (under 7.43 km²) | Roughly 37% of the city's land (the number above is in the chosen unit) |
+| Breakdown row | +3 ft adds · 6.44 km² · 1,592 acres | +3 ft adds · 6.44 km² (or 1,592 acres) |
+| Low spots | Plus 0.29 km² of low spots cut off from the sea, not counted above (only with the layer on) | Low spots at +3 ft · 0.29 km² · Cut off from the sea, so not counted above (always) |
+| Unit switch | (none) | km² / acres. Screen readers hear "Area unit: Square kilometres / Acres" |

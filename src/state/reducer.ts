@@ -1,4 +1,5 @@
 import type { Feature, MultiPolygon, Polygon } from 'geojson'
+import type { AreaUnit } from '../lib/format'
 import type { LngLat } from '../lib/geo'
 
 export type ViewMode = '3d' | '2d'
@@ -38,6 +39,8 @@ export interface AppState {
   inspectCenterToken: number
   /** Mobile/tablet drawers; desktop panels can be collapsed too. */
   panels: { controls: boolean; insights: boolean }
+  /** Unit for areas in the Insights panel; remembered in this browser. */
+  areaUnit: AreaUnit
 }
 
 export type Action =
@@ -52,6 +55,7 @@ export type Action =
   | { type: 'resetCamera' }
   | { type: 'inspectCenter' }
   | { type: 'setPanel'; panel: keyof AppState['panels']; open: boolean }
+  | { type: 'setAreaUnit'; unit: AreaUnit }
 
 export const DEFAULT_SCENARIO_FT = 2
 
@@ -65,6 +69,7 @@ export const initialState: AppState = {
   cameraResetToken: 0,
   inspectCenterToken: 0,
   panels: { controls: true, insights: true },
+  areaUnit: 'km2',
 }
 
 /** Nearest available scenario to `target`, preferring the lower one on ties. */
@@ -108,6 +113,8 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, inspectCenterToken: state.inspectCenterToken + 1 }
     case 'setPanel':
       return { ...state, panels: { ...state.panels, [action.panel]: action.open } }
+    case 'setAreaUnit':
+      return action.unit === state.areaUnit ? state : { ...state, areaUnit: action.unit }
     default:
       return state
   }

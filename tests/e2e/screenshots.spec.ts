@@ -59,6 +59,12 @@ test.describe('screenshots', () => {
     await page.mouse.move(700, 120)
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/09-north-beach-not-reached.png` })
+
+    // Insights in acres, with low spots listed below the breakdown
+    await page.keyboard.press('Escape')
+    await page.getByRole('radio', { name: 'Acres' }).click()
+    await page.waitForTimeout(800)
+    await page.screenshot({ path: `${OUT}/10-insights-acres.png` })
   })
 
   test('mobile states', async ({ page }) => {
