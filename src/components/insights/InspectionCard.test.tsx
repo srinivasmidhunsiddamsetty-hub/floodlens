@@ -42,7 +42,7 @@ describe('<InspectionCard>', () => {
 
   it('leads with the first water level that reaches it, and shows every level in context', () => {
     card(levels(3))
-    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('At +3 ft')
+    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^\+3 ft$/)
     const levelsList = screen.getByRole('list', { name: 'Water at this spot, by sea level' })
     expect(within(levelsList).getAllByRole('listitem')).toHaveLength(4)
     expect(within(levelsList).getAllByText('water doesn’t reach it')).toHaveLength(3)
@@ -66,7 +66,7 @@ describe('<InspectionCard>', () => {
 
   it('says water doesn’t reach it up to +3 ft, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('Not up to +3 ft')
+    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent('Not up to +3 ft')
     expect(screen.queryByText(/dry|safe/i)).toBeNull()
   })
 
@@ -82,9 +82,9 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText('Water reaches it')).toBeNull()
   })
 
-  it('says "already today" for places water reaches at today’s high tide', () => {
+  it('says "Today" for places water reaches at today’s high tide', () => {
     card(levels(0))
-    expect(screen.getByText('When water reaches it').nextSibling).toHaveTextContent('Already today')
+    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^Today$/)
   })
 
   it('keeps height and footprint for a spot that isn’t a building, with no value', () => {

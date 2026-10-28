@@ -122,18 +122,17 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           const shownOnMap = reached && firstFeet <= scenarioFt
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
 
-          // Label and answer read as one sentence: "When water reaches it: at +3 ft",
-          // "already today" (at today's high tide; the Today pin says so too). Never
-          // "safe" or "dry": NOAA's map not reaching a place isn't a promise, and we
-          // only map up to +3 ft.
-          const answer = !reached ? `Not up to ${formatScenario(top)}` : firstFeet === 0 ? 'Already today' : `At ${formatScenario(firstFeet)}`
+          // Label and answer: "Water reaches at +3 ft", or "Today" (today's high tide, the
+          // same name as the first pin). Never "safe" or "dry": NOAA's map not reaching a
+          // place isn't a promise, and we only map up to +3 ft.
+          const answer = !reached ? `Not up to ${formatScenario(top)}` : firstFeet === 0 ? 'Today' : formatScenario(firstFeet)
 
           return (
             <div aria-live="polite">
               {/* The answer, emphasised, with every level in context below it */}
               <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-3 pb-2.5">
-                <p className="t-overline">When water reaches it</p>
-                <p className={`text-[24px] leading-8 font-semibold tracking-tight ${reached ? 'text-accent-strong' : 'text-fg'}`}>{answer}</p>
+                <p className="t-overline">Water reaches at</p>
+                <p className="text-[20px] leading-7 font-semibold tracking-tight text-fg tabular">{answer}</p>
                 <div className="mt-2.5">
                   <LevelTrack levels={hits} firstFeet={firstFeet} scenarioFt={scenarioFt} />
                 </div>

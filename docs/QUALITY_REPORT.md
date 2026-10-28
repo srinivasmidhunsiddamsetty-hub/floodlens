@@ -29,6 +29,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - A one-column card (when water reaches it, height, footprint, low spot) with a level track of pins on rising water, chips restored, the bottom "What this map can and can't tell you" link restored, and no visible Insights title; fits at 1440×850 in every state (v0.11).
 - The first-reached answer back as the card's large lead, over a level track with "Not reached / First reached / Reached" pins and water that stops at the first level that reaches the place; summary and chart on tiles; coordinate copy button; distance to street removed; fits at 1440×900 (v0.12).
 - The card answer back to v0.11's wording ("When water reaches it · At +3 ft"), status labels and copy button dropped, height and footprint always listed, a one-line chart title, and the bottom link pinned to the panel's bottom edge (v0.13).
+- One tile for the summary and chart (they share the unit switch), "Water reaches at · +3 ft" in smaller black type, and no blue numbers anywhere (v0.14).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**

@@ -163,6 +163,11 @@ The product went through numbered versions, each tagged in git with screenshots 
   - The chart title is one plain line.
   - The bottom link is a pinned footer.
   Lesson: take a reference's layout, not its words, and change only what was asked.
+- **v0.13 → v0.14:** the summary and chart sat on separate tiles but used one unit switch, the answer label was wordier than needed, and blue numbers competed with links. Fixes:
+  - One tile for both.
+  - "Water reaches at · +3 ft".
+  - A smaller answer (20 px).
+  - Every number in black.
 
 ## 11. Known limitations
 

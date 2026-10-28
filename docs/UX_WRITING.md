@@ -23,7 +23,7 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
 8. **A label and its value read as one sentence.** "Water reaches it · At +3 ft". "Up to +3 ft · Water doesn't reach it". Never pair a label with a value that contradicts it.
 9. **Chart titles are one plain line that names the measure: "Land underwater by sea level".** v0.8–v0.12 followed the [ONS](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) / [GOV.UK](https://brand.design-system.service.gov.uk/data/charts) pattern of a finding as the title plus a measure-and-place subtitle. In a small tile under a "Land underwater" summary, that was more text than the reader needed, so v0.13 cut it to one line.
-10. **A reference is a reference.** When a mockup is supplied, take its layout and emphasis, not its wording. The answer keeps FloodLens's voice ("When water reaches it · At +3 ft"), not the mockup's ("First reached / at +3 ft / Within the mapped extent…").
+10. **A reference is a reference.** When a mockup is supplied, take its layout and emphasis, not its wording. The answer keeps FloodLens's voice ("Water reaches at · +3 ft"), not the mockup's ("First reached / at +3 ft / Within the mapped extent…").
 
 ## Before and after (v0.6 → v0.7)
 
@@ -119,3 +119,11 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Level pins | Today · Not reached … +3 ft · First reached | Today, +1 ft, +2 ft, +3 ft (the first level in blue) |
 | Chart title | The biggest jump comes at +3 ft / Land underwater, km², City of Miami Beach | Land underwater by sea level |
 | Facts, not a building | (Height and Footprint rows hidden) | Height — / Footprint — |
+
+## Before and after (v0.13 → v0.14)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card answer | WHEN WATER REACHES IT / At +3 ft | WATER REACHES AT / +3 ft |
+| Card, today | WHEN WATER REACHES IT / Already today | WATER REACHES AT / Today |
+| Card, not reached | WHEN WATER REACHES IT / Not up to +3 ft | WATER REACHES AT / Not up to +3 ft |

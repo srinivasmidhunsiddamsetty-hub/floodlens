@@ -140,7 +140,7 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
           .selectAll<SVGTextElement, number>('.tick text')
           .attr('font-size', 11)
           .attr('font-weight', (d) => (d === selectedFt ? 600 : 400))
-          .attr('fill', (d) => (d === selectedFt ? colors.accent : colors.chartAxis)),
+          .attr('fill', (d) => (d === selectedFt ? colors.chartLabel : colors.chartAxis)),
       )
 
     const t = d3.transition().duration(reduced ? 0 : 400).ease(d3.easeCubicOut)

@@ -17,8 +17,22 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.11 | 28 Oct 2026 | One-column card with a level track, chips and bottom link back | [`docs/versions/v0.11/`](docs/versions/v0.11/) |
 | v0.12 | 28 Oct 2026 | First-reached answer as the card's lead, summary and chart on tiles | [`docs/versions/v0.12/`](docs/versions/v0.12/) |
 | v0.13 | 28 Oct 2026 | Agreed wording back, facts always listed, chart title, pinned footer link | [`docs/versions/v0.13/`](docs/versions/v0.13/) |
+| v0.14 | 28 Oct 2026 | One tile for the area figures, "Water reaches at", no blue numbers | [`docs/versions/v0.14/`](docs/versions/v0.14/) |
 
 ---
+
+## v0.14: One tile, plain numbers (28 Oct 2026)
+
+Driven by a design review of v0.13.
+
+- **One tile for the area figures.** "Land underwater" (the figures at the chosen level) and "Land underwater by sea level" (the chart and per-foot breakdown) share the km² / acres switch, so they now share one tile, with a hairline between them.
+- **"Water reaches at"** replaces "When water reaches it", with the level as the answer:
+  - "WATER REACHES AT / **+3 ft**"
+  - "Today" (water reaches it at today's high tide)
+  - "Not up to +3 ft"
+- **A smaller answer.** It's 20 px instead of 24 px, in black instead of blue.
+- **No blue numbers.** The first-reached pin's label and the chart's selected axis label are now bold black instead of blue. Blue stays only on links ("You're looking at +2 ft. See it at +3 ft", "What this map can and can't tell you"), pins, the bar's selection ring and the selected area chip.
+- Tests: 99 unit/component tests and 17 end-to-end tests.
 
 ## v0.13: Reference, not replica (28 Oct 2026)
 

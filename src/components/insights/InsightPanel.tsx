@@ -84,9 +84,9 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
 
         {manifestState.status === 'ready' && s && (
           <>
-            {/* Tile 1: the answer at the chosen level, with the unit switch for both tiles.
-                Each block of information sits on its own tile, like the selected-place card. */}
-            <section aria-labelledby="summary-title" className="mt-2.5 rounded-xl border border-line bg-surface p-3">
+            {/* One tile for everything the km² / acres switch controls: the figures at the
+                chosen level, then every level in the chart, with what each foot adds. */}
+            <section aria-labelledby="summary-title" className="mt-2.5 rounded-xl border border-line bg-surface px-3 pt-3 pb-1.5">
               <div className="flex items-center justify-between gap-3">
                 <h3 id="summary-title" className="flex items-center gap-2 t-heading font-semibold">
                   <Waves className="size-4 shrink-0 text-accent" aria-hidden />
@@ -116,70 +116,69 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                   ) : null}
                 </dl>
               )}
+
+              <div className="mt-3 border-t border-line pt-3">
+                <ScenarioAreaChart
+                  bands={bands}
+                  unit={unit}
+                  selectedFt={state.scenarioFt}
+                  highlightFt={highlightFt}
+                  onHighlight={onHighlight}
+                  onSelect={(feet) => dispatch({ type: 'setScenario', feet })}
+                />
+
+                {/* Breakdown: doubles as the chart's key; hover to spotlight a band on the map */}
+                <section aria-labelledby="breakdown-title">
+                  <h3 id="breakdown-title" className="sr-only">
+                    Area added by each foot
+                  </h3>
+                  <ul className="-mx-2" onMouseLeave={() => onHighlight(null)}>
+                    {bands
+                      .filter((b) => !b.isReference)
+                      .map((b) => {
+                        // Only levels on the map can be spotlighted there, but every row
+                        // stays at full strength: the numbers hold at any slider position.
+                        const shown = b.feet <= state.scenarioFt
+                        return (
+                          <li key={b.feet}>
+                            <button
+                              type="button"
+                              onMouseEnter={() => shown && onHighlight(b.feet)}
+                              onFocus={() => shown && onHighlight(b.feet)}
+                              onBlur={() => onHighlight(null)}
+                              onClick={() => dispatch({ type: 'setScenario', feet: b.feet })}
+                              className={`flex w-full items-center gap-3 rounded px-2 py-[3px] text-left transition-colors hover:bg-surface-2 ${
+                                highlightFt === b.feet ? 'bg-surface-2' : ''
+                              }`}
+                            >
+                              <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
+                              <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
+                              <span className="text-[13px] text-fg tabular">
+                                {formatArea(b.addedM2, unit)} {unitShort}
+                              </span>
+                            </button>
+                          </li>
+                        )
+                      })}
+                  </ul>
+                  {low && (
+                    <div className="mt-1.5 border-t border-line pt-2">
+                      <p className="flex items-center gap-3">
+                        <span className="shrink-0" aria-hidden>
+                          <Swatch kind="lowLying" size={12} />
+                        </span>
+                        <span className="flex-1 t-label text-fg">Low spots {low.feet === 0 ? 'today' : `at ${formatScenario(low.feet)}`}</span>
+                        <span className="text-[13px] text-fg tabular">
+                          {formatArea(low.areaM2, unit)} {unitShort}
+                        </span>
+                      </p>
+                      {/* Full width under the label, so it stays on one line */}
+                      <p className="pl-6 t-caption">Cut off from the sea, so not counted above</p>
+                    </div>
+                  )}
+                </section>
+              </div>
             </section>
-
-            {/* Tile 2: every level side by side, with what each foot adds */}
-            <div className="mt-2.5 rounded-xl border border-line bg-surface px-3 pt-3 pb-1.5">
-              <ScenarioAreaChart
-                bands={bands}
-                unit={unit}
-                selectedFt={state.scenarioFt}
-                highlightFt={highlightFt}
-                onHighlight={onHighlight}
-                onSelect={(feet) => dispatch({ type: 'setScenario', feet })}
-              />
-
-              {/* Breakdown: doubles as the chart's key; hover to spotlight a band on the map */}
-              <section aria-labelledby="breakdown-title">
-                <h3 id="breakdown-title" className="sr-only">
-                  Area added by each foot
-                </h3>
-                <ul className="-mx-2" onMouseLeave={() => onHighlight(null)}>
-                  {bands
-                    .filter((b) => !b.isReference)
-                    .map((b) => {
-                      // Only levels on the map can be spotlighted there, but every row
-                      // stays at full strength: the numbers hold at any slider position.
-                      const shown = b.feet <= state.scenarioFt
-                      return (
-                        <li key={b.feet}>
-                          <button
-                            type="button"
-                            onMouseEnter={() => shown && onHighlight(b.feet)}
-                            onFocus={() => shown && onHighlight(b.feet)}
-                            onBlur={() => onHighlight(null)}
-                            onClick={() => dispatch({ type: 'setScenario', feet: b.feet })}
-                            className={`flex w-full items-center gap-3 rounded px-2 py-[3px] text-left transition-colors hover:bg-surface-2 ${
-                              highlightFt === b.feet ? 'bg-surface-2' : ''
-                            }`}
-                          >
-                            <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
-                            <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
-                            <span className="text-[13px] text-fg tabular">
-                              {formatArea(b.addedM2, unit)} {unitShort}
-                            </span>
-                          </button>
-                        </li>
-                      )
-                    })}
-                </ul>
-                {low && (
-                  <div className="mt-1.5 border-t border-line pt-2">
-                    <p className="flex items-center gap-3">
-                      <span className="shrink-0" aria-hidden>
-                        <Swatch kind="lowLying" size={12} />
-                      </span>
-                      <span className="flex-1 t-label text-fg">Low spots {low.feet === 0 ? 'today' : `at ${formatScenario(low.feet)}`}</span>
-                      <span className="text-[13px] text-fg tabular">
-                        {formatArea(low.areaM2, unit)} {unitShort}
-                      </span>
-                    </p>
-                    {/* Full width under the label, so it stays on one line */}
-                    <p className="pl-6 t-caption">Cut off from the sea, so not counted above</p>
-                  </div>
-                )}
-              </section>
-            </div>
           </>
         )}
 
