@@ -65,10 +65,11 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
             ))}
           </ol>
 
-          <H>Validation of derived comparison layers</H>
+          <H>Validation of derived layers</H>
           <p className="text-xs">
             Each &ldquo;added extent&rdquo; layer is a polygon difference (higher − lower). The pipeline checks that the lower extent lies
-            inside the higher one and that the difference area equals the change in total area.
+            inside the higher one and that the difference area equals the change in total area. The map&rsquo;s colour bands are the
+            differences between neighbouring levels (0→1, 1→2, 2→3 ft).
           </p>
           <div className="mt-2 overflow-x-auto">
             <table className="w-full text-left text-xs tabular">

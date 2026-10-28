@@ -93,4 +93,31 @@ export function comparisonFor(m: DataManifest, a: number, b: number): Comparison
   return m.comparisons.find((c) => c.fromFt === lo && c.toFt === hi)
 }
 
+export interface FloodBand {
+  /** Water level (ft above MHHW) at which this area is first reached. */
+  feet: number
+  file: string
+  /** Area this level adds beyond the previous level (m²); 0 for the reference level. */
+  addedM2: number
+  isReference: boolean
+}
+
+/**
+ * Splits the cumulative NOAA extents into disjoint bands: the reference extent
+ * (0 ft) plus "area added by each next level", using the validated difference
+ * layers between neighbouring scenarios. Returns only bands whose data exist.
+ */
+export function bandsFor(m: DataManifest): FloodBand[] {
+  const bands: FloodBand[] = []
+  m.scenarios.forEach((s, i) => {
+    if (i === 0) {
+      bands.push({ feet: s.feet, file: s.file, addedM2: 0, isReference: true })
+      return
+    }
+    const c = comparisonFor(m, m.scenarios[i - 1].feet, s.feet)
+    if (c) bands.push({ feet: s.feet, file: c.file, addedM2: c.areaM2, isReference: false })
+  })
+  return bands
+}
+
 export const fileUrl = (file: string) => `${DATA_BASE_URL}${file}`

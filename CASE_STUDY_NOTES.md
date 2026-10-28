@@ -70,8 +70,8 @@ Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet 
 | --- | --- |
 | **Discrete slider** (native `<input type=range>`) with tick shortcuts | Communicates an ordered water-level scale while preventing in-between values that NOAA did not map. The native control gives keyboard, touch and screen-reader behaviour for free. |
 | **Scenario swap preserves the camera** | Users compare by toggling in place, so the view must not jump. |
-| **"Compare with…" instead of two independent selectors** | One extra choice instead of two, and the current scenario stays the anchor. The pair is always ordered low → high. |
-| **Overlay comparison, not swipe/split** | A swipe needs two synchronized WebGL maps. An overlay with a validated difference layer was more reliable in scope and shows "what's new" directly. |
+| **Flood bands instead of a compare mode (v0.3)** | Colouring each area by the level that first reaches it shows every level's contribution on one map. The v0.2 compare toggle needed explaining; the bands don't. |
+| **In-map camera controls (v0.3)** | Zoom, compass, Home and 2D/3D act on the map, so they live on it. This removed duplicate reset buttons. |
 | **Overlays beneath basemap water** | NOAA's 0 ft extent includes open water. Drawing it beneath the water layer makes blue appear only where water reaches land, which is the planner's question, without altering the data. |
 | **Inspection probes all scenarios** | Answers "at what level does this place first fall inside the mapped extent?", which is more useful than a yes/no for the current scenario. |
 | **Building clicks use the footprint**, not the click point | In 3D a roof click unprojects to the ground behind the building. Using the footprint is both more correct and more meaningful. |
@@ -122,6 +122,13 @@ Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet 
 **Measures:** task success, time on task, errors, SEQ per task, SUS overall, and qualitative notes on terminology ("MHHW", "ocean-connected", "added extent") and trust.
 
 **Hypotheses to check:** the headline sentence improves comprehension over numbers alone; overlay comparison beats side-by-side for spotting change; users don't over-interpret "within the mapped extent" as certainty.
+
+## 10a. Iteration log
+
+The product went through numbered versions, each tagged in git with screenshots (see [CHANGELOG.md](CHANGELOG.md)):
+
+- **v0.1 → v0.2:** the dark "control-room" look read as decorative. Moved to a light, ArcGIS/Calcite-like UI with a geographic basemap and Roboto, to match the tools planners already use.
+- **v0.2 → v0.3:** a design review found that one blue for every level hid *how* flooding spreads, that the compare toggle was hard to understand, that reset controls were duplicated, that building selection was unreliable in 3D, and that the panels lacked hierarchy. Fixes: flood bands, in-map controls, one headline number, a redesigned building card, a type scale, and ray-based 3D picking.
 
 ## 11. Known limitations
 

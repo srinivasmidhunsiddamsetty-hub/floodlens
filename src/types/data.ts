@@ -99,6 +99,8 @@ export interface ExtentProperties {
   fromFt?: number
   toFt?: number
   source?: string
+  /** Set client-side: the water level (ft) at which this area is first reached. */
+  band?: number
 }
 
 export type ExtentFeature = Feature<Polygon | MultiPolygon, ExtentProperties>

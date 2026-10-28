@@ -94,6 +94,58 @@
     font-weight: 500;
     color: var(--color-fg);
   }
+  /* Type scale — Roboto. One role per class so hierarchy stays consistent. */
+  .t-display {
+    font-size: 36px;
+    line-height: 40px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-fg);
+  }
+  .t-metric {
+    font-size: 28px;
+    line-height: 32px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-fg);
+  }
+  .t-title {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    color: var(--color-fg);
+  }
+  .t-heading {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    color: var(--color-fg);
+  }
+  .t-label {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+  .t-body {
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--color-fg-muted);
+  }
+  .t-caption {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--color-fg-subtle);
+  }
+  .t-overline {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-fg-subtle);
+  }
   .tabular {
     font-variant-numeric: tabular-nums;
   }
@@ -214,22 +266,11 @@
 .fl-range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
-  background: linear-gradient(
-    to right,
-    var(--color-accent) 0%,
-    var(--color-accent) var(--fill, 0%),
-    #d4d4d4 var(--fill, 0%)
-  );
+  background: transparent;
 }
 .fl-range::-moz-range-track {
   height: 4px;
-  border-radius: 999px;
-  background: #d4d4d4;
-}
-.fl-range::-moz-range-progress {
-  height: 4px;
-  border-radius: 999px;
-  background: var(--color-accent);
+  background: transparent;
 }
 .fl-range::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -239,7 +280,7 @@
   height: 20px;
   border-radius: 999px;
   background: #fff;
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-fg);
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
   transition: box-shadow 120ms;
 }
@@ -248,7 +289,7 @@
   height: 16px;
   border-radius: 999px;
   background: #fff;
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-fg);
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
 }
 .fl-range:focus-visible::-webkit-slider-thumb {

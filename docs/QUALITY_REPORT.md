@@ -1,6 +1,6 @@
 # Quality report
 
-Status as of 23 Oct 2026. Every "passed" below was actually executed in this environment (macOS, Node 24, Chrome).
+Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in this environment (macOS, Node 24, Chrome).
 
 ## Implemented
 
@@ -17,7 +17,8 @@ Status as of 23 Oct 2026. Every "passed" below was actually executed in this env
 - D3 bar chart (added extent beyond 0 ft), with highlight, tooltips, keyboard selection and a screen-reader table.
 - Location and building inspection across all scenarios (point-in-polygon or footprint intersection), nearest OSM street and OSM height.
 - 2D/3D toggle with animated pitch and bearing, kept in sync with manual tilting.
-- Scenario comparison using validated, precomputed polygon differences (6 pairs).
+- Flood bands by water level (today / +1 / +2 / +3 ft) from validated, precomputed polygon differences, with spotlight on hover (v0.3; replaced the v0.2 compare mode).
+- In-map camera controls (zoom, compass, Home, 2D/3D) and 3D-accurate building picking (v0.3).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
@@ -31,14 +32,14 @@ Status as of 23 Oct 2026. Every "passed" below was actually executed in this env
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **8 files, 68 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **11 passed** (10 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
+| Unit and component tests | `npm test` | **9 files, 75 tests passed** |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **12 passed** (11 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 390 KB gzip (MapLibre 285 KB); data 7.8 MB raw, lazy-loaded per state |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage; all 6 difference validations passed |
 | Contrast (computed) | WCAG formula on design tokens | All text tokens ≥ 4.7:1 on every surface (accent blue 5.0–5.8:1); unselected switch border 3.5:1; map place labels 9.5:1, road labels 5.9:1 |
 
-What the E2E suite covers: initial load with no console errors or failed requests; NOAA figures shown; attribution present; keyboard slider (Arrow, Home, End) swapping the scenario file without a page reload; chart bar selection; 2D/3D pitch (checked through the compass transform); comparison loading the difference layer and updating the legend and summary; centre inspection producing 4 scenario rows; layer toggles and legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing scenario file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
+What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Play the rise stepping to +3 ft and stopping; chart bars and breakdown rows selecting levels; in-map 2D/3D (pitch read from the control stack) and Home restoring 3D, with no duplicate reset buttons; keyboard inspection (Enter on the map) with a 4-step ladder; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
 
 Geographic calculations are verified by `src/lib/dataIntegrity.test.ts`. Turf areas match the manifest's ellipsoidal areas within 0.5% for all 10 extent and difference files. Difference area ≈ change in totals within 1%. Areas grow monotonically. All coordinates fall inside the study area. A point inside the +1 → +2 ft added extent is outside the 1 ft extent and inside the 2 ft extent.
 

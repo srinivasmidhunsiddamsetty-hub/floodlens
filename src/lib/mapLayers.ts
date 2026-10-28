@@ -1,11 +1,10 @@
 import type { FeatureCollection } from 'geojson'
-import type { ExpressionSpecification, GeoJSONSource, Map as MLMap } from 'maplibre-gl'
+import type { DataDrivenPropertyValueSpecification, ExpressionSpecification, GeoJSONSource, Map as MLMap } from 'maplibre-gl'
 import { GROUND_OVERLAY_BEFORE } from './mapStyle'
-import { colors, opacity } from './theme'
+import { BAND_COLORS, colors, opacity } from './theme'
 
 export const SRC = {
-  extent: 'fl-extent',
-  compare: 'fl-compare',
+  flood: 'fl-flood',
   low: 'fl-low',
   study: 'fl-study',
   mask: 'fl-mask',
@@ -15,10 +14,8 @@ export const SRC = {
 } as const
 
 export const LYR = {
-  extentFill: 'fl-extent-fill',
-  extentLine: 'fl-extent-line',
-  compareFill: 'fl-compare-fill',
-  compareLine: 'fl-compare-line',
+  floodFill: 'fl-flood-fill',
+  floodLine: 'fl-flood-line',
   lowFill: 'fl-low-fill',
   lowLine: 'fl-low-line',
   mask: 'fl-outside-mask',
@@ -27,19 +24,14 @@ export const LYR = {
   buildingsFlat: 'fl-buildings-flat',
   buildingsOutline: 'fl-buildings-outline',
   selectedBuilding3d: 'fl-selected-building-3d',
+  selectedBuildingFill: 'fl-selected-building-fill',
   selectedBuildingLine: 'fl-selected-building-line',
   selectedHalo: 'fl-selected-halo',
   selectedCore: 'fl-selected-core',
 } as const
 
 /** Layers whose features can be hovered / clicked for inspection. */
-export const INTERACTIVE_LAYERS = [
-  LYR.buildings3d,
-  LYR.buildingsFlat,
-  LYR.compareFill,
-  LYR.lowFill,
-  LYR.extentFill,
-] as const
+export const INTERACTIVE_LAYERS = [LYR.buildings3d, LYR.buildingsFlat, LYR.lowFill, LYR.floodFill] as const
 
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] }
 const HATCH = 'fl-hatch'
@@ -51,8 +43,7 @@ function hatchImage(size = 16, ratio = 2) {
   const [r, g, b] = [0x6b, 0x35, 0xaa]
   for (let y = 0; y < px; y++) {
     for (let x = 0; x < px; x++) {
-      const d = (x + y) % (px / 2)
-      const on = d < ratio * 2.2
+      const on = (x + y) % (px / 2) < ratio * 2.2
       const i = (y * px + x) * 4
       data[i] = r
       data[i + 1] = g
@@ -71,9 +62,23 @@ const firstSymbolLayer = (map: MLMap) => map.getStyle().layers?.find((l) => l.ty
 const buildingHeight: ExpressionSpecification = ['coalesce', ['get', 'render_height'], 0]
 const buildingBase: ExpressionSpecification = ['coalesce', ['get', 'render_min_height'], 0]
 
+/** `band` (ft) → ramp colour. */
+const bandColorExpr = [
+  'match',
+  ['get', 'band'],
+  ...Object.entries(BAND_COLORS).flatMap(([ft, c]) => [Number(ft), c]),
+  BAND_COLORS[2],
+] as unknown as ExpressionSpecification
+
+/** Opacity for the flood bands, optionally emphasising one band and dimming the others. */
+export function bandOpacity(highlight: number | null): DataDrivenPropertyValueSpecification<number> {
+  if (highlight === null) return opacity.band
+  return ['case', ['==', ['get', 'band'], highlight], 0.95, opacity.bandDimmed]
+}
+
 /**
  * Adds every FloodLens source and layer to a loaded style.
- * Ground overlays sit beneath basemap water (so they read as "water reaching land"),
+ * Flood bands sit beneath basemap water (so they read as "water reaching land"),
  * buildings sit above the overlays, and labels stay on top of everything.
  */
 export function addFloodLensLayers(map: MLMap) {
@@ -81,68 +86,38 @@ export function addFloodLensLayers(map: MLMap) {
   const labels = firstSymbolLayer(map)
   const hasBasemap = !!map.getSource(SRC.basemap)
 
-  for (const id of [SRC.extent, SRC.compare, SRC.low, SRC.study, SRC.mask, SRC.selectedPoint, SRC.selectedBuilding]) {
-    if (!map.getSource(id)) map.addSource(id, { type: 'geojson', data: EMPTY, generateId: id !== SRC.selectedBuilding })
+  for (const id of Object.values(SRC)) {
+    if (id === SRC.basemap || map.getSource(id)) continue
+    map.addSource(id, { type: 'geojson', data: EMPTY, generateId: id !== SRC.selectedBuilding })
   }
   if (!map.hasImage(HATCH)) map.addImage(HATCH, hatchImage())
 
-  // --- ground overlays (below water) -------------------------------------------------
+  // --- flood bands + low-lying areas (below water) ------------------------------------
   map.addLayer(
     {
-      id: LYR.extentFill,
+      id: LYR.floodFill,
       type: 'fill',
-      source: SRC.extent,
+      source: SRC.flood,
       paint: {
-        'fill-color': colors.flood,
-        'fill-opacity': opacity.flood,
-        'fill-opacity-transition': { duration: 350, delay: 0 },
-        'fill-color-transition': { duration: 350, delay: 0 },
+        'fill-color': bandColorExpr,
+        'fill-opacity': opacity.band,
+        'fill-opacity-transition': { duration: 300, delay: 0 },
       },
     },
     ground,
   )
   map.addLayer(
     {
-      id: LYR.extentLine,
+      id: LYR.floodLine,
       type: 'line',
-      source: SRC.extent,
-      paint: {
-        'line-color': colors.floodLine,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.4, 16, 1.1],
-        'line-opacity': 0.55,
-      },
+      source: SRC.flood,
+      minzoom: 14,
+      paint: { 'line-color': bandColorExpr, 'line-width': 0.6, 'line-opacity': 0.9 },
     },
     ground,
   )
   map.addLayer(
-    {
-      id: LYR.compareFill,
-      type: 'fill',
-      source: SRC.compare,
-      paint: { 'fill-color': colors.compare, 'fill-opacity': opacity.compare },
-    },
-    ground,
-  )
-  map.addLayer(
-    {
-      id: LYR.compareLine,
-      type: 'line',
-      source: SRC.compare,
-      paint: {
-        'line-color': colors.compareLine,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.3, 16, 1],
-        'line-opacity': 0.8,
-      },
-    },
-    ground,
-  )
-  map.addLayer(
-    {
-      id: LYR.lowFill,
-      type: 'fill',
-      source: SRC.low,
-      paint: { 'fill-pattern': HATCH, 'fill-opacity': opacity.lowLying },
-    },
+    { id: LYR.lowFill, type: 'fill', source: SRC.low, paint: { 'fill-pattern': HATCH, 'fill-opacity': opacity.lowLying } },
     ground,
   )
   map.addLayer(
@@ -155,7 +130,7 @@ export function addFloodLensLayers(map: MLMap) {
     ground,
   )
 
-  // --- outside-study-area mask + outline (above roads, below buildings & labels) --------
+  // --- outside-study-area wash + boundary (above roads, below buildings & labels) --------
   map.addLayer(
     { id: LYR.mask, type: 'fill', source: SRC.mask, paint: { 'fill-color': colors.mask, 'fill-opacity': opacity.outsideMask } },
     labels,
@@ -179,7 +154,7 @@ export function addFloodLensLayers(map: MLMap) {
         source: SRC.basemap,
         'source-layer': 'building',
         minzoom: 13,
-        paint: { 'fill-color': colors.building, 'fill-opacity': 0.6 },
+        paint: { 'fill-color': colors.buildingFlat, 'fill-opacity': 0.75 },
       },
       labels,
     )
@@ -203,18 +178,10 @@ export function addFloodLensLayers(map: MLMap) {
         minzoom: 13,
         filter: ['!=', ['get', 'hide_3d'], true],
         paint: {
-          'fill-extrusion-color': [
-            'interpolate',
-            ['linear'],
-            buildingHeight,
-            0,
-            colors.building,
-            80,
-            colors.buildingTall,
-          ],
+          'fill-extrusion-color': ['interpolate', ['linear'], buildingHeight, 0, colors.building, 60, colors.buildingTall],
           'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 13.6, buildingHeight],
           'fill-extrusion-base': buildingBase,
-          'fill-extrusion-opacity': 0.9,
+          'fill-extrusion-opacity': 1,
           'fill-extrusion-vertical-gradient': true,
         },
       },
@@ -222,32 +189,39 @@ export function addFloodLensLayers(map: MLMap) {
     )
   }
 
-  // --- selection --------------------------------------------------------------------------
+  // --- selection (drawn slightly larger than the building so faces never coincide) -------
   map.addLayer({
     id: LYR.selectedBuilding3d,
     type: 'fill-extrusion',
     source: SRC.selectedBuilding,
     paint: {
-      'fill-extrusion-color': colors.selectedBuilding,
-      'fill-extrusion-height': ['+', ['coalesce', ['get', 'height'], 0], 0.4],
+      'fill-extrusion-color': colors.selection,
+      'fill-extrusion-height': ['+', ['coalesce', ['get', 'height'], 0], 0.6],
       'fill-extrusion-base': ['coalesce', ['get', 'base'], 0],
-      'fill-extrusion-opacity': 0.85,
+      'fill-extrusion-opacity': 1,
+      'fill-extrusion-vertical-gradient': true,
     },
+  })
+  map.addLayer({
+    id: LYR.selectedBuildingFill,
+    type: 'fill',
+    source: SRC.selectedBuilding,
+    paint: { 'fill-color': colors.selection, 'fill-opacity': 0.85 },
   })
   map.addLayer({
     id: LYR.selectedBuildingLine,
     type: 'line',
     source: SRC.selectedBuilding,
-    paint: { 'line-color': colors.accent, 'line-width': 2.5 },
+    paint: { 'line-color': colors.selectionLine, 'line-width': 2 },
   })
   map.addLayer({
     id: LYR.selectedHalo,
     type: 'circle',
     source: SRC.selectedPoint,
     paint: {
-      'circle-radius': 11,
-      'circle-color': 'rgba(0,0,0,0)',
-      'circle-stroke-color': colors.accent,
+      'circle-radius': 12,
+      'circle-color': 'rgba(255,138,31,0.18)',
+      'circle-stroke-color': colors.selection,
       'circle-stroke-width': 3,
       'circle-pitch-alignment': 'map',
     },
@@ -257,8 +231,8 @@ export function addFloodLensLayers(map: MLMap) {
     type: 'circle',
     source: SRC.selectedPoint,
     paint: {
-      'circle-radius': 4,
-      'circle-color': colors.selection,
+      'circle-radius': 4.5,
+      'circle-color': colors.selectionLine,
       'circle-stroke-color': '#ffffff',
       'circle-stroke-width': 2,
       'circle-pitch-alignment': 'map',

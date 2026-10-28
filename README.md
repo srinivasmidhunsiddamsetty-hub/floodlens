@@ -8,9 +8,11 @@ FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation 
 
 ![FloodLens overview — +2 ft scenario in 3D](docs/screenshots/01-overview-2ft-3d.png)
 
-| Compare 0 ft → +3 ft | 2D view with location inspection |
+| +3 ft, spotlighting what +2 ft adds | 2D view with location inspection |
 | --- | --- |
-| ![Comparison](docs/screenshots/02-compare-0-3ft.png) | ![2D + inspection](docs/screenshots/03-2d-3ft-inspect.png) |
+| ![Flood bands](docs/screenshots/02-bands-3ft-spotlight-2ft.png) | ![2D + inspection](docs/screenshots/03-2d-3ft-inspect.png) |
+
+Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -18,12 +20,12 @@ FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation 
 
 - **Real NOAA data.** Ocean-connected inundation polygons from the NOAA Office for Coastal Management Sea Level Rise Viewer data (FL_SE GeoPackage) for 0 ft (current MHHW), +1 ft, +2 ft and +3 ft, clipped to an 18.7 km² South Beach study area. Nothing is simulated.
 - **3D map (MapLibre GL JS).** A light, ArcGIS-style geographic basemap (OpenFreeMap Positron, restyled) with Roboto labels. Buildings are extruded from OpenStreetMap heights, and the overlay draws beneath basemap water so mapped inundation reads as "water reaching land".
-- **Discrete scenario control.** A keyboard-operable slider (native range input) with tick shortcuts. Switching scenarios swaps the GeoJSON source in place, so the camera and app state are preserved.
-- **2D / 3D toggle.** Pitch and bearing animate (or jump, with reduced motion) around the same centre. Tilting the map by hand keeps the toggle in sync.
-- **Scenario comparison.** Pick any second scenario. The lower extent is drawn in blue and the extent added by the higher scenario in orange. The added extent comes from a validated polygon difference computed offline.
-- **Exposure insights.** Headline sentence, computed indicators (extent beyond the 0 ft reference, change from the previous scenario, total mapped extent) and a D3 bar chart with tooltips, keyboard focus and a screen-reader table.
-- **Location inspection.** Click the map or a building, or use "Inspect map center" from the keyboard, to see which scenarios' mapped extents include that point or footprint, plus the nearest named street and OSM building height.
-- **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate hatched layer and are never merged with ocean-connected extents.
+- **Sea-level control.** A keyboard-operable slider (native range input) whose track is painted with the map's colour ramp, plus **Play the rise** to animate today → +3 ft. Levels swap in place, so the camera and app state are preserved.
+- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it (navy = today … aqua = +3 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
+- **In-map controls.** Zoom, compass, Home (reset view) and 2D/3D sit together inside the map, ArcGIS-style. Tilting the map by hand keeps 2D/3D in sync.
+- **Insights.** A headline number (area flooded beyond today's high tide), a stacked D3 chart of growth per foot, and a breakdown of what each foot adds, with tooltips, keyboard focus and a screen-reader table.
+- **Building and location inspection.** Click any building (3D-accurate picking) or place, or focus the map and press Enter. A card shows the first water level that reaches it, a level-by-level ladder, OSM height and footprint area. Esc clears it.
+- **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate purple-hatched layer and are never merged with ocean-connected extents.
 - **Honest states.** Loading, missing-file and missing-manifest states are explicit. If data are unavailable, FloodLens shows nothing rather than an estimate.
 - **Responsive and accessible.** Three columns on desktop. Below 1024 px the controls become a drawer and the insights a bottom sheet. Keyboard operable throughout, with visible focus, reduced-motion support and text alternatives.
 
@@ -124,3 +126,4 @@ Basemap: OpenFreeMap © OpenMapTiles, data © OpenStreetMap contributors.
 - [docs/DESIGN_DECISIONS.md](docs/DESIGN_DECISIONS.md): interaction, visual and technical decisions
 - [docs/LIMITATIONS.md](docs/LIMITATIONS.md): what FloodLens can and cannot tell you
 - [docs/QUALITY_REPORT.md](docs/QUALITY_REPORT.md): what was built, tested and deferred
+- [CHANGELOG.md](CHANGELOG.md): numbered versions with screenshots of each iteration

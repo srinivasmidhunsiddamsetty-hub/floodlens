@@ -5,7 +5,7 @@
 import { test } from '@playwright/test'
 import { waitForMap } from './helpers'
 
-const OUT = 'docs/screenshots'
+const OUT = process.env.SCREENSHOT_DIR ?? 'docs/screenshots'
 
 test.describe('screenshots', () => {
   test.skip(!process.env.SCREENSHOTS, 'set SCREENSHOTS=1 to capture')
@@ -16,17 +16,20 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    await page.getByRole('switch', { name: 'Compare two scenarios' }).click()
-    await page.getByRole('radio', { name: '0 ft' }).click()
+    // +3 ft with the +2 ft band spotlighted from the breakdown list
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
-    await page.screenshot({ path: `${OUT}/02-compare-0-3ft.png` })
+    await page.getByRole('button', { name: /\+2 ft adds/ }).hover()
+    await page.waitForTimeout(600)
+    await page.screenshot({ path: `${OUT}/02-bands-3ft-spotlight-2ft.png` })
+    await page.mouse.move(700, 120)
 
-    await page.getByRole('switch', { name: 'Compare two scenarios' }).click()
-    await page.getByRole('radio', { name: '2D top-down' }).click()
+    // 2D + inspection of the map centre
+    await page.getByRole('button', { name: '2D view' }).click()
     await page.waitForTimeout(2500)
-    await page.getByRole('button', { name: 'Inspect map center' }).first().click()
+    await page.locator('.maplibregl-canvas').focus()
+    await page.keyboard.press('Enter')
     await page.waitForTimeout(1500)
     await page.screenshot({ path: `${OUT}/03-2d-3ft-inspect.png` })
 
@@ -41,11 +44,11 @@ test.describe('screenshots', () => {
     await waitForMap(page)
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/05-mobile-map.png` })
-    await page.getByRole('button', { name: /Exposure insights ·/ }).click()
+    await page.getByRole('button', { name: /Insights ·/ }).click()
     await page.waitForTimeout(600)
     await page.screenshot({ path: `${OUT}/06-mobile-insights.png` })
-    await page.getByRole('button', { name: /Exposure insights ·/ }).click()
-    await page.getByRole('button', { name: 'Open scenario controls' }).click()
+    await page.getByRole('button', { name: /Insights ·/ }).click()
+    await page.getByRole('button', { name: 'Open sea level and layers' }).click()
     await page.waitForTimeout(600)
     await page.screenshot({ path: `${OUT}/07-mobile-controls.png` })
   })

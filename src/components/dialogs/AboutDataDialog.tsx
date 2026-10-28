@@ -38,8 +38,11 @@ export function AboutDataDialog({ open, onClose, manifest }: Props) {
 
       <H>How to read the map</H>
       <ul className="list-disc space-y-1 pl-5">
-        <li>Blue areas are inside NOAA&rsquo;s mapped extent for the selected scenario. Open water is drawn above the overlay, so the blue appears on land.</li>
-        <li>When comparing, amber shows the extent added between the lower and the higher scenario.</li>
+        <li>
+          Colour shows the water level at which NOAA&rsquo;s mapped extent <em>first</em> reaches each area: darkest for today&rsquo;s high
+          tide, lightening through +1, +2 and +3 ft. Places reached at lower levels are the most exposed.
+        </li>
+        <li>Open water is drawn above the overlay, so colour appears only where water reaches land.</li>
         <li>Areas are geodesic measurements of the processed polygons inside the study area only.</li>
         <li>Building heights come from OpenStreetMap through OpenMapTiles. Where OSM has no height, the tiles use an estimate, so heights are approximate.</li>
       </ul>

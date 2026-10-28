@@ -3,10 +3,7 @@
  * legend, D3 chart and MapLibre layers always agree.
  *
  * Basemap: a soft "streets / topographic" palette (warm land, sage parks,
- * pale-blue water, white roads) so data overlays carry the strongest colour.
- * Inundation (saturated blue) vs. comparison (orange) is a blue/orange pair
- * that stays distinguishable for common colour-vision deficiencies; the
- * pale-blue water is deliberately much lighter than the inundation fill.
+ * pale grey-blue water, white roads) so data overlays carry the strongest colour.
  */
 export const colors = {
   // basemap
@@ -14,8 +11,8 @@ export const colors = {
   landResidential: '#ebe7e0',
   landPark: '#d5e7c6',
   landWood: '#c8dfb6',
-  water: '#a9cbe8',
-  waterLine: '#a9cbe8',
+  water: '#b3cde3',
+  waterLine: '#b3cde3',
   roadMinor: '#ffffff',
   roadMajor: '#ffffff',
   roadCasing: '#d8d1c5',
@@ -29,33 +26,46 @@ export const colors = {
   labelMinor: '#555555',
   labelWater: '#2f5d8f',
   halo: '#ffffff',
-  building: '#e4dfd6',
-  buildingTall: '#cfc7ba',
-  buildingOutline: '#c6bdb0',
+  // Warm taupe buildings: clearly darker than land and a different hue from water.
+  building: '#b4ada3',
+  buildingTall: '#8f877c',
+  buildingOutline: '#8a8277',
+  buildingFlat: '#c3bcb2',
 
   // data
-  flood: '#1f66d1',
-  floodLine: '#0f4aa3',
-  compare: '#f08c1e',
-  compareLine: '#c05f00',
   lowLying: '#6b35aa',
   accent: '#0069b0',
-  selection: '#0069b0',
-  selectedBuilding: '#2a9df4',
+  selection: '#ff8a1f',
+  selectionLine: '#b85a00',
   studyArea: '#3d4655',
   mask: '#ffffff',
 
   // chart
-  chartMuted: '#cdd6e2',
   chartGrid: '#ebebeb',
   chartAxis: '#6a6a6a',
   chartLabel: '#151515',
 } as const
 
+/**
+ * Sequential ramp for "where water first reaches" at each NOAA water level.
+ * Darkest = reached at the lowest level (most exposed, and deepest at any higher
+ * level); lighter = reached only at higher levels. Lightness carries the order,
+ * so the ramp also works in greyscale and for colour-vision deficiencies; the
+ * hue drifts navy → aqua so even the lightest band stays distinct from the
+ * pale grey-blue basemap water.
+ */
+export const BAND_COLORS: Record<number, string> = {
+  0: '#14307a',
+  1: '#1f5fd0',
+  2: '#3a97e8',
+  3: '#4cc9d6',
+}
+
+export const bandColor = (feet: number) => BAND_COLORS[feet] ?? '#3a97e8'
+
 export const opacity = {
-  flood: 0.62,
-  compareBase: 0.5,
-  compare: 0.8,
+  band: 0.85,
+  bandDimmed: 0.18,
   lowLying: 0.75,
   outsideMask: 0.5,
 } as const

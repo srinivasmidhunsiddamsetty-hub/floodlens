@@ -1,5 +1,7 @@
-import { Building2, Loader2, MapPin, X } from 'lucide-react'
+import { Building2, Loader2, MapPin, Waves, X } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { formatCoord, formatMeters, formatScenario, formatSmallArea } from '../../lib/format'
+import { bandColor } from '../../lib/theme'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { Selection } from '../../state/reducer'
 
@@ -10,125 +12,142 @@ interface Props {
   onClear: () => void
 }
 
-function Dot({ on, tone }: { on: boolean; tone: 'flood' | 'low' }) {
-  const color = tone === 'flood' ? 'bg-flood' : 'bg-lowlying'
+const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
+
+function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <span
-      aria-hidden
-      className={`inline-block size-2.5 shrink-0 rounded-full ${on ? color : 'border border-fg-subtle/60 bg-transparent'}`}
-    />
+    <div className="flex items-baseline justify-between gap-4 py-2">
+      <dt className="t-caption">{label}</dt>
+      <dd className="text-right text-[13px] text-fg tabular">{children}</dd>
+    </div>
   )
 }
 
+/**
+ * Selected building / location. Hierarchy: what it is → the answer (first
+ * water level that reaches it) → the level-by-level ladder → supporting facts →
+ * the caveat. Wording stays at "within NOAA's mapped extent", never "will flood".
+ */
 export function InspectionCard({ selection, inspection, scenarioFt, onClear }: Props) {
   const { building, street, lngLat, insideStudyArea, onWater } = selection
-  const subject = building ? 'Building footprint' : 'Location'
-  const verb = building ? 'intersects' : 'is within'
+  const title = building ? 'Building' : onWater ? 'Water' : 'Location'
+  const Icon = building ? Building2 : onWater ? Waves : MapPin
 
   return (
-    <section aria-labelledby="insp-title" className="rounded-xl border border-accent/30 bg-surface-2 p-4 animate-slide-up">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
-          {building ? <Building2 className="size-4 text-accent" aria-hidden /> : <MapPin className="size-4 text-accent" aria-hidden />}
-          <h3 id="insp-title" className="text-[13px] font-semibold text-fg">
-            {building ? 'Selected building' : 'Selected location'}
+    <section aria-labelledby="insp-title" className="overflow-hidden rounded border border-line bg-surface shadow-panel animate-slide-up">
+      {/* Header */}
+      <div className="flex items-start gap-3 px-4 pt-4">
+        <span className="grid size-9 shrink-0 place-items-center rounded bg-[#fff1e3] text-[#b85a00]">
+          <Icon className="size-4.5" aria-hidden />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h3 id="insp-title" className="t-heading">
+            {title}
+            {street && <span className="font-normal text-fg-muted"> near {street.name}</span>}
           </h3>
+          <p className="t-caption tabular">
+            {street ? `${formatMeters(street.distanceM)} from street · ` : ''}
+            {formatCoord(lngLat[0], lngLat[1])}
+          </p>
         </div>
-        <button type="button" onClick={onClear} className="rounded p-0.5 text-fg-subtle hover:text-fg" aria-label="Clear selection">
+        <button
+          type="button"
+          onClick={onClear}
+          className="btn-ghost -mt-1 -mr-2 size-8 justify-center px-0"
+          aria-label="Clear selection (Esc)"
+          title="Clear selection (Esc)"
+        >
           <X className="size-4" aria-hidden />
         </button>
       </div>
 
-      <dl className="mt-2 space-y-0.5 text-xs">
-        {street && (
-          <div className="flex gap-1.5">
-            <dt className="text-fg-subtle">Near</dt>
-            <dd className="text-fg">
-              {street.name} <span className="text-fg-subtle">(≈{formatMeters(street.distanceM)}, OSM)</span>
-            </dd>
-          </div>
-        )}
-        <div className="flex gap-1.5">
-          <dt className="sr-only">Coordinates</dt>
-          <dd className="text-xs text-fg-muted tabular">{formatCoord(lngLat[0], lngLat[1])}</dd>
-        </div>
-        {building && (
-          <div className="flex gap-1.5">
-            <dt className="text-fg-subtle">Height</dt>
-            <dd className="text-fg">
-              {building.renderHeightM !== null ? `${Math.round(building.renderHeightM)} m` : 'Not available'}
-              <span className="text-fg-subtle"> · OSM-derived, may be estimated</span>
-            </dd>
-          </div>
-        )}
-      </dl>
-
-      {!insideStudyArea && (
-        <p className="mt-3 rounded-md bg-surface-3 px-2.5 py-2 text-xs text-fg-muted">
-          Outside the study area. NOAA data were only processed inside the dashed boundary, so no scenario
-          information is shown here.
-        </p>
-      )}
-
-      {insideStudyArea && onWater && (
-        <p className="mt-3 text-xs text-fg-muted">OpenStreetMap draws this point as open water.</p>
-      )}
-
-      {insideStudyArea && inspection.status === 'loading' && (
-        <p className="mt-3 flex items-center gap-2 text-xs text-fg-muted" role="status">
-          <Loader2 className="size-3.5 animate-spin text-accent" aria-hidden /> Checking all scenarios…
-        </p>
-      )}
-
-      {insideStudyArea && inspection.status === 'error' && (
-        <p className="mt-3 text-xs text-danger" role="alert">
-          Could not check scenarios: {inspection.error}
-        </p>
-      )}
-
-      {insideStudyArea && inspection.status === 'ready' && (
-        <div className="mt-3" aria-live="polite">
-          <p className="text-[13px] leading-5 text-fg">
-            {inspection.result.firstFeet === null
-              ? `${subject} is outside the mapped ocean-connected extent for every scenario up to ${formatScenario(
-                  inspection.result.hits.at(-1)?.feet ?? 0,
-                )}.`
-              : inspection.result.firstFeet === 0
-                ? `${subject} ${verb} the extent NOAA maps at today’s MHHW (0 ft).`
-                : `${subject} first ${verb} the mapped extent at ${formatScenario(inspection.result.firstFeet)}.`}
+      <div className="px-4 pt-3 pb-4">
+        {!insideStudyArea && (
+          <p className="rounded bg-surface-2 px-3 py-2.5 t-body">
+            Outside the study area. NOAA data were only processed inside the dashed boundary.
           </p>
-          <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs" aria-label="Ocean-connected extent by scenario">
-            {inspection.result.hits.map((h) => (
-              <li key={h.feet} className={`flex items-center gap-2 ${h.feet === scenarioFt ? 'text-fg' : 'text-fg-muted'}`}>
-                <Dot on={h.within} tone="flood" />
-                <span className="tabular">{formatScenario(h.feet)}</span>
-                <span className="sr-only">{h.within ? 'within mapped extent' : 'outside mapped extent'}</span>
-                <span aria-hidden className="text-fg-subtle">
-                  {h.within ? 'within' : 'outside'}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {inspection.result.lowHits.some((h) => h.within) && (
-            <p className="mt-2 flex items-start gap-2 text-xs text-fg-muted">
-              <Dot on tone="low" />
-              <span>
-                In a low-lying area that is not ocean-connected at{' '}
-                {inspection.result.lowHits
-                  .filter((h) => h.within)
-                  .map((h) => formatScenario(h.feet))
-                  .join(', ')}
-                {inspection.result.lowPartAreaM2 !== null && ` (${formatSmallArea(inspection.result.lowPartAreaM2)} patch at ${formatScenario(scenarioFt)})`}
-                .
-              </span>
-            </p>
-          )}
-          <p className="mt-3 border-t border-line pt-2 text-[11px] leading-4 text-fg-subtle">
-            “Within the mapped extent” is a screening indicator, not a statement that this {building ? 'building' : 'place'} will
-            flood. NOAA extents show the scale, not the exact location, of potential inundation.
+        )}
+
+        {insideStudyArea && inspection.status === 'loading' && (
+          <p className="flex items-center gap-2 t-body" role="status">
+            <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Checking every water level…
           </p>
-        </div>
-      )}
+        )}
+
+        {insideStudyArea && inspection.status === 'error' && (
+          <p className="t-body text-danger" role="alert">
+            Could not check water levels: {inspection.error}
+          </p>
+        )}
+
+        {insideStudyArea && inspection.status === 'ready' && (() => {
+          const { hits, firstFeet, lowHits, lowPartAreaM2 } = inspection.result
+          const reachedNow = firstFeet !== null && firstFeet <= scenarioFt
+          const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
+          return (
+            <div aria-live="polite">
+              {/* Answer */}
+              <div
+                className="rounded px-3 py-2.5"
+                style={{ background: firstFeet === null ? '#f3f3f3' : `${bandColor(firstFeet)}14`, borderLeft: `4px solid ${firstFeet === null ? '#c9c9c9' : bandColor(firstFeet)}` }}
+              >
+                <p className="t-overline">First reached</p>
+                <p className="t-metric text-[22px] leading-7">
+                  {firstFeet === null ? 'Not up to +3 ft' : firstFeet === 0 ? 'Today' : `at ${formatScenario(firstFeet)}`}
+                </p>
+                <p className="t-caption mt-0.5">
+                  {firstFeet === null
+                    ? `Outside NOAA’s mapped extent at every level up to ${levelName(hits.at(-1)?.feet ?? 0)}.`
+                    : reachedNow
+                      ? `Within the mapped extent at the selected level (${levelName(scenarioFt)}).`
+                      : `Not yet at the selected level (${levelName(scenarioFt)}).`}
+                </p>
+              </div>
+
+              {/* Ladder */}
+              <ol className="mt-3 grid grid-flow-col items-end gap-1" aria-label="Within NOAA’s mapped extent, by water level">
+                {hits.map((h) => (
+                  <li key={h.feet} className="flex flex-col items-center gap-1">
+                    <span
+                      className={`w-full rounded-sm ${h.feet === scenarioFt ? 'h-3.5' : 'h-2.5'}`}
+                      style={{ background: h.within && firstFeet !== null ? bandColor(firstFeet) : '#e6e6e6' }}
+                      aria-hidden
+                    />
+                    <span className={`text-[11px] tabular ${h.feet === scenarioFt ? 'font-medium text-fg' : 'text-fg-subtle'}`}>
+                      {levelName(h.feet)}
+                    </span>
+                    <span className="sr-only">{h.within ? 'within mapped extent' : 'outside mapped extent'}</span>
+                  </li>
+                ))}
+              </ol>
+
+              {/* Facts */}
+              <dl className="mt-3 divide-y divide-line border-t border-line">
+                {building && (
+                  <>
+                    <Row label="Height">
+                      {building.renderHeightM !== null ? `≈ ${Math.round(building.renderHeightM)} m` : '—'}
+                      <span className="block t-caption">OpenStreetMap, may be estimated</span>
+                    </Row>
+                    <Row label="Footprint">≈ {formatSmallArea(building.footprintAreaM2)}</Row>
+                  </>
+                )}
+                <Row label="Low-lying area">
+                  {lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'}
+                  {lowAt.length > 0 && lowPartAreaM2 !== null && (
+                    <span className="block t-caption">{formatSmallArea(lowPartAreaM2)} patch, not ocean-connected</span>
+                  )}
+                </Row>
+              </dl>
+
+              <p className="mt-3 t-caption leading-4">
+                A screening indicator from NOAA’s mapped extents — not a prediction that this {building ? 'building' : 'place'} will
+                flood.
+              </p>
+            </div>
+          )
+        })()}
+      </div>
     </section>
   )
 }

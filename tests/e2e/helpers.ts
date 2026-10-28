@@ -21,7 +21,9 @@ export async function waitForMap(page: Page) {
   await page.waitForTimeout(1500)
 }
 
-/** Compass icon transform encodes the map's pitch/bearing (visualizePitch: true). */
-export async function compassTransform(page: Page) {
-  return page.locator('.maplibregl-ctrl-compass .maplibregl-ctrl-icon').evaluate((el) => (el as HTMLElement).style.transform)
+/** Current map pitch, exposed by the in-map control stack. */
+export async function mapPitch(page: Page) {
+  return Number(await page.locator('[data-pitch]').getAttribute('data-pitch'))
 }
+
+export const insights = (page: Page) => page.getByRole('complementary', { name: 'Insights' })

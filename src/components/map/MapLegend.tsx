@@ -1,58 +1,97 @@
-import { X } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
+import { useState } from 'react'
 import { formatScenario } from '../../lib/format'
-import { Swatch, type SwatchKind } from '../ui/Swatch'
+import type { FloodBand } from '../../lib/manifest'
+import { bandColor } from '../../lib/theme'
+import { Swatch } from '../ui/Swatch'
 
 interface Props {
+  bands: FloodBand[]
   scenarioFt: number
-  pair: [number, number] | null
+  showFlood: boolean
   showLowLying: boolean
   showBuildings: boolean
-  showStudyArea: boolean
-  showInundation: boolean
-  onClose: () => void
+  highlightFt: number | null
+  onHighlight: (ft: number | null) => void
+  defaultOpen?: boolean
 }
 
-function Row({ kind, children }: { kind: SwatchKind; children: React.ReactNode }) {
+/**
+ * Compact, collapsible legend. The flood ramp reads like a weather-radar key:
+ * one swatch per water level, dimmed for levels above the current scenario.
+ * Hovering a level emphasises that band on the map.
+ */
+export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuildings, highlightFt, onHighlight, defaultOpen = true }: Props) {
+  const [open, setOpen] = useState(defaultOpen)
   return (
-    <li className="flex items-center gap-2 leading-5">
-      <Swatch kind={kind} size={13} />
-      <span>{children}</span>
-    </li>
-  )
-}
+    <section aria-label="Map legend" className="pointer-events-auto w-52 overflow-hidden rounded border border-line bg-surface/95 shadow-float backdrop-blur-sm">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex h-8 w-full items-center justify-between px-3 text-left t-label text-fg hover:bg-surface-3"
+      >
+        Legend
+        <ChevronDown className={`size-4 text-fg-subtle transition-transform ${open ? '' : '-rotate-90'}`} aria-hidden />
+      </button>
 
-/** Compact legend — entries mirror only what is currently drawn on the map. */
-export function MapLegend({ scenarioFt, pair, showLowLying, showBuildings, showStudyArea, showInundation, onClose }: Props) {
-  return (
-    <section
-      aria-label="Map legend"
-      className="pointer-events-auto w-60 rounded-xl border border-line-strong bg-surface/95 p-3 text-xs text-fg-muted shadow-panel backdrop-blur-sm animate-fade-in"
-    >
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="section-title">Legend</h3>
-        <button type="button" onClick={onClose} className="rounded p-0.5 text-fg-subtle hover:text-fg" aria-label="Hide legend">
-          <X className="size-3.5" aria-hidden />
-        </button>
-      </div>
-      <ul className="space-y-1">
-        {showInundation && !pair && <Row kind="flood">Mapped inundation, {formatScenario(scenarioFt)}</Row>}
-        {showInundation && pair && (
-          <>
-            <Row kind="flood">Mapped extent, {formatScenario(pair[0])}</Row>
-            <Row kind="compare">Added by {formatScenario(pair[1])}</Row>
-          </>
-        )}
-        {showLowLying && <Row kind="lowLying">Low-lying, not ocean-connected</Row>}
-        <Row kind="water">Existing water (OSM)</Row>
-        <Row kind="land">Land</Row>
-        {showBuildings && <Row kind="building">Buildings (OSM footprints)</Row>}
-        <Row kind="selection">Selected location</Row>
-        {showStudyArea && <Row kind="study">Study area · data clipped</Row>}
-        {showStudyArea && <Row kind="outside">Outside study area</Row>}
-      </ul>
-      <p className="mt-2 border-t border-line pt-2 leading-4 text-fg-subtle">
-        Overlays appear on land only; open water is drawn above them.
-      </p>
+      {open && (
+        <div className="border-t border-line px-3 pt-2 pb-3">
+          {showFlood && bands.length > 0 && (
+            <>
+              <p className="t-overline mb-1">Flooded first at</p>
+              <ul className="mb-2" onMouseLeave={() => onHighlight(null)}>
+                {bands.map((b) => {
+                  const shown = b.feet <= scenarioFt
+                  return (
+                    <li key={b.feet}>
+                      <button
+                        type="button"
+                        disabled={!shown}
+                        onMouseEnter={() => shown && onHighlight(b.feet)}
+                        onFocus={() => shown && onHighlight(b.feet)}
+                        onBlur={() => onHighlight(null)}
+                        className={`flex w-full items-center gap-2 rounded px-1 py-0.5 text-left t-caption transition-colors ${
+                          shown ? 'text-fg hover:bg-surface-3' : 'cursor-default text-fg-subtle/70'
+                        } ${highlightFt === b.feet ? 'bg-surface-3' : ''}`}
+                      >
+                        <span
+                          aria-hidden
+                          className="h-3 w-5 shrink-0 rounded-sm"
+                          style={{ background: bandColor(b.feet), opacity: shown ? 1 : 0.3 }}
+                        />
+                        {b.isReference ? 'Today (0 ft)' : formatScenario(b.feet)}
+                        {!shown && <span className="ml-auto text-[11px]">hidden</span>}
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </>
+          )}
+          <ul className="grid grid-cols-2 gap-x-2 gap-y-1 border-t border-line pt-2 t-caption text-fg-muted">
+            {showLowLying && (
+              <li className="flex items-center gap-2">
+                <Swatch kind="lowLying" size={13} /> Low-lying
+              </li>
+            )}
+            <li className="flex items-center gap-2">
+              <Swatch kind="water" size={13} /> Water
+            </li>
+            {showBuildings && (
+              <li className="flex items-center gap-2">
+                <Swatch kind="building" size={13} /> Building
+              </li>
+            )}
+            <li className="flex items-center gap-2">
+              <Swatch kind="selection" size={13} /> Selected
+            </li>
+            <li className="flex items-center gap-2">
+              <Swatch kind="study" size={13} /> Study area
+            </li>
+          </ul>
+        </div>
+      )}
     </section>
   )
 }

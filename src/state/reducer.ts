@@ -2,14 +2,17 @@ import type { Feature, MultiPolygon, Polygon } from 'geojson'
 import type { LngLat } from '../lib/geo'
 
 export type ViewMode = '3d' | '2d'
-export type LayerKey = 'inundation' | 'buildings' | 'labels' | 'lowLying' | 'studyArea'
+export type LayerKey = 'inundation' | 'buildings' | 'labels' | 'lowLying'
 export type DialogKey = 'sources' | 'about' | null
 
 export interface BuildingInfo {
   /** OpenMapTiles render_height (m). May be derived from OSM levels or a default. */
   renderHeightM: number | null
   renderMinHeightM: number | null
+  /** Footprint as drawn in the vector tiles (tile-split pieces re-joined). */
   footprint: Feature<Polygon | MultiPolygon>
+  /** Geodesic area of the footprint as drawn in the vector tiles (m²). */
+  footprintAreaM2: number
 }
 
 export interface Selection {
@@ -25,7 +28,6 @@ export interface AppState {
   /** Scenario feet available in the manifest, ascending. Empty until the manifest loads. */
   available: number[]
   scenarioFt: number
-  compare: { enabled: boolean; withFt: number }
   layers: Record<LayerKey, boolean>
   viewMode: ViewMode
   selection: Selection | null
@@ -42,8 +44,6 @@ export type Action =
   | { type: 'manifestLoaded'; available: number[] }
   | { type: 'setScenario'; feet: number }
   | { type: 'stepScenario'; delta: 1 | -1 }
-  | { type: 'setCompareEnabled'; enabled: boolean }
-  | { type: 'setCompareWith'; feet: number }
   | { type: 'toggleLayer'; layer: LayerKey }
   | { type: 'setLayer'; layer: LayerKey; visible: boolean }
   | { type: 'setViewMode'; mode: ViewMode }
@@ -58,8 +58,7 @@ export const DEFAULT_SCENARIO_FT = 2
 export const initialState: AppState = {
   available: [],
   scenarioFt: DEFAULT_SCENARIO_FT,
-  compare: { enabled: false, withFt: 1 },
-  layers: { inundation: true, buildings: true, labels: true, lowLying: false, studyArea: true },
+  layers: { inundation: true, buildings: true, labels: true, lowLying: false },
   viewMode: '3d',
   selection: null,
   dialog: null,
@@ -71,18 +70,7 @@ export const initialState: AppState = {
 /** Nearest available scenario to `target`, preferring the lower one on ties. */
 export function nearestScenario(available: number[], target: number): number {
   if (available.length === 0) return target
-  return available.reduce((best, ft) =>
-    Math.abs(ft - target) < Math.abs(best - target) ? ft : best,
-  )
-}
-
-/** A comparison partner for `scenario`: keep `preferred` if valid, else the next lower, else the next higher. */
-export function pickComparePartner(available: number[], scenario: number, preferred: number): number {
-  if (preferred !== scenario && available.includes(preferred)) return preferred
-  const lower = available.filter((f) => f < scenario)
-  if (lower.length) return lower[lower.length - 1]
-  const higher = available.filter((f) => f > scenario)
-  return higher.length ? higher[0] : scenario
+  return available.reduce((best, ft) => (Math.abs(ft - target) < Math.abs(best - target) ? ft : best))
 }
 
 export function reducer(state: AppState, action: Action): AppState {
@@ -92,41 +80,17 @@ export function reducer(state: AppState, action: Action): AppState {
       const scenarioFt = available.includes(state.scenarioFt)
         ? state.scenarioFt
         : nearestScenario(available, state.scenarioFt)
-      const withFt = pickComparePartner(available, scenarioFt, state.compare.withFt)
-      return {
-        ...state,
-        available,
-        scenarioFt,
-        compare: { enabled: state.compare.enabled && available.length > 1, withFt },
-      }
+      return { ...state, available, scenarioFt }
     }
     case 'setScenario': {
       if (state.available.length && !state.available.includes(action.feet)) return state
       if (action.feet === state.scenarioFt) return state
-      return {
-        ...state,
-        scenarioFt: action.feet,
-        compare: { ...state.compare, withFt: pickComparePartner(state.available, action.feet, state.compare.withFt) },
-      }
+      return { ...state, scenarioFt: action.feet }
     }
     case 'stepScenario': {
       const i = state.available.indexOf(state.scenarioFt)
       const next = state.available[i + action.delta]
-      return next === undefined ? state : reducer(state, { type: 'setScenario', feet: next })
-    }
-    case 'setCompareEnabled': {
-      if (action.enabled && state.available.length < 2) return state
-      return {
-        ...state,
-        compare: {
-          enabled: action.enabled,
-          withFt: pickComparePartner(state.available, state.scenarioFt, state.compare.withFt),
-        },
-      }
-    }
-    case 'setCompareWith': {
-      if (action.feet === state.scenarioFt || !state.available.includes(action.feet)) return state
-      return { ...state, compare: { ...state.compare, withFt: action.feet } }
+      return next === undefined ? state : { ...state, scenarioFt: next }
     }
     case 'toggleLayer':
       return { ...state, layers: { ...state.layers, [action.layer]: !state.layers[action.layer] } }
@@ -147,12 +111,4 @@ export function reducer(state: AppState, action: Action): AppState {
     default:
       return state
   }
-}
-
-/** The ordered (lower, higher) pair being compared, or null when comparison is off. */
-export function comparePair(state: AppState): [number, number] | null {
-  if (!state.compare.enabled || state.compare.withFt === state.scenarioFt) return null
-  const a = state.scenarioFt
-  const b = state.compare.withFt
-  return a < b ? [a, b] : [b, a]
 }
