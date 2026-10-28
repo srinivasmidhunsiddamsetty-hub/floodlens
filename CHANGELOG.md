@@ -20,8 +20,29 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.14 | 28 Oct 2026 | One tile for the area figures, "Water reaches at", no blue numbers | [`docs/versions/v0.14/`](docs/versions/v0.14/) |
 | v0.15 | 28 Oct 2026 | Shorter answer box, "See it at" link removed | [`docs/versions/v0.15/`](docs/versions/v0.15/) |
 | v0.16 | 28 Oct 2026 | Answer box down to 92 px | [`docs/versions/v0.16/`](docs/versions/v0.16/) |
+| v0.17 | 28 Oct 2026 | Sea levels up to +5 ft, six-step blue ramp | [`docs/versions/v0.17/`](docs/versions/v0.17/) |
 
 ---
+
+## v0.17: Up to +5 ft (28 Oct 2026)
+
+- **Sea levels now run from today's high tide to +5 ft**, up from +3 ft.
+  - The +4 and +5 ft layers are NOAA's own, from the same GeoPackage, processed by the same pipeline.
+  - Land underwater: 12.37 km² (62% of the city's land) at +4 ft, and 15.26 km² (77%) at +5 ft.
+  - The designer chose +5 ft after seeing every level measured for Miami Beach, from 37% at +3 ft to 97% at +10 ft. +5 ft covers the Southeast Florida Compact's 2070 range.
+- **Everything follows the data:** the slider, Watch the water rise, the legend, the chart, the breakdown and the card's level track. A building the top level doesn't reach now says "Not up to +5 ft".
+- **A six-step blue ramp.**
+  - It starts from the same light blue for today and steps evenly darker to a dark navy at +5 ft (`#9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555`).
+  - Keeping the four v0.7 shades and adding two darker ones would have ended near black, so the middle shades shift a little lighter. The old +3 ft navy is now +4 ft.
+  - The worst neighbouring pair stays ΔE 10.5 apart for colour-blind viewers.
+- **The pipeline writes only the bands the app uses:** neighbouring levels 0→1 … 4→5 ft. Before, it derived every pair; three of those files (0→2, 0→3, 1→3 ft) were never loaded and are removed. All 5 band validations pass.
+- **Data:** 26 MB across 19 files. The new bands load only when the slider reaches +4 or +5 ft, so the opening view is unchanged.
+- **Wording:** the About dialog now says the colour gets "darker with each foot up to +5 ft". The Sources dialog lists the neighbouring bands as "0→1, 1→2, … 4→5 ft".
+- **Tests:**
+  - The data test now checks that each level's total equals the sum of its bands.
+  - The band-area tolerance is measured against the extent, not the band; simplification noise grows with the 32–35 km² outlines.
+  - 100 unit/component tests and 17 end-to-end tests pass.
+- **Screenshots:** 02 and 03 are renamed for the +5 ft top level. 09 now shows a building near Beachwalk that +5 ft doesn't reach.
 
 ## v0.16: 92 px (28 Oct 2026)
 

@@ -27,6 +27,10 @@ The GeoPackage holds 42 layers: `FL_SE_slr_{0_0…10_0}ft` and `FL_SE_low_{0_0�
 | +1 ft | `FL_SE_slr_1_0ft` | `FL_SE_low_1_0ft` | 10,412 / 9,980 |
 | +2 ft | `FL_SE_slr_2_0ft` | `FL_SE_low_2_0ft` | 6,423 / 8,703 |
 | +3 ft | `FL_SE_slr_3_0ft` | `FL_SE_low_3_0ft` | 6,329 / 8,674 |
+| +4 ft | `FL_SE_slr_4_0ft` | `FL_SE_low_4_0ft` | 11,723 / 15,508 |
+| +5 ft | `FL_SE_slr_5_0ft` | `FL_SE_low_5_0ft` | 21,614 / 15,689 |
+
+FloodLens maps whole feet up to +5 ft (v0.17; 0–3 ft before). By +5 ft, 77% of the city's land is underwater; NOAA's levels from +6 to +10 ft add little more for Miami Beach (85% at +6 ft, 97% at +10 ft).
 
 - **`slr`**: inundation hydrologically connected to the ocean. This is FloodLens's primary layer.
 - **`low`**: areas below the water level but **not** connected to the ocean, which "may also flood". These are processed separately, shown only as an optional hatched layer, and never merged with `slr`.
@@ -71,14 +75,14 @@ NAD83 → WGS84 uses the default PROJ transformation, which differs by about 1�
 ## 4. Transformation steps
 
 1. **Acquire**: resumable download of the zip; extract the GeoPackage (or `--gpkg` to use a local copy).
-2. **Inspect**: list layers and verify that all 8 required layers exist, are `MULTIPOLYGON` and use EPSG:4269. Otherwise fail.
+2. **Inspect**: list layers and verify that all 12 required layers exist, are `MULTIPOLYGON` and use EPSG:4269. Otherwise fail.
 3. **Read**: only features intersecting the study area (spatial-index bbox read with pyogrio).
 4. **Clip, then repair**: `clip_by_rect` to the boundary's bounding box first, because NOAA features can cover the whole FL_SE region and repairing them before clipping takes minutes. Then `make_valid`, dissolve (`union_all`) and exact intersection with the city boundary polygon.
 5. **Project** to EPSG:26917.
-6. **Derive comparison layers**: for every scenario pair (A < B), GEOS `difference(B, A)`. Validation checks:
-   - *Containment*: area(A − B) must be under 1 m². Measured: 0.12–0.18 m².
+6. **Derive comparison layers**: for each pair of neighbouring scenarios (0→1, 1→2, … 4→5 ft), GEOS `difference(B, A)`. These are the map's colour bands. (Before v0.17 every pair was derived, including ones the app never loaded.) Validation checks:
+   - *Containment*: area(A − B) must be under 1 m². Measured: 0.02–0.16 m².
    - *Consistency*: area(B − A) must equal area(B) − area(A) within 0.1%. Measured relative error: 0.000000.
-   All 6 pairs pass. The results are stored in `manifest.processing.validation` and shown in the app.
+   All 5 pairs pass. The results are stored in `manifest.processing.validation` and shown in the app.
 7. **Drop slivers** under 1 m² created by differencing. These are numerical artifacts; the smallest real raster-derived parts are about 9 m².
 8. **Simplify** with a topology-preserving 0.75 m tolerance (in metres, below the ~3 m source cell size).
 9. **Reproject** to EPSG:4326, round to 6 decimals (about 0.1 m), re-validate, and orient rings counter-clockwise.
@@ -93,10 +97,12 @@ NAD83 → WGS84 uses the default PROJ transformation, which differs by about 1�
 | +1 ft | 19.710 km² | 0.038 km² | 0.2% | `slr_1ft.geojson` (521 KB) |
 | +2 ft | 20.660 km² | 0.989 km² | 5.0% | `slr_2ft.geojson` (1.1 MB) |
 | +3 ft | 27.094 km² | 7.433 km² | 37% | `slr_3ft.geojson` (2.7 MB) |
+| +4 ft | 32.026 km² | 12.372 km² | 62% | `slr_4ft.geojson` (2.1 MB) |
+| +5 ft | 34.835 km² | 15.256 km² | 77% | `slr_5ft.geojson` (1.4 MB) |
 
 "Total mapped extent" includes existing open water (the Biscayne Bay waters inside city limits), which NOAA maps as inundated at MHHW. "Beyond 0 ft" is the land-side growth and is the headline indicator in the UI. The share column divides it by the Census land area (19.92 km²); the app words this as "equal to N% of the city's land area", a size comparison between two sources rather than a parcel count.
 
-What each foot adds (the map's colour bands): +1 ft 0.038 km², +2 ft 0.951 km², +3 ft 6.444 km².
+What each foot adds (the map's colour bands): +1 ft 0.038 km², +2 ft 0.951 km², +3 ft 6.444 km², +4 ft 4.976 km², +5 ft 2.866 km².
 
 The unit tests (`src/lib/dataIntegrity.test.ts`) recompute every area in the browser with Turf (spherical) and require agreement within 0.5%. They also check monotonic growth, that all coordinates fall inside the study area, and point membership for derived layers.
 

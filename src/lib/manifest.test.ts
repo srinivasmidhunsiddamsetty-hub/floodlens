@@ -9,7 +9,7 @@ describe('parseManifest — source metadata handling', () => {
     expect(m.source.geography).toBe('FL_SE')
     expect(m.source.downloadUrl).toMatch(/^https:\/\/chs\.coast\.noaa\.gov\//)
     expect(m.crs).toEqual({ source: 'EPSG:4269', output: 'EPSG:4326', processing: 'EPSG:26917' })
-    expect(m.scenarios.map((s) => s.feet)).toEqual([0, 1, 2, 3])
+    expect(m.scenarios.map((s) => s.feet)).toEqual([0, 1, 2, 3, 4, 5])
     expect(m.processing.validation.every((v) => v.passed)).toBe(true)
   })
 
@@ -81,12 +81,18 @@ describe('bandsFor — disjoint flood bands', () => {
   it('splits the real data into today + the area each foot adds', () => {
     const m = parseManifest(realManifestJson())
     const bands = bandsFor(m)
-    expect(bands.map((b) => b.feet)).toEqual([0, 1, 2, 3])
+    expect(bands.map((b) => b.feet)).toEqual([0, 1, 2, 3, 4, 5])
     expect(bands[0]).toMatchObject({ isReference: true, file: 'slr_0ft.geojson', addedM2: 0 })
-    expect(bands.slice(1).map((b) => b.file)).toEqual(['diff_0ft_1ft.geojson', 'diff_1ft_2ft.geojson', 'diff_2ft_3ft.geojson'])
-    // Bands add up to the published "beyond today" total at +3 ft (within simplification noise)
+    expect(bands.slice(1).map((b) => b.file)).toEqual([
+      'diff_0ft_1ft.geojson',
+      'diff_1ft_2ft.geojson',
+      'diff_2ft_3ft.geojson',
+      'diff_3ft_4ft.geojson',
+      'diff_4ft_5ft.geojson',
+    ])
+    // Bands add up to the published "beyond today" total at the top level, +5 ft (within simplification noise)
     const sum = bands.reduce((a, b) => a + b.addedM2, 0)
-    const total = m.scenarios.find((s) => s.feet === 3)!.beyondBaselineM2
+    const total = m.scenarios.find((s) => s.feet === 5)!.beyondBaselineM2
     expect(Math.abs(sum - total) / total).toBeLessThan(0.01)
   })
 

@@ -27,8 +27,10 @@ describe('processed NOAA data integrity', () => {
       expect(rel(area, c.areaM2)).toBeLessThan(0.005)
       const lo = manifest.scenarios.find((s) => s.feet === c.fromFt)!
       const hi = manifest.scenarios.find((s) => s.feet === c.toFt)!
-      // Polygon difference area ≈ difference of total areas (lower ⊆ higher), within simplification noise.
-      expect(rel(c.areaM2, hi.areaM2 - lo.areaM2)).toBeLessThan(0.01)
+      // Polygon difference area ≈ difference of total areas (lower ⊆ higher). Each extent is simplified
+      // on its own, so the noise scales with the size of the extents, not the band: keep it within 0.5%
+      // of the higher extent. (The pipeline checks the unsimplified difference to within 0.1%.)
+      expect(Math.abs(c.areaM2 - (hi.areaM2 - lo.areaM2)) / hi.areaM2).toBeLessThan(0.005)
     },
   )
 
@@ -42,10 +44,15 @@ describe('processed NOAA data integrity', () => {
     expect(beyond[0]).toBe(0)
   })
 
-  it('beyond-baseline areas equal the 0 ft → N ft comparison layers', () => {
+  it('beyond-baseline areas equal the sum of the neighbouring bands up to that level', () => {
+    expect(manifest.comparisons.map((c) => [c.fromFt, c.toFt])).toEqual(
+      manifest.scenarios.slice(1).map((s, i) => [manifest.scenarios[i].feet, s.feet]),
+    )
+    let sum = 0
     for (const s of manifest.scenarios.filter((x) => x.feet > 0)) {
-      const c = manifest.comparisons.find((x) => x.fromFt === 0 && x.toFt === s.feet)!
-      expect(rel(s.beyondBaselineM2, c.areaM2)).toBeLessThan(1e-6)
+      sum += manifest.comparisons.find((x) => x.toFt === s.feet)!.areaM2
+      // Each band is simplified separately, so allow simplification noise.
+      expect(rel(s.beyondBaselineM2, sum)).toBeLessThan(0.01)
     }
   })
 

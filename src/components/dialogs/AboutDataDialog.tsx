@@ -36,8 +36,8 @@ export function AboutDataDialog({ open, onClose, manifest }: Props) {
       <H>How to read the map</H>
       <ul className="list-disc space-y-1 pl-5">
         <li>
-          Colour shows the sea level at which water <em>first</em> reaches a place: light blue at today’s high tide, getting darker at +1,
-          +2 and +3 ft.
+          Colour shows the sea level at which water <em>first</em> reaches a place: light blue at today’s high tide, getting darker with
+          each foot up to +5 ft.
         </li>
         <li>Open water sits on top, so colour only appears where water reaches land.</li>
         <li>Areas are measured on the curved Earth, and only inside Miami Beach’s city limits.</li>

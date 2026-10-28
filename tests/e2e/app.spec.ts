@@ -44,7 +44,7 @@ test.describe('FloodLens — core flows', () => {
     await waitForMap(page)
     await page.getByRole('button', { name: 'Watch the water rise' }).click()
     const slider = page.getByRole('slider')
-    await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW', { timeout: 10_000 })
+    await expect(slider).toHaveAttribute('aria-valuetext', '+5 ft above MHHW', { timeout: 15_000 })
     await expect(page.getByRole('button', { name: 'Watch the water rise' })).toHaveAttribute('aria-pressed', 'false')
   })
 
@@ -146,7 +146,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('Enter')
     const card = page.getByRole('region', { name: /^(Building|Spot|Open water)/ })
     await expect(card).toBeVisible()
-    await expect(card.getByRole('list', { name: /by sea level/ }).getByRole('listitem')).toHaveCount(4)
+    await expect(card.getByRole('list', { name: /by sea level/ }).getByRole('listitem')).toHaveCount(6)
     await page.keyboard.press('Escape')
     await expect(card).toHaveCount(0)
   })
@@ -242,7 +242,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(dlg).toBeVisible()
     await expect(dlg).toContainText('FL_SE_slr_final_dist.gpkg')
     await expect(dlg).toContainText('EPSG:4269')
-    await expect(dlg.getByText('Passed')).toHaveCount(6)
+    await expect(dlg.getByText('Passed')).toHaveCount(5)
     await page.keyboard.press('Escape')
     await expect(dlg).toBeHidden()
 

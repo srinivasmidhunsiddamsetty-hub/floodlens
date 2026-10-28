@@ -119,9 +119,9 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
           const reached = firstFeet !== null
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
 
-          // Label and answer: "Water reaches at +3 ft", or "Today" (today's high tide, the
+          // Label and answer: "Water reaches at +2 ft", or "Today" (today's high tide, the
           // same name as the first pin). Never "safe" or "dry": NOAA's map not reaching a
-          // place isn't a promise, and we only map up to +3 ft.
+          // place isn't a promise, and we only map up to the top level (+5 ft).
           const answer = !reached ? `Not up to ${formatScenario(top)}` : firstFeet === 0 ? 'Today' : formatScenario(firstFeet)
 
           return (

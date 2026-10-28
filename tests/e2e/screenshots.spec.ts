@@ -16,13 +16,13 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // +3 ft with the +2 ft band spotlighted from the breakdown list
+    // The top level (+5 ft) with the +2 ft band spotlighted from the breakdown list
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
     await page.getByRole('button', { name: /\+2 ft adds/ }).hover()
     await page.waitForTimeout(600)
-    await page.screenshot({ path: `${OUT}/02-bands-3ft-spotlight-2ft.png` })
+    await page.screenshot({ path: `${OUT}/02-bands-5ft-spotlight-2ft.png` })
     await page.mouse.move(700, 120)
 
     // 2D + inspection of the map centre
@@ -31,7 +31,7 @@ test.describe('screenshots', () => {
     await page.locator('.maplibregl-canvas').focus()
     await page.keyboard.press('Enter')
     await page.waitForTimeout(1500)
-    await page.screenshot({ path: `${OUT}/03-2d-3ft-inspect.png` })
+    await page.screenshot({ path: `${OUT}/03-2d-5ft-inspect.png` })
 
     await page.getByRole('button', { name: 'About the data', exact: true }).click()
     await page.waitForTimeout(400)
@@ -41,7 +41,9 @@ test.describe('screenshots', () => {
     // South Beach in 3D at +2 ft, with a building selected (Euclid Avenue at this viewport)
     await page.keyboard.press('Escape')
     await page.getByRole('slider').focus()
-    await page.keyboard.press('ArrowLeft')
+    await page.keyboard.press('ArrowLeft', { delay: 50 })
+    await page.keyboard.press('ArrowLeft', { delay: 50 })
+    await page.keyboard.press('ArrowLeft', { delay: 50 })
     await page.getByRole('button', { name: '3D view' }).click()
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
     await page.waitForTimeout(5000)
@@ -50,17 +52,17 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/08-south-beach-building-card.png` })
 
-    // North Beach at +3 ft, a building none of the mapped levels reach (78th Street at this viewport)
+    // North Beach at +5 ft, a building none of the mapped levels reach (near Beachwalk at this viewport)
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'North Beach' }).click()
     await page.waitForTimeout(5000)
-    await page.mouse.click(753, 385)
+    await page.mouse.click(876, 346)
     await page.mouse.move(700, 120)
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/09-north-beach-not-reached.png` })
 
-    // Insights in acres, with low spots listed below the breakdown
+    // Insights in acres
     await page.keyboard.press('Escape')
     await page.getByRole('radio', { name: 'Acres' }).click()
     await page.waitForTimeout(800)

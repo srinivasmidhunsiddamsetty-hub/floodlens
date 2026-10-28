@@ -17,8 +17,9 @@ Steps
   3. Clip      read only features intersecting the study area, cut them to its
                bounding box, repair invalid geometries, then clip them to the
                city boundary polygon.
-  4. Derive    compute the additional extent between every pair of scenarios
-               with GEOS polygon difference in a projected CRS (validated).
+  4. Derive    compute the additional extent between each pair of neighbouring
+               scenarios (0→1, 1→2, …) with GEOS polygon difference in a
+               projected CRS (validated). These are the bands the app draws.
   5. Simplify  conservative, topology-preserving simplification in metres.
   6. Export    reproject to EPSG:4326, write GeoJSON + a manifest with
                geodesic areas, provenance, processing steps and validation.
@@ -43,7 +44,6 @@ import sys
 import urllib.request
 import zipfile
 from dataclasses import dataclass
-from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -76,7 +76,9 @@ BOUNDARY_ZIP_URL = (
 )
 BOUNDARY_GEOID = "1245025"  # Miami Beach city, Florida
 
-SCENARIOS_FT = [0, 1, 2, 3]
+# NOAA publishes 0–10 ft in half-foot steps; FloodLens maps whole feet to +5 ft,
+# where three quarters of the city's land is already underwater.
+SCENARIOS_FT = [0, 1, 2, 3, 4, 5]
 
 SOURCE_CRS = "EPSG:4269"  # NAD83 geographic — as published in the GeoPackage
 OUTPUT_CRS = "EPSG:4326"  # WGS84 lon/lat for web maps (RFC 7946)
@@ -416,10 +418,10 @@ def main() -> int:
         })
         files[fname] = stats
 
-    # ---- additional extent between scenario pairs: B − A (A < B)
+    # ---- additional extent between neighbouring scenarios: B − A (A < B)
     comparisons = []
     validation = []
-    for a, b in combinations(SCENARIOS_FT, 2):
+    for a, b in zip(SCENARIOS_FT, SCENARIOS_FT[1:]):
         A, B = clipped[f"slr_{a}ft"], clipped[f"slr_{b}ft"]
         a_minus_b = shapely.difference(A, B).area
         diff_m = shapely.difference(B, A)

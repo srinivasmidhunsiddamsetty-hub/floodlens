@@ -8,9 +8,9 @@ FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation 
 
 ![FloodLens overview — the City of Miami Beach at +2 ft](docs/screenshots/01-overview-2ft-3d.png)
 
-| South Beach in 3D with a building selected | +3 ft, spotlighting what +2 ft adds |
+| South Beach in 3D with a building selected | +5 ft, spotlighting what +2 ft adds |
 | --- | --- |
-| ![Building card](docs/screenshots/08-south-beach-building-card.png) | ![Flood bands](docs/screenshots/02-bands-3ft-spotlight-2ft.png) |
+| ![Building card](docs/screenshots/08-south-beach-building-card.png) | ![Flood bands](docs/screenshots/02-bands-5ft-spotlight-2ft.png) |
 
 Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md).
 
@@ -18,10 +18,10 @@ Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md)
 
 ## Features
 
-- **Real NOAA data.** Ocean-connected inundation polygons from the NOAA Office for Coastal Management Sea Level Rise Viewer data (FL_SE GeoPackage) for 0 ft (current MHHW), +1 ft, +2 ft and +3 ft, clipped to the City of Miami Beach boundary (US Census Bureau TIGER/Line; 39.4 km² including Biscayne Bay waters inside city limits). Nothing is simulated.
+- **Real NOAA data.** Ocean-connected inundation polygons from the NOAA Office for Coastal Management Sea Level Rise Viewer data (FL_SE GeoPackage) for 0 ft (current MHHW) and every foot up to +5 ft, clipped to the City of Miami Beach boundary (US Census Bureau TIGER/Line; 39.4 km² including Biscayne Bay waters inside city limits). Nothing is simulated.
 - **3D map (MapLibre GL JS).** A light, ArcGIS-style geographic basemap (OpenFreeMap Positron, restyled) with Roboto labels; the interface is set in Satoshi. Buildings are extruded from OpenStreetMap heights, and the overlay draws beneath basemap water so mapped inundation reads as "water reaching land".
-- **Sea-level control.** A keyboard-operable slider (native range input) whose track is painted with the map's colour ramp, plus **Play the rise** to animate today → +3 ft. Levels swap in place, so the camera and app state are preserved.
-- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, in one blue hue that darkens as the water rises (light blue = today's high tide, navy = +3 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
+- **Sea-level control.** A keyboard-operable slider (native range input) whose track is painted with the map's colour ramp, plus **Watch the water rise** to animate today → +5 ft. Levels swap in place, so the camera and app state are preserved.
+- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, in one blue hue that darkens as the water rises (light blue = today's high tide, dark navy = +5 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
 - **In-map controls.** Zoom, compass, **Show all of Miami Beach** (fits the whole city back into view) and 2D/3D sit together inside the map, ArcGIS-style. Tilting the map by hand keeps 2D/3D in sync.
 - **Area chips.** South Beach, Mid-Beach and North Beach chips (top-left) fly the camera along the 12.6 km city, keeping the current 2D/3D mode. The chip you pick is highlighted straight away; when you pan by hand, the nearest area's chip takes over. The named areas are camera positions only; no statistics are invented for these unofficial areas.
 - **Insights.** A headline number (land underwater at the chosen level, and as a share of the city's Census land area), a stacked D3 chart of land underwater by sea level, a breakdown of what each foot adds, and the low spots cut off from the sea. A km² / acres switch shows every figure in one unit, remembered in the browser, with tooltips, keyboard focus and a screen-reader table.

@@ -51,16 +51,20 @@ export const colors = {
 /**
  * Sequential ramp for "where water first reaches" at each NOAA water level:
  * one blue hue, light → dark as the water level rises (more water, darker blue).
- * Evenly spaced steps (200 / 350 / 500 / 650) of a validated sequential blue
- * scale, so lightness alone carries the order: it survives greyscale printing
- * and colour-vision deficiencies. (v0.6 tried a viridis-style ramp; the blues
- * read better as water and were restored in v0.7.)
+ * Six steps (today to +5 ft) evenly spaced in OKLab lightness, from the same
+ * light blue as before to a dark navy, so lightness alone carries the order: it
+ * survives greyscale printing and colour-vision deficiencies (worst neighbouring
+ * pair ΔE 10.5 for deuteranopia). v0.17 re-spaced the v0.7 four-step blues; the
+ * old +3 ft navy is now +4 ft. (v0.6 tried a viridis-style ramp; the blues read
+ * better as water.)
  */
 export const BAND_COLORS: Record<number, string> = {
   0: '#9ec5f4',
-  1: '#5598e7',
-  2: '#256abf',
-  3: '#104281',
+  1: '#67a3ea',
+  2: '#3d80d2',
+  3: '#1f5fae',
+  4: '#104180',
+  5: '#022555',
 }
 
 export const bandColor = (feet: number) => BAND_COLORS[feet] ?? BAND_COLORS[2]
