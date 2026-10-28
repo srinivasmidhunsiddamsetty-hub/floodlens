@@ -9,7 +9,7 @@ Working notes for a future portfolio case study. Everything here describes desig
 - **Product:** FloodLens, a Coastal Exposure Explorer
 - **Tagline:** See the coastline. Understand the exposure.
 - **Category:** Geospatial decision support · climate resilience · interactive 3D visualization
-- **Scope:** Single-screen web app for South Beach, Miami Beach, FL, using real NOAA sea-level-rise inundation polygons for 0, +1, +2 and +3 ft above MHHW.
+- **Scope:** Single-screen web app for the City of Miami Beach, FL (municipal boundary, US Census TIGER/Line), using real NOAA sea-level-rise inundation polygons for 0, +1, +2 and +3 ft above MHHW.
 - **Role (self-initiated):** Product design (IA, interaction, visual, data-viz), front-end engineering (React/TypeScript/MapLibre/D3), GIS data preparation (Python/GEOS).
 - **Timeframe:** 1–2 day MVP build.
 
@@ -71,7 +71,8 @@ Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet 
 | **Discrete slider** (native `<input type=range>`) with tick shortcuts | Communicates an ordered water-level scale while preventing in-between values that NOAA did not map. The native control gives keyboard, touch and screen-reader behaviour for free. |
 | **Scenario swap preserves the camera** | Users compare by toggling in place, so the view must not jump. |
 | **Flood bands instead of a compare mode (v0.3)** | Colouring each area by the level that first reaches it shows every level's contribution on one map. The v0.2 compare toggle needed explaining; the bands don't. |
-| **In-map camera controls (v0.3)** | Zoom, compass, Home and 2D/3D act on the map, so they live on it. This removed duplicate reset buttons. |
+| **In-map camera controls (v0.3)** | Zoom, compass, Home and 2D/3D act on the map, so they live on it. This removed duplicate reset buttons. v0.4 swapped the house icon for a frame icon labelled "Show all of Miami Beach", which says what it does. |
+| **Area bookmarks (v0.4)** | The study area grew to a 12.6 km-long city. Chips for South Beach, Mid-Beach and North Beach get from overview to street-level 3D in one click. |
 | **Overlays beneath basemap water** | NOAA's 0 ft extent includes open water. Drawing it beneath the water layer makes blue appear only where water reaches land, which is the planner's question, without altering the data. |
 | **Inspection probes all scenarios** | Answers "at what level does this place first fall inside the mapped extent?", which is more useful than a yes/no for the current scenario. |
 | **Building clicks use the footprint**, not the click point | In 3D a roof click unprojects to the ground behind the building. Using the footprint is both more correct and more meaningful. |
@@ -80,11 +81,11 @@ Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet 
 
 ## 7. Data visualization decisions
 
-- **Headline metric = extent beyond the 0 ft reference.** The total extent is dominated by existing open water (10.6 of 18.7 km²), so it barely changes. The added extent (0.02 → 0.53 → 2.36 km²) shows the non-linear growth that matters.
+- **Headline metric = extent beyond the 0 ft reference.** The total extent is dominated by existing open water inside city limits (19.7 of 39.4 km²), so it barely changes. The added extent (0.04 → 0.99 → 7.43 km²) shows the non-linear growth that matters. v0.4 adds acres and "equal to N% of the city's land area" (Census land area) so the number is relatable.
 - **Bar chart, not a line.** Scenarios are discrete states, and a line would imply interpolation.
 - **Colour:** a light, ArcGIS-style geographic basemap (warm land, sage parks, pale-blue water, white roads) keeps the strongest colours for data. Saturated blue marks mapped inundation, clearly darker than the pale water; orange marks the added extent (a colour-vision-deficiency-safe pair); a purple hatch marks low-lying areas (readable without colour); and a blue ring with a white-outlined core marks the selection.
 - **Typography:** Roboto throughout, including map labels (self-hosted glyphs), to match the Esri/Calcite feel.
-- **Units:** km² with acres as secondary, for US planning audiences. Geodesic areas only.
+- **Units:** km² with acres as secondary, for US planning audiences, always spelled out ("acres", never "ac"). Geodesic areas only.
 - **Language:** "within the mapped extent", never "will flood". No depths, dates or probabilities.
 - **Study area made visible:** a dashed boundary and a dimmed outside area, so clipped data aren't mistaken for "no flooding".
 
@@ -129,10 +130,11 @@ The product went through numbered versions, each tagged in git with screenshots 
 
 - **v0.1 → v0.2:** the dark "control-room" look read as decorative. Moved to a light, ArcGIS/Calcite-like UI with a geographic basemap and Roboto, to match the tools planners already use.
 - **v0.2 → v0.3:** a design review found that one blue for every level hid *how* flooding spreads, that the compare toggle was hard to understand, that reset controls were duplicated, that building selection was unreliable in 3D, and that the panels lacked hierarchy. Fixes: flood bands, in-map controls, one headline number, a redesigned building card, a type scale, and ray-based 3D picking.
+- **v0.3 → v0.4:** review feedback: the darker-for-lower ramp felt backwards, the buildings read as heavy grey, the Home icon didn't say what it did, "ac" was cryptic, and South Beach alone was too narrow. Fixes: a single-hue ramp that darkens as the water rises, sandstone buildings, a frame icon for "show all", acres spelled out, an illustrated building card modelled on a reference the designer supplied, area bookmarks, and the full City of Miami Beach boundary from the Census Bureau.
 
 ## 11. Known limitations
 
-See [docs/LIMITATIONS.md](docs/LIMITATIONS.md). In short: screening-level NOAA bathtub data (no surge, erosion, subsidence or depth), a single rectangular study area, approximate OSM building heights, no building-level exposure counts, and canvas content that is not exposed to screen readers.
+See [docs/LIMITATIONS.md](docs/LIMITATIONS.md). In short: screening-level NOAA bathtub data (no surge, erosion, subsidence or depth), a single city-wide study area, approximate OSM building heights, no building-level exposure counts, and canvas content that is not exposed to screen readers.
 
 ## 12. Potential future improvements
 

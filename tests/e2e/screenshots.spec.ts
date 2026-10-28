@@ -36,6 +36,19 @@ test.describe('screenshots', () => {
     await page.getByRole('button', { name: 'About the data', exact: true }).click()
     await page.waitForTimeout(400)
     await page.screenshot({ path: `${OUT}/04-about-data.png` })
+    await page.keyboard.press('Escape')
+
+    // South Beach in 3D at +2 ft, with a building selected (Euclid Avenue at this viewport)
+    await page.keyboard.press('Escape')
+    await page.getByRole('slider').focus()
+    await page.keyboard.press('ArrowLeft')
+    await page.getByRole('button', { name: '3D view' }).click()
+    await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
+    await page.waitForTimeout(5000)
+    await page.mouse.click(640, 470)
+    await page.mouse.move(700, 120)
+    await page.waitForTimeout(2500)
+    await page.screenshot({ path: `${OUT}/08-south-beach-building-card.png` })
   })
 
   test('mobile states', async ({ page }) => {

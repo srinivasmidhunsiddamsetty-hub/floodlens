@@ -1,4 +1,4 @@
-import { Home, Minus, Plus } from 'lucide-react'
+import { Focus, Minus, Plus } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { ViewMode } from '../../state/reducer'
 
@@ -6,10 +6,12 @@ interface Props {
   viewMode: ViewMode
   bearing: number
   pitch: number
+  zoom: number
   onZoomIn: () => void
   onZoomOut: () => void
   onResetNorth: () => void
-  onHome: () => void
+  /** Fit the whole study area (the City of Miami Beach) back into view. */
+  onShowAll: () => void
   onSetMode: (mode: ViewMode) => void
 }
 
@@ -38,10 +40,10 @@ function Btn({ label, onClick, children, pressed }: { label: string; onClick: ()
   )
 }
 
-/** Map navigation in the ArcGIS/komoot pattern: zoom, orientation, home, then perspective. */
-export function MapControls({ viewMode, bearing, pitch, onZoomIn, onZoomOut, onResetNorth, onHome, onSetMode }: Props) {
+/** Map navigation in the ArcGIS/komoot pattern: zoom, orientation, full extent, then perspective. */
+export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOut, onResetNorth, onShowAll, onSetMode }: Props) {
   return (
-    <div className="absolute top-3 right-3 z-10 flex flex-col gap-2" data-pitch={Math.round(pitch)} data-bearing={Math.round(bearing)}>
+    <div className="absolute top-3 right-3 z-10 flex flex-col gap-2" data-pitch={Math.round(pitch)} data-bearing={Math.round(bearing)} data-zoom={zoom.toFixed(1)}>
       <Group label="Zoom">
         <Btn label="Zoom in" onClick={onZoomIn}>
           <Plus className="size-4" aria-hidden />
@@ -57,8 +59,8 @@ export function MapControls({ viewMode, bearing, pitch, onZoomIn, onZoomOut, onR
             <path d="M8 14.5 5 8h6z" fill="currentColor" />
           </svg>
         </Btn>
-        <Btn label="Reset view" onClick={onHome}>
-          <Home className="size-4" aria-hidden />
+        <Btn label="Show all of Miami Beach" onClick={onShowAll}>
+          <Focus className="size-4" aria-hidden />
         </Btn>
       </Group>
       <Group label="Perspective">

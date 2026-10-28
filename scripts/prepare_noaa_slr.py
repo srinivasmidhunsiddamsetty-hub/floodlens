@@ -4,15 +4,19 @@ FloodLens — NOAA sea-level-rise data preparation.
 
 Reproducible pipeline that turns NOAA Office for Coastal Management (OCM)
 Sea Level Rise Viewer inundation polygons into small, web-ready GeoJSON files
-for the FloodLens study area (South Beach, Miami Beach, FL).
+for the FloodLens study area: the City of Miami Beach, FL, as drawn by the
+US Census Bureau's TIGER/Line place boundary.
 
 Steps
   1. Acquire   download FL_SE_slr_data_dist.zip (resumable) and extract the
-               GeoPackage, unless a local copy is supplied with --gpkg.
+               GeoPackage, unless a local copy is supplied with --gpkg; and
+               download the Census TIGER/Line Florida places file for the
+               city boundary.
   2. Inspect   list layers, CRS and feature counts; fail loudly if the expected
                scenario layers are missing.
-  3. Clip      read only features intersecting the study area, cut them to the
-               study-area rectangle and repair invalid geometries.
+  3. Clip      read only features intersecting the study area, cut them to its
+               bounding box, repair invalid geometries, then clip them to the
+               city boundary polygon.
   4. Derive    compute the additional extent between every pair of scenarios
                with GEOS polygon difference in a projected CRS (validated).
   5. Simplify  conservative, topology-preserving simplification in metres.
@@ -25,7 +29,7 @@ a NOAA source polygon (or a difference between two of them).
 Usage
   python3 -m venv scripts/.venv
   scripts/.venv/bin/pip install -r scripts/requirements.txt
-  scripts/.venv/bin/python scripts/prepare_noaa_slr.py --cache-dir .cache/noaa
+  scripts/.venv/bin/python scripts/prepare_noaa_slr.py --cache-dir ~/.cache/floodlens
 """
 
 from __future__ import annotations
@@ -46,7 +50,7 @@ import numpy as np
 import pyogrio
 import shapely
 from pyproj import Geod, Transformer
-from shapely.geometry import MultiPolygon, Polygon, box, mapping
+from shapely.geometry import MultiPolygon, Polygon, mapping
 from shapely.geometry.polygon import orient
 
 # --------------------------------------------------------------------------
@@ -61,10 +65,16 @@ SOURCE_INDEX_URL = "https://coast.noaa.gov/slrdata/Sea_Level_Rise_Vectors/FL/ind
 GPKG_MEMBER = "FL_SE_slr_final_dist.gpkg"
 GEOGRAPHY = "FL_SE"  # Broward, Miami-Dade, Palm Beach
 
-# Study area: South Beach, Miami Beach (incl. Star, Palm & Hibiscus islands,
-# the southern Venetian Islands and South Pointe). WGS84 lon/lat.
-STUDY_AREA_NAME = "South Beach, Miami Beach, FL"
-STUDY_BBOX_WGS84 = (-80.160, 25.760, -80.118, 25.800)  # (west, south, east, north)
+# Study area: the City of Miami Beach municipal boundary (incorporated place),
+# from the US Census Bureau TIGER/Line Shapefiles. Includes the barrier island
+# from South Pointe to the northern city limit, the Venetian, Star, Palm,
+# Hibiscus and other city islands, and the Biscayne Bay waters inside city limits.
+STUDY_AREA_NAME = "City of Miami Beach, FL"
+BOUNDARY_YEAR = 2026
+BOUNDARY_ZIP_URL = (
+    f"https://www2.census.gov/geo/tiger/TIGER{BOUNDARY_YEAR}/PLACE/tl_{BOUNDARY_YEAR}_12_place.zip"
+)
+BOUNDARY_GEOID = "1245025"  # Miami Beach city, Florida
 
 SCENARIOS_FT = [0, 1, 2, 3]
 
@@ -136,6 +146,18 @@ def download_resumable(url: str, dest: Path) -> None:
         raise RuntimeError("download incomplete — re-run to resume")
 
 
+def acquire_boundary(cache_dir: Path, zip_arg: str | None) -> Path:
+    if zip_arg:
+        p = Path(zip_arg).expanduser().resolve()
+        if not p.exists():
+            raise FileNotFoundError(p)
+        return p
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    zpath = cache_dir / Path(BOUNDARY_ZIP_URL).name
+    download_resumable(BOUNDARY_ZIP_URL, zpath)
+    return zpath
+
+
 def acquire(cache_dir: Path, gpkg_arg: str | None) -> Path:
     if gpkg_arg:
         p = Path(gpkg_arg).expanduser().resolve()
@@ -170,7 +192,6 @@ def make_transform(src: str, dst: str):
     return _apply
 
 
-to_source = make_transform(OUTPUT_CRS, SOURCE_CRS)
 source_to_metric = make_transform(SOURCE_CRS, METRIC_CRS)
 metric_to_output = make_transform(METRIC_CRS, OUTPUT_CRS)
 output_to_metric = make_transform(OUTPUT_CRS, METRIC_CRS)
@@ -229,11 +250,27 @@ def inspect(gpkg: Path) -> dict:
     return {"layerCount": len(layers), "layers": info}
 
 
-def study_area_polygons():
-    study_wgs84 = box(*STUDY_BBOX_WGS84)
-    # Densify before reprojecting so the rectangle edges are transformed faithfully.
-    study_src = to_source(shapely.segmentize(study_wgs84, 0.0005))
-    return study_wgs84, study_src
+def study_area_polygons(boundary_zip: Path):
+    """The city boundary in the source CRS (for clipping) and as a simplified WGS84 outline."""
+    meta, _, wkb, fields = pyogrio.raw.read(f"/vsizip/{boundary_zip}", where=f"GEOID = '{BOUNDARY_GEOID}'")
+    if len(wkb) != 1:
+        raise RuntimeError(f"expected exactly one place with GEOID {BOUNDARY_GEOID}, found {len(wkb)}")
+    if meta["crs"] != SOURCE_CRS:
+        raise RuntimeError(f"boundary CRS {meta['crs']} (expected {SOURCE_CRS})")
+    record = {name: fields[i][0] for i, name in enumerate(meta["fields"])}
+    study_src = polygons_only(shapely.make_valid(shapely.from_wkb(wkb[0])))
+    study_wgs84 = finalize(source_to_metric(study_src))
+    census = {
+        "publisher": "US Census Bureau",
+        "dataset": f"TIGER/Line Shapefiles {BOUNDARY_YEAR}, places (Florida)",
+        "downloadUrl": BOUNDARY_ZIP_URL,
+        "geoid": BOUNDARY_GEOID,
+        "name": str(record["NAMELSAD"]),
+        "censusLandM2": int(record["ALAND"]),
+        "censusWaterM2": int(record["AWATER"]),
+        "license": "Public domain (US federal government work)",
+    }
+    return study_wgs84, study_src, census
 
 
 def clip_layer(gpkg: Path, layer: Layer, study_src) -> MultiPolygon:
@@ -310,17 +347,20 @@ def write_geojson(path: Path, features: list[dict], name: str) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--cache-dir", default=".cache/noaa", help="where the raw NOAA download is cached")
+    ap.add_argument("--cache-dir", default=".cache/floodlens", help="where the raw downloads are cached")
     ap.add_argument("--gpkg", help="use an existing FL_SE GeoPackage instead of downloading")
+    ap.add_argument("--boundary-zip", help="use an existing TIGER/Line Florida places zip instead of downloading")
     ap.add_argument("--out", default="public/data/noaa", help="output directory for processed data")
     args = ap.parse_args()
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
-    gpkg = acquire(Path(args.cache_dir), args.gpkg)
+    cache = Path(args.cache_dir).expanduser()
+    gpkg = acquire(cache / "noaa", args.gpkg)
+    boundary_zip = acquire_boundary(cache / "tiger", args.boundary_zip)
     inspection = inspect(gpkg)
-    study_wgs84, study_src = study_area_polygons()
+    study_wgs84, study_src, census = study_area_polygons(boundary_zip)
     study_area_m2 = geodesic_area_m2(study_wgs84)
     log(f"study area {STUDY_AREA_NAME}: {study_area_m2 / 1e6:.3f} km²")
 
@@ -412,10 +452,12 @@ def main() -> int:
         files[fname] = stats
 
     # ---- study area outline
+    study_parts = [orient(p, sign=1.0) for p in study_wgs84.geoms]
+    study_geom = study_parts[0] if len(study_parts) == 1 else MultiPolygon(study_parts)
     write_geojson(out / "study_area.geojson", [{
         "type": "Feature",
-        "properties": {"name": STUDY_AREA_NAME, "areaM2": round(study_area_m2, 1)},
-        "geometry": mapping(orient(study_wgs84, sign=1.0)),
+        "properties": {"name": STUDY_AREA_NAME, "geoid": BOUNDARY_GEOID, "areaM2": round(study_area_m2, 1)},
+        "geometry": mapping(study_geom),
     }], "study_area")
 
     manifest = {
@@ -444,9 +486,10 @@ def main() -> int:
         },
         "studyArea": {
             "name": STUDY_AREA_NAME,
-            "bbox": list(STUDY_BBOX_WGS84),
+            "bbox": [round(v, 6) for v in study_wgs84.bounds],
             "areaM2": round(study_area_m2, 1),
             "file": "study_area.geojson",
+            "boundary": census,
         },
         "crs": {"source": SOURCE_CRS, "output": OUTPUT_CRS, "processing": METRIC_CRS},
         "processing": {
@@ -456,7 +499,8 @@ def main() -> int:
             "areaMethod": "Geodesic area on the WGS84 ellipsoid (pyproj.Geod) of the exported polygons",
             "steps": [
                 "Read only features intersecting the study area from the NOAA FL_SE GeoPackage (EPSG:4269).",
-                "Cut source polygons to the study-area rectangle, repair invalid geometry (GEOS make_valid) and dissolve.",
+                "Cut source polygons to the study area's bounding box, repair invalid geometry (GEOS make_valid) and dissolve.",
+                f"Clip to the City of Miami Beach boundary (Census TIGER/Line {BOUNDARY_YEAR} place, GEOID {BOUNDARY_GEOID}).",
                 "Reproject to NAD83 / UTM zone 17N (EPSG:26917) for metric operations.",
                 "Derive additional extent between scenario pairs with GEOS polygon difference (higher − lower).",
                 f"Drop difference slivers smaller than {MIN_PART_AREA_M2} m².",

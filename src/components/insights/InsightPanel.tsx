@@ -1,5 +1,6 @@
 import { AlertTriangle, ArrowRight, Loader2, MousePointerClick } from 'lucide-react'
-import { formatAcres, formatKm2, formatScenario } from '../../lib/format'
+import { useEffect, useRef } from 'react'
+import { formatAcres, formatKm2, formatPercent, formatScenario } from '../../lib/format'
 import { lowLyingByFeet, scenarioByFeet, type FloodBand } from '../../lib/manifest'
 import { bandColor } from '../../lib/theme'
 import type { InspectionState } from '../../hooks/useInspection'
@@ -24,6 +25,34 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
   const manifest = manifestState.manifest
   const s = manifest ? scenarioByFeet(manifest, state.scenarioFt) : undefined
   const low = manifest && state.layers.lowLying ? lowLyingByFeet(manifest, state.scenarioFt) : undefined
+  const landM2 = manifest?.studyArea.boundary?.censusLandM2
+
+  // A new selection is the user's latest question: bring its answer into view.
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const selection = state.selection
+  useEffect(() => {
+    if (selection) scrollRef.current?.scrollTo({ top: 0 })
+  }, [selection])
+
+  // The selection card and its empty state share the top slot, so the answer always appears in the same place.
+  const card = selection ? (
+    <InspectionCard
+      selection={selection}
+      inspection={inspection}
+      scenarioFt={state.scenarioFt}
+      onClear={() => dispatch({ type: 'select', selection: null })}
+      onShowLevel={(feet) => dispatch({ type: 'setScenario', feet })}
+    />
+  ) : manifestState.status === 'ready' ? (
+    <div className="flex items-center gap-3 rounded-xl border border-dashed border-line-strong px-4 py-3">
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#ffeedf] text-[#d65a00]" aria-hidden>
+        <MousePointerClick className="size-4" />
+      </span>
+      <p className="t-body">
+        <span className="font-medium text-fg">Click any building</span> to see the water level that first reaches it.
+      </p>
+    </div>
+  ) : null
 
   return (
     <div className="flex h-full flex-col">
@@ -35,7 +64,9 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
         <h2 className="sr-only">Insights</h2>
       )}
 
-      <div className={`scrollbar-thin flex-1 space-y-6 overflow-y-auto px-5 pb-5 ${showHeader ? 'pt-3' : 'pt-4'}`}>
+      <div ref={scrollRef} className={`scrollbar-thin flex-1 space-y-6 overflow-y-auto px-5 pb-5 ${showHeader ? 'pt-3' : 'pt-4'}`}>
+        {card}
+
         {manifestState.status === 'loading' && (
           <p className="flex items-center gap-2 t-body" role="status">
             <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Loading NOAA data…
@@ -69,7 +100,8 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                     <span className="ml-1 text-base text-fg-muted">km²</span>
                   </p>
                   <p className="mt-0.5 t-body">
-                    ≈ {formatAcres(s.beyondBaselineM2)} acres of South Beach at {formatScenario(s.feet)}
+                    ≈ {formatAcres(s.beyondBaselineM2)} acres at {formatScenario(s.feet)}
+                    {landM2 ? <>, equal to {formatPercent(s.beyondBaselineM2 / landM2)} of the city’s land area</> : null}
                   </p>
                 </>
               )}
@@ -109,7 +141,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                           <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
                           <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
                           <span className="text-[13px] text-fg tabular">{formatKm2(b.addedM2)} km²</span>
-                          <span className="w-16 text-right t-caption tabular">{formatAcres(b.addedM2)} ac</span>
+                          <span className="w-[74px] text-right t-caption tabular">{formatAcres(b.addedM2)} acres</span>
                         </button>
                       </li>
                     )
@@ -123,25 +155,6 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
               )}
             </section>
           </>
-        )}
-
-        {/* Selection */}
-        {state.selection ? (
-          <InspectionCard
-            selection={state.selection}
-            inspection={inspection}
-            scenarioFt={state.scenarioFt}
-            onClear={() => dispatch({ type: 'select', selection: null })}
-          />
-        ) : (
-          manifestState.status === 'ready' && (
-            <div className="flex items-start gap-3 rounded border border-dashed border-line-strong px-4 py-3">
-              <MousePointerClick className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden />
-              <p className="t-body">
-                <span className="text-fg">Select a building or place</span> on the map to see the water level that first reaches it.
-              </p>
-            </div>
-          )
         )}
 
         {manifestState.status === 'ready' && (

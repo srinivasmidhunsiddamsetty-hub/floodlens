@@ -43,16 +43,20 @@ The GeoPackage holds 42 layers: `FL_SE_slr_{0_0…10_0}ft` and `FL_SE_low_{0_0�
 
 The NOAA ArcGIS REST services (`coast.noaa.gov/arcgis/rest/services/dc_slr/slr_{N}ft/MapServer`) expose only the **low-lying** polygons as a queryable feature layer. Ocean-connected inundation is published there as a depth raster. The bulk GeoPackage is the only official vector source of ocean-connected extents, so the pipeline downloads it once (resumable), caches it outside the repository, and reads only features that intersect the study area through the GeoPackage spatial index.
 
-## 2. Study area and clipping
+## 2. Study area: City of Miami Beach (US Census Bureau TIGER/Line)
 
 | | |
 | --- | --- |
-| Name | South Beach, Miami Beach, FL (incl. South Pointe, Star / Palm / Hibiscus Islands, southern Venetian Islands) |
-| Bounding box (EPSG:4326) | west −80.160, south 25.760, east −80.118, north 25.800 |
-| Geodesic area | 18.668 km² |
+| Name | City of Miami Beach, FL (incorporated place; GEOID `1245025`) |
+| Source | US Census Bureau, TIGER/Line Shapefiles 2026, places, Florida: https://www2.census.gov/geo/tiger/TIGER2026/PLACE/tl_2026_12_place.zip (7.1 MB, `Last-Modified: 06 Oct 2026`) |
+| Licence | Public domain (US federal government work) |
+| Bounding box (EPSG:4326) | west −80.16905, south 25.759106, east −80.118744, north 25.872621 |
+| Geodesic area | 39.418 km² (Census: 19.92 km² land, 19.49 km² water) |
 | File | `public/data/noaa/study_area.geojson` |
 
-The rectangle is densified, then transformed to EPSG:4269 for clipping. Data outside it are not processed, and the app dims that area.
+The city limits run 12.6 km from South Pointe to the northern boundary and include the city's islands and the Biscayne Bay waters inside city limits. The boundary is published in EPSG:4269, the same CRS as the NOAA data, so it is used unsimplified for clipping; the outline file shown on the map is simplified with the same 0.75 m tolerance. Data outside it are not processed, and the app dims that area.
+
+v0.1–v0.3 used an 18.7 km² rectangle over South Beach (`[-80.160, 25.760, -80.118, 25.800]`). v0.4 replaced it with the municipal boundary: the jurisdiction a city planner is responsible for, and a boundary with an authoritative source.
 
 ## 3. Coordinate reference systems
 
@@ -69,10 +73,10 @@ NAD83 → WGS84 uses the default PROJ transformation, which differs by about 1�
 1. **Acquire**: resumable download of the zip; extract the GeoPackage (or `--gpkg` to use a local copy).
 2. **Inspect**: list layers and verify that all 8 required layers exist, are `MULTIPOLYGON` and use EPSG:4269. Otherwise fail.
 3. **Read**: only features intersecting the study area (spatial-index bbox read with pyogrio).
-4. **Clip, then repair**: `clip_by_rect` first, because NOAA features can cover the whole FL_SE region and repairing them before clipping takes minutes. Then `make_valid`, dissolve (`union_all`) and exact intersection with the study polygon.
+4. **Clip, then repair**: `clip_by_rect` to the boundary's bounding box first, because NOAA features can cover the whole FL_SE region and repairing them before clipping takes minutes. Then `make_valid`, dissolve (`union_all`) and exact intersection with the city boundary polygon.
 5. **Project** to EPSG:26917.
 6. **Derive comparison layers**: for every scenario pair (A < B), GEOS `difference(B, A)`. Validation checks:
-   - *Containment*: area(A − B) must be under 1 m². Measured: 0.003–0.043 m².
+   - *Containment*: area(A − B) must be under 1 m². Measured: 0.12–0.18 m².
    - *Consistency*: area(B − A) must equal area(B) − area(A) within 0.1%. Measured relative error: 0.000000.
    All 6 pairs pass. The results are stored in `manifest.processing.validation` and shown in the app.
 7. **Drop slivers** under 1 m² created by differencing. These are numerical artifacts; the smallest real raster-derived parts are about 9 m².
@@ -83,14 +87,16 @@ NAD83 → WGS84 uses the default PROJ transformation, which differs by about 1�
 
 ## 5. Resulting figures (study area only)
 
-| Scenario | Total mapped extent | Beyond 0 ft extent | File |
-| --- | --- | --- | --- |
-| 0 ft | 10.629 km² | n/a (reference) | `slr_0ft.geojson` (225 KB) |
-| +1 ft | 10.651 km² | 0.022 km² | `slr_1ft.geojson` (225 KB) |
-| +2 ft | 11.156 km² | 0.526 km² | `slr_2ft.geojson` (487 KB) |
-| +3 ft | 12.988 km² | 2.360 km² | `slr_3ft.geojson` (771 KB) |
+| Scenario | Total mapped extent | Beyond 0 ft extent | Share of Census land area | File |
+| --- | --- | --- | --- | --- |
+| 0 ft | 19.671 km² | n/a (reference) | n/a | `slr_0ft.geojson` (520 KB) |
+| +1 ft | 19.710 km² | 0.038 km² | 0.2% | `slr_1ft.geojson` (521 KB) |
+| +2 ft | 20.660 km² | 0.989 km² | 5.0% | `slr_2ft.geojson` (1.1 MB) |
+| +3 ft | 27.094 km² | 7.433 km² | 37% | `slr_3ft.geojson` (2.7 MB) |
 
-"Total mapped extent" includes existing open water (Biscayne Bay and the ocean side), which NOAA maps as inundated at MHHW. "Beyond 0 ft" is the land-side growth and is the headline indicator in the UI.
+"Total mapped extent" includes existing open water (the Biscayne Bay waters inside city limits), which NOAA maps as inundated at MHHW. "Beyond 0 ft" is the land-side growth and is the headline indicator in the UI. The share column divides it by the Census land area (19.92 km²); the app words this as "equal to N% of the city's land area", a size comparison between two sources rather than a parcel count.
+
+What each foot adds (the map's colour bands): +1 ft 0.038 km², +2 ft 0.951 km², +3 ft 6.444 km².
 
 The unit tests (`src/lib/dataIntegrity.test.ts`) recompute every area in the browser with Turf (spherical) and require agreement within 0.5%. They also check monotonic growth, that all coordinates fall inside the study area, and point membership for derived layers.
 
@@ -107,6 +113,6 @@ The unit tests (`src/lib/dataIntegrity.test.ts`) recompute every area in the bro
 ## 7. Assumptions
 
 - The bulk GeoPackage (2023) is the same product shown in NOAA's Sea Level Rise Viewer for this area.
-- A rectangular study area is adequate for an MVP. Edge effects (polygons cut at the rectangle) are disclosed by the boundary and mask.
+- The Census place boundary represents the City of Miami Beach. Polygons are cut at the city limits, which the dashed boundary and the outside mask disclose.
 - Areas are reported for the study area only and include whatever NOAA maps as inundated there (including open water for the total extent).
 - Street names in the inspection card come from the nearest OSM `transportation_name` feature within 150 m. They are a locational aid, not an address.

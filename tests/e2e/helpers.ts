@@ -26,4 +26,9 @@ export async function mapPitch(page: Page) {
   return Number(await page.locator('[data-pitch]').getAttribute('data-pitch'))
 }
 
+/** Current map zoom (one decimal), exposed by the in-map control stack. */
+export async function mapZoom(page: Page) {
+  return Number(await page.locator('[data-zoom]').getAttribute('data-zoom'))
+}
+
 export const insights = (page: Page) => page.getByRole('complementary', { name: 'Insights' })

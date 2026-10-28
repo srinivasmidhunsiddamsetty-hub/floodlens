@@ -5,9 +5,9 @@ import type { LineString, MultiLineString, Position } from 'geojson'
 import maplibregl, { type MapGeoJSONFeature, type Map as MLMap, type PointLike, type StyleSpecification } from 'maplibre-gl'
 import { useEffect, useRef, useState } from 'react'
 import { expandFootprint, firstPrismHit, rejoinTileSplit, unionPieces, type Prism } from '../../lib/buildingPick'
-import { INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN } from '../../lib/constants'
+import { BOOKMARK_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
 import { formatScenario, formatSmallArea } from '../../lib/format'
-import { distanceToLineM, isInsideBBox, outsideMask, type LngLat } from '../../lib/geo'
+import { distanceToLineM, isInsideArea, outsideMask, type LngLat } from '../../lib/geo'
 import {
   addFloodLensLayers,
   bandOpacity,
@@ -23,6 +23,8 @@ import { useReducedMotion } from '../../hooks/useMediaQuery'
 import type { MapData } from '../../hooks/useMapData'
 import { useAppDispatch, useAppState } from '../../state/AppState'
 import type { BuildingInfo, Selection } from '../../state/reducer'
+import type { Feature, MultiPolygon, Polygon } from 'geojson'
+import { AreaBookmarks } from './AreaBookmarks'
 import { MapControls } from './MapControls'
 import { MapStatus } from './MapStatus'
 
@@ -166,6 +168,50 @@ function isWaterAt(map: MLMap, point: PointLike) {
   return !!map.getLayer('water') && map.queryRenderedFeatures(point, { layers: ['water'] }).length > 0
 }
 
+/**
+ * The whole study area fitted to the current viewport, tilted and looking up the
+ * island. Computed directly in Web Mercator so the result doesn't depend on the
+ * camera's current pitch (maplibre's cameraForBounds does).
+ */
+function overviewCamera(map: MLMap, bbox: [number, number, number, number] | null, mode: '2d' | '3d'): CameraState {
+  const pitch = mode === '3d' ? INITIAL_CAMERA.pitch : 0
+  const bearing = mode === '3d' ? INITIAL_CAMERA.bearing : 0
+  if (!bbox) return { ...INITIAL_CAMERA, pitch, bearing }
+  const { clientWidth: w, clientHeight: h } = map.getContainer()
+  const [west, south, east, north] = bbox
+  const corners = [
+    [west, south],
+    [east, south],
+    [east, north],
+    [west, north],
+  ].map(([lng, lat]) => maplibregl.MercatorCoordinate.fromLngLat([lng, lat]))
+  const cx = (Math.min(...corners.map((c) => c.x)) + Math.max(...corners.map((c) => c.x))) / 2
+  const cy = (Math.min(...corners.map((c) => c.y)) + Math.max(...corners.map((c) => c.y))) / 2
+  // Rotate into screen space for the target bearing, then measure the extent.
+  const rad = (bearing * Math.PI) / 180
+  const rotated = corners.map((c) => {
+    const dx = c.x - cx
+    const dy = c.y - cy
+    return [dx * Math.cos(rad) + dy * Math.sin(rad), -dx * Math.sin(rad) + dy * Math.cos(rad)]
+  })
+  const spanX = Math.max(...rotated.map((r) => r[0])) - Math.min(...rotated.map((r) => r[0]))
+  const spanY = Math.max(...rotated.map((r) => r[1])) - Math.min(...rotated.map((r) => r[1]))
+  const pad = Math.max(16, Math.min(w, h) * 0.05)
+  // Below 1024px the insights sheet (64px peek) and legend overlap the bottom of the map.
+  const sheet = window.innerWidth < 1024 ? 96 : 0
+  const availW = Math.max(100, w - 2 * pad - 48) // room for the map controls
+  const availH = Math.max(100, h - 2 * pad - 40 - sheet) // room for the area bookmarks
+  // A tilted view foreshortens the north–south extent (≈ cos 40° ≈ 0.77), so it can zoom in a little.
+  const zoom = Math.log2(Math.min(availW / (spanX * 512), availH / (spanY * 512))) + (pitch > 0 ? 0.3 : 0)
+  // Nudge the centre toward the near (south) end, which a tilted camera magnifies.
+  const tilt = pitch > 0 ? 0.08 * (Math.max(...corners.map((c) => c.y)) - Math.min(...corners.map((c) => c.y))) : 0
+  const lift = sheet / 2 / (512 * 2 ** zoom)
+  const center = new maplibregl.MercatorCoordinate(cx, cy + tilt + lift).toLngLat()
+  return { center: [center.lng, center.lat], zoom: Math.min(Math.max(zoom, MIN_ZOOM), 16), pitch, bearing }
+}
+
+type StudyFeature = Feature<Polygon | MultiPolygon>
+
 export function MapView({ data, studyBbox, highlightFt }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
@@ -177,12 +223,13 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
   const [fatal, setFatal] = useState<string | null>(null)
   const [basemapWarning, setBasemapWarning] = useState<string | null>(null)
   const [hover, setHover] = useState<HoverInfo | null>(null)
-  const [camera, setCamera] = useState({ bearing: INITIAL_CAMERA.bearing, pitch: INITIAL_CAMERA.pitch })
+  const [camera, setCamera] = useState({ bearing: INITIAL_CAMERA.bearing, pitch: INITIAL_CAMERA.pitch, zoom: INITIAL_CAMERA.zoom })
   const [keyboardFocus, setKeyboardFocus] = useState(false)
 
   // Values read inside long-lived map event handlers.
-  const live = useRef({ state, studyBbox, reduced })
-  live.current = { state, studyBbox, reduced }
+  const studyFeature = (data.studyArea.data?.features[0] ?? null) as StudyFeature | null
+  const live = useRef({ state, studyFeature, studyBbox, reduced })
+  live.current = { state, studyFeature, studyBbox, reduced }
 
   // ---------------------------------------------------------------- map lifecycle
   useEffect(() => {
@@ -194,14 +241,14 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       const building = pickBuilding(map, point, clicked)
       // Use the footprint centre: in 3D the click unprojects to the ground behind the roof.
       const lngLat = building ? (turfCentroid(building.footprint).geometry.coordinates as LngLat) : clicked
-      const bbox = live.current.studyBbox
+      const area = live.current.studyFeature
       dispatch({
         type: 'select',
         selection: {
           lngLat,
           building,
           street: nearestStreet(map, lngLat),
-          insideStudyArea: bbox ? isInsideBBox(lngLat, bbox) : false,
+          insideStudyArea: area ? isInsideArea(lngLat, area) : false,
           onWater: !building && isWaterAt(map, point),
         },
       })
@@ -242,7 +289,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       const canvas = map.getCanvas()
       canvas.setAttribute(
         'aria-label',
-        'Map of South Beach, Miami Beach. Arrow keys pan, plus and minus zoom, Enter inspects the centre, Escape clears the selection.',
+        'Map of the City of Miami Beach. Arrow keys pan, plus and minus zoom, Enter inspects the centre, Escape clears the selection.',
       )
       canvas.addEventListener('focus', () => setKeyboardFocus(canvas.matches(':focus-visible')))
       canvas.addEventListener('blur', () => setKeyboardFocus(false))
@@ -258,12 +305,17 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       })
 
       map.addControl(new maplibregl.ScaleControl({ unit: 'imperial', maxWidth: 110 }), 'bottom-right')
+      // Keep attribution fully visible on desktop; collapse to an (i) button on narrow screens,
+      // with shorter source names so the expanded strip stays compact.
+      const compact = window.innerWidth < 1024
+      const noaa = '<a href="https://coast.noaa.gov/slr/" target="_blank" rel="noopener">'
+      const census = '<a href="https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html" target="_blank" rel="noopener">'
       map.addControl(
         new maplibregl.AttributionControl({
-          // Keep attribution fully visible on desktop; collapse to an (i) button on narrow screens.
-          compact: window.innerWidth < 1024,
-          customAttribution:
-            'Inundation: <a href="https://coast.noaa.gov/slr/" target="_blank" rel="noopener">NOAA Office for Coastal Management</a>',
+          compact,
+          customAttribution: compact
+            ? `Inundation: ${noaa}NOAA OCM</a> | Boundary: ${census}US Census Bureau</a>`
+            : `Inundation: ${noaa}NOAA Office for Coastal Management</a> | City boundary: ${census}US Census Bureau TIGER/Line</a>`,
         }),
         'bottom-right',
       )
@@ -297,7 +349,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       let camFrame = 0
       map.on('move', () => {
         cancelAnimationFrame(camFrame)
-        camFrame = requestAnimationFrame(() => map && setCamera({ bearing: map.getBearing(), pitch: map.getPitch() }))
+        camFrame = requestAnimationFrame(() => map && setCamera({ bearing: map.getBearing(), pitch: map.getPitch(), zoom: map.getZoom() }))
       })
 
       // Keep the 2D/3D control honest when users tilt the map directly (right-drag, two-finger drag).
@@ -367,8 +419,17 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
     const map = mapRef.current
     if (!ready || !map) return
     setSourceData(map, SRC.study, studyData)
-    setSourceData(map, SRC.mask, studyBbox ? outsideMask(studyBbox) : null)
-  }, [ready, studyData, studyBbox])
+    setSourceData(map, SRC.mask, studyFeature ? outsideMask(studyFeature) : null)
+  }, [ready, studyData, studyFeature])
+
+  // Frame the whole city once, as soon as both the map and the study area are known.
+  const fitted = useRef(false)
+  useEffect(() => {
+    const map = mapRef.current
+    if (!ready || !map || !studyBbox || fitted.current) return
+    fitted.current = true
+    map.jumpTo(overviewCamera(map, studyBbox, live.current.state.viewMode))
+  }, [ready, studyBbox])
 
   // ---------------------------------------------------------------- layer visibility
   const { layers, viewMode } = state
@@ -407,8 +468,9 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
   useEffect(() => {
     const map = mapRef.current
     if (!ready || !map || resetToken === 0) return
-    if (reduced) map.jumpTo(INITIAL_CAMERA)
-    else map.flyTo({ ...INITIAL_CAMERA, duration: 1400, essential: false })
+    const camera = overviewCamera(map, live.current.studyBbox, '3d')
+    if (reduced) map.jumpTo(camera)
+    else map.flyTo({ ...camera, duration: 1400, essential: false })
   }, [ready, resetToken, reduced])
 
   const inspectToken = state.inspectCenterToken
@@ -441,21 +503,29 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
 
   const ease = (fn: (m: MLMap) => void) => mapRef.current && fn(mapRef.current)
   const anim = reduced ? { duration: 0 } : { duration: 300 }
+  const goTo = (center: [number, number]) =>
+    ease((m) => {
+      const camera = { center, zoom: BOOKMARK_ZOOM, ...(viewMode === '3d' ? OBLIQUE : TOP_DOWN) }
+      if (reduced) m.jumpTo(camera)
+      else m.flyTo({ ...camera, duration: 1600, essential: false })
+    })
 
   return (
     <div className="relative h-full w-full bg-canvas" role="region" aria-label="Map">
       {/* maplibre-gl.css forces `position: relative` on the container, so size it explicitly. */}
       <div ref={containerRef} className="h-full w-full" />
 
+      {ready && <AreaBookmarks onGo={goTo} />}
       {ready && (
         <MapControls
           viewMode={viewMode}
           bearing={camera.bearing}
           pitch={camera.pitch}
+          zoom={camera.zoom}
           onZoomIn={() => ease((m) => m.zoomIn(anim))}
           onZoomOut={() => ease((m) => m.zoomOut(anim))}
           onResetNorth={() => ease((m) => m.easeTo({ bearing: 0, ...anim }))}
-          onHome={() => dispatch({ type: 'resetCamera' })}
+          onShowAll={() => dispatch({ type: 'resetCamera' })}
           onSetMode={(mode) => dispatch({ type: 'setViewMode', mode })}
         />
       )}

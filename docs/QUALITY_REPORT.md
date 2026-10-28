@@ -9,7 +9,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - MapLibre GL JS 5 map on OpenFreeMap Positron (verified free, keyless, attribution kept), restyled at runtime into a light geographic palette with self-hosted Roboto label glyphs.
 - 3D building extrusions from OpenMapTiles `render_height`; footprints in 2D.
 - Discrete scenario control (0 / +1 / +2 / +3 ft above MHHW).
-- **Real NOAA OCM data**: FL_SE GeoPackage, ocean-connected (`slr`) and low-lying (`low`) layers, clipped to an 18.7 km² South Beach study area by a reproducible pipeline.
+- **Real NOAA OCM data**: FL_SE GeoPackage, ocean-connected (`slr`) and low-lying (`low`) layers, clipped to the City of Miami Beach boundary (US Census TIGER/Line, 39.4 km²) by a reproducible pipeline.
 - Overlay switching in place (GeoJSON `setData`), preserving the camera.
 
 **Phase 2: spatial analysis and interaction**
@@ -19,6 +19,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - 2D/3D toggle with animated pitch and bearing, kept in sync with manual tilting.
 - Flood bands by water level (today / +1 / +2 / +3 ft) from validated, precomputed polygon differences, with spotlight on hover (v0.3; replaced the v0.2 compare mode).
 - In-map camera controls (zoom, compass, Home, 2D/3D) and 3D-accurate building picking (v0.3).
+- City-wide study area, area bookmarks, a "show all of Miami Beach" control, a single-hue flood ramp and an illustrated building card (v0.4).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
@@ -32,14 +33,14 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **9 files, 75 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **12 passed** (11 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
+| Unit and component tests | `npm test` | **10 files, 85 tests passed** |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **13 passed** (12 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
-| Production build | `npm run build` | Succeeds; JS ≈ 390 KB gzip (MapLibre 285 KB); data 7.8 MB raw, lazy-loaded per state |
+| Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 20.8 MB raw across 16 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3 ft band adds 4.3 MB raw, ≈ 0.48 MB gzip) |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage; all 6 difference validations passed |
 | Contrast (computed) | WCAG formula on design tokens | All text tokens ≥ 4.7:1 on every surface (accent blue 5.0–5.8:1); unselected switch border 3.5:1; map place labels 9.5:1, road labels 5.9:1 |
 
-What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Play the rise stepping to +3 ft and stopping; chart bars and breakdown rows selecting levels; in-map 2D/3D (pitch read from the control stack) and Home restoring 3D, with no duplicate reset buttons; keyboard inspection (Enter on the map) with a 4-step ladder; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
+What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Play the rise stepping to +3 ft and stopping; chart bars and breakdown rows selecting levels; in-map 2D/3D (pitch read from the control stack) and "Show all of Miami Beach" restoring the 3D city view, with no duplicate reset buttons; area bookmarks flying the camera and keeping 2D/3D; keyboard inspection (Enter on the map) with a 4-step ladder; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
 
 Geographic calculations are verified by `src/lib/dataIntegrity.test.ts`. Turf areas match the manifest's ellipsoidal areas within 0.5% for all 10 extent and difference files. Difference area ≈ change in totals within 1%. Areas grow monotonically. All coordinates fall inside the study area. A point inside the +1 → +2 ft added extent is outside the 1 ft extent and inside the 2 ft extent.
 
@@ -52,7 +53,7 @@ Geographic calculations are verified by `src/lib/dataIntegrity.test.ts`. Turf ar
 
 ## Known limitations
 
-See `docs/LIMITATIONS.md`. Summary: NOAA screening-level bathtub data (no surge, depth, erosion, subsidence or dates); one rectangular study area; approximate OSM building heights; vector-tile footprints may be merged or clipped at tile edges; the WebGL canvas is not exposed to assistive tech.
+See `docs/LIMITATIONS.md`. Summary: NOAA screening-level bathtub data (no surge, depth, erosion, subsidence or dates); one city-wide study area; approximate OSM building heights; vector-tile footprints may be merged or clipped at tile edges; the WebGL canvas is not exposed to assistive tech.
 
 ## Deliberately deferred
 

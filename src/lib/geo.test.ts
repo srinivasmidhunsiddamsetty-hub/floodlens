@@ -1,7 +1,7 @@
 import type { Feature, Polygon } from 'geojson'
 import { describe, expect, it } from 'vitest'
 import type { ExtentCollection } from '../types/data'
-import { collectionAreaM2, distanceToLineM, featureAtPoint, featureIntersecting, outsideMask, probeScenarios } from './geo'
+import { collectionAreaM2, distanceToLineM, featureAtPoint, featureIntersecting, isInsideArea, outsideMask, probeScenarios } from './geo'
 
 /** Axis-aligned square in lon/lat degrees. */
 function square(w: number, s: number, size: number, props = {}): Feature<Polygon> {
@@ -79,10 +79,30 @@ describe('distanceToLineM', () => {
   })
 })
 
-describe('outsideMask', () => {
-  it('cuts the study area out of a world polygon', () => {
-    const m = outsideMask([-80.16, 25.76, -80.118, 25.8])
+describe('outsideMask / isInsideArea', () => {
+  const area: Feature<Polygon> = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [[-80.16, 25.76], [-80.12, 25.76], [-80.12, 25.8], [-80.16, 25.8], [-80.16, 25.76]],
+        [[-80.15, 25.77], [-80.15, 25.78], [-80.14, 25.78], [-80.14, 25.77], [-80.15, 25.77]],
+      ],
+    },
+  }
+
+  it('cuts the study area out of a world polygon and masks its holes', () => {
+    const m = outsideMask(area)
     expect(m.geometry.coordinates).toHaveLength(2)
-    expect(m.geometry.coordinates[1]).toContainEqual([-80.16, 25.76])
+    expect(m.geometry.coordinates[0]).toHaveLength(2)
+    expect(m.geometry.coordinates[0][1]).toContainEqual([-80.16, 25.76])
+    expect(m.geometry.coordinates[1][0]).toContainEqual([-80.15, 25.77])
+  })
+
+  it('tests points against the real outline, not its bounding box', () => {
+    expect(isInsideArea([-80.13, 25.79], area)).toBe(true)
+    expect(isInsideArea([-80.145, 25.775], area)).toBe(false)
+    expect(isInsideArea([-80.1, 25.79], area)).toBe(false)
   })
 })

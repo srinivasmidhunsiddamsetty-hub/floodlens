@@ -7,8 +7,40 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.1 | 23 Oct 2026 | First working build, dark UI | [`docs/versions/v0.1-dark/`](docs/versions/v0.1-dark/) |
 | v0.2 | 23 Oct 2026 | Light ArcGIS-style UI, Roboto | [`docs/versions/v0.2-light/`](docs/versions/v0.2-light/) |
 | v0.3 | 27 Oct 2026 | Flood bands, in-map controls, redesigned panels | [`docs/versions/v0.3/`](docs/versions/v0.3/) |
+| v0.4 | 28 Oct 2026 | Whole City of Miami Beach, new ramp, illustrated building card | [`docs/versions/v0.4/`](docs/versions/v0.4/) |
 
 ---
+
+## v0.4: The whole city (28 Oct 2026)
+
+Driven by a design review of v0.3. Each change lists the problem it solved.
+
+**Data**
+- **Study area: the City of Miami Beach.** v0.3 covered an 18.7 km² rectangle over South Beach. v0.4 clips NOAA's data to the city's municipal boundary from the US Census Bureau (TIGER/Line 2026, GEOID 1245025, public domain): 39.4 km² from South Pointe to the northern city limit, including the bay waters inside city limits. It is the area a city planner is responsible for, and the boundary has an authoritative source. All six difference validations pass.
+- New figures: beyond today's high tide, +1 ft adds 0.038 km², +2 ft 0.95 km² and +3 ft 6.44 km² (7.43 km² in total at +3 ft, equal to 37% of the city's Census land area).
+
+**Map**
+- **Flood ramp reversed and rebuilt.** v0.3 made lower levels darker ("reached sooner"). In review that read backwards: depth isn't shown, so "submerged is submerged". The bands are now one blue hue that darkens as the water rises (today `#9ec5f4` → +3 ft `#104281`), using evenly spaced steps of a validated sequential blue scale. Basemap water is now a muted grey-blue so the flood blues never read as plain water.
+- **Buildings in light sandstone** instead of taupe grey, which looked heavy. The warm stone colour is the complement of the blue ramp, so buildings stay legible on every band.
+- **"Show all of Miami Beach"** replaces Home. A house icon suggested "go home"; the frame icon and label say what it does: fit the whole city back into view.
+- **Area bookmarks.** South Beach, Mid-Beach and North Beach chips fly the camera along the 12.6 km city and keep the current 2D/3D mode. They are camera positions only; no statistics are reported for these unofficial areas.
+- **Opening view fits the city** to any screen, tilted 40° and looking up the island, with room for the mobile bottom sheet.
+
+**Insights**
+- **Building card rebuilt from a reference design:**
+  - An orange icon tile (the map's selection colour), the title, and chips for distance to street and coordinates.
+  - A "First reached" hero with a large answer and an illustration: the water rises to the level that first reaches the building, with the level on a gauge line.
+  - A four-stop gauge (today → +3 ft).
+  - Icon rows for height, footprint and low-lying status.
+  - A one-line caveat.
+- If the slider is below the level that reaches the building, one click shows that level on the map.
+- **The card now opens at the top of Insights**, where the "Click any building" prompt sits, so the answer appears where the eye already is.
+- **Units spelled out:** "acres", never "ac". The headline adds "equal to N% of the city's land area" so the number is relatable.
+
+**Engineering**
+- Pipeline: Census boundary download and polygon clipping (`scripts/prepare_noaa_slr.py`); manifest records the boundary's source, GEOID, licence and Census land/water areas.
+- Study-area tests use the real outline (point-in-polygon), not its bounding box; the outside mask also masks holes in the boundary.
+- Tests: 85 unit/component tests (new InspectionCard suite), 13 end-to-end tests (new area-bookmark test).
 
 ## v0.3: Clarity pass (27 Oct 2026)
 

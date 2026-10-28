@@ -16,7 +16,8 @@ FloodLens is an **exploratory screening tool**. It visualizes NOAA's mapped inun
 
 - **Scenarios are amounts of rise, not dates.** No years or probabilities are shown, because that needs a separate sea-level projection.
 - **No depth.** An extent polygon cannot tell you how deep water would be.
-- **Study area only.** Data are clipped to an 18.7 km² rectangle over South Beach. Polygons are cut at its edges, and nothing outside it is processed.
+- **Study area only.** Data are clipped to the City of Miami Beach boundary (US Census TIGER/Line, 39.4 km² including bay waters). Polygons are cut at the city limits, and nothing outside them is processed.
+- **Area bookmarks are camera positions.** South Beach, Mid-Beach and North Beach have no official boundaries, so FloodLens reports no statistics for them.
 - **Total extent includes open water.** NOAA maps the bay and ocean as inundated at MHHW. The headline metric (extent beyond 0 ft) removes that baseline.
 - **"Within the mapped extent" ≠ "will flood".** Inspection results are a geometric test against NOAA polygons, nothing more.
 - **Building heights are approximate** (OpenStreetMap via OpenMapTiles; estimated where OSM lacks height). Footprints come from vector tiles and can be merged or clipped at tile edges.

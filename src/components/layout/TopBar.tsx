@@ -34,7 +34,7 @@ export function TopBar({ isDesktop, controlsOpen }: Props) {
 
       <p className="hidden min-w-0 items-center gap-1.5 truncate t-body md:flex">
         <MapPin className="size-3.5 shrink-0 text-fg-subtle" aria-hidden />
-        <span className="truncate">{LOCATION_LABEL} · South Beach</span>
+        <span className="truncate">{LOCATION_LABEL}</span>
       </p>
 
       <nav aria-label="Data" className="ml-auto flex items-center gap-0.5">

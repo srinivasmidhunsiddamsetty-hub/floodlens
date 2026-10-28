@@ -144,34 +144,33 @@ export function bboxOf(bbox: [number, number, number, number]): Feature<Polygon>
   }
 }
 
-/** A world-sized polygon with the study area cut out — used to dim "no data" areas. */
-export function outsideMask(bbox: [number, number, number, number]): Feature<Polygon> {
-  const [w, s, e, n] = bbox
+type AreaFeature = Feature<Polygon | MultiPolygon>
+
+const WORLD: Position[] = [
+  [-180, -85],
+  [180, -85],
+  [180, 85],
+  [-180, 85],
+  [-180, -85],
+]
+
+/**
+ * A world-sized polygon with the study area cut out — used to dim "no data" areas.
+ * Every outer ring of the study area becomes a hole; any hole *in* the study area
+ * (land outside city limits) becomes its own masked polygon.
+ */
+export function outsideMask(area: AreaFeature): Feature<MultiPolygon> {
+  const polys = area.geometry.type === 'Polygon' ? [area.geometry.coordinates] : area.geometry.coordinates
   return {
     type: 'Feature',
     properties: {},
     geometry: {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [-180, -85],
-          [180, -85],
-          [180, 85],
-          [-180, 85],
-          [-180, -85],
-        ],
-        [
-          [w, s],
-          [w, n],
-          [e, n],
-          [e, s],
-          [w, s],
-        ],
-      ],
+      type: 'MultiPolygon',
+      coordinates: [[WORLD, ...polys.map((rings) => rings[0])], ...polys.flatMap((rings) => rings.slice(1).map((hole) => [hole]))],
     },
   }
 }
 
-export function isInsideBBox(pt: LngLat, bbox: [number, number, number, number]) {
-  return bboxContains(bbox as BBox, pt)
+export function isInsideArea(pt: LngLat, area: AreaFeature) {
+  return bboxContains(featureBBox(area), pt) && booleanPointInPolygon(pt, area)
 }

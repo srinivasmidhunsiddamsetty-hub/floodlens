@@ -1,19 +1,21 @@
 import { expect, test } from '@playwright/test'
-import { insights, mapPitch, trackErrors, waitForMap } from './helpers'
+import { insights, mapPitch, mapZoom, trackErrors, waitForMap } from './helpers'
 
 test.describe('FloodLens — core flows', () => {
-  test('loads Miami Beach with real NOAA data and no runtime errors', async ({ page }) => {
+  test('loads the City of Miami Beach with real NOAA data and no runtime errors', async ({ page }) => {
     const errors = trackErrors(page)
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'FloodLens', level: 1 })).toBeVisible()
-    await expect(page.getByText('Miami Beach, Florida · South Beach')).toBeVisible()
+    await expect(page.getByText('City of Miami Beach, Florida')).toBeVisible()
     await waitForMap(page)
 
     const headline = insights(page).getByRole('region', { name: 'Headline' })
     await expect(headline).toContainText('Flooded beyond today’s high tide')
-    await expect(headline).toContainText('0.53')
+    await expect(headline).toContainText('0.99')
+    await expect(headline).toContainText('of the city’s land area')
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/OpenStreetMap/)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/NOAA/)
+    await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/Census Bureau/)
     expect(errors).toEqual([])
   })
 
@@ -28,7 +30,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('ArrowRight')
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
-    await expect(insights(page).getByRole('region', { name: 'Headline' })).toContainText('2.36')
+    await expect(insights(page).getByRole('region', { name: 'Headline' })).toContainText('7.43')
     await expect(page.getByRole('region', { name: 'Map legend' }).getByRole('button', { name: '+3 ft' })).toBeEnabled()
 
     await page.keyboard.press('Home')
@@ -54,25 +56,42 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+1 ft above MHHW')
     await expect(bar).toHaveAttribute('aria-pressed', 'true')
     const row = insights(page).getByRole('button', { name: /\+3 ft adds/ })
-    await expect(row).toContainText('1.83 km²')
+    await expect(row).toContainText('6.44 km²')
+    await expect(row).toContainText('acres')
     await row.click()
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
   })
 
-  test('in-map controls: 2D/3D keeps the level, Home restores the 3D view', async ({ page }) => {
+  test('in-map controls: 2D/3D keeps the level, "show all" restores the 3D city view', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    expect(await mapPitch(page)).toBe(55)
+    expect(await mapPitch(page)).toBe(40)
     await page.getByRole('button', { name: '2D view' }).click()
     await expect.poll(() => mapPitch(page)).toBe(0)
     await expect(page.getByRole('button', { name: '2D view' })).toHaveAttribute('aria-pressed', 'true')
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+2 ft above MHHW')
-    await page.getByRole('button', { name: 'Reset view' }).click()
-    await expect.poll(() => mapPitch(page)).toBe(55)
+    await page.getByRole('button', { name: 'Show all of Miami Beach' }).click()
+    await expect.poll(() => mapPitch(page)).toBe(40)
     await expect(page.getByRole('button', { name: '3D view' })).toHaveAttribute('aria-pressed', 'true')
-    // Reset view lives only in the map now — no duplicate in the header or panels.
-    await expect(page.getByRole('banner').getByRole('button', { name: /reset/i })).toHaveCount(0)
-    await expect(page.getByRole('button', { name: 'Reset view' })).toHaveCount(1)
+    // The view reset lives only in the map — no duplicate in the header or panels.
+    await expect(page.getByRole('banner').getByRole('button', { name: /reset|show all/i })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Show all of Miami Beach' })).toHaveCount(1)
+  })
+
+  test('area bookmarks fly along the city and keep the current 2D/3D mode', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const overview = await mapZoom(page)
+    const go = page.getByRole('navigation', { name: 'Go to area' })
+    await go.getByRole('button', { name: 'North Beach' }).click()
+    await expect.poll(() => mapZoom(page), { timeout: 10_000 }).toBeGreaterThan(overview + 2)
+    await expect.poll(() => mapPitch(page)).toBe(55)
+    await page.getByRole('button', { name: '2D view' }).click()
+    await expect.poll(() => mapPitch(page)).toBe(0)
+    await go.getByRole('button', { name: 'South Beach' }).click()
+    await page.waitForTimeout(2500)
+    expect(await mapPitch(page)).toBe(0)
+    await expect(page.getByRole('button', { name: '2D view' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   test('keyboard inspection: Enter on the map inspects the centre, Esc clears it', async ({ page }) => {

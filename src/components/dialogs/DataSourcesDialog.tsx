@@ -52,6 +52,19 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
             </li>
           </ul>
 
+          {manifest.studyArea.boundary && (
+            <>
+              <H>Study area boundary</H>
+              <p>
+                {manifest.studyArea.boundary.name} (GEOID {manifest.studyArea.boundary.geoid}) from the{' '}
+                <A href={manifest.studyArea.boundary.downloadUrl}>{manifest.studyArea.boundary.publisher} {manifest.studyArea.boundary.dataset}</A>,{' '}
+                {manifest.studyArea.boundary.license.toLowerCase()}. The city limits include Biscayne Bay waters: Census lists{' '}
+                {formatKm2(manifest.studyArea.boundary.censusLandM2)} km² of land and {formatKm2(manifest.studyArea.boundary.censusWaterM2)} km²
+                of water.
+              </p>
+            </>
+          )}
+
           <H>Processing</H>
           <p className="text-xs">
             Study area <strong className="text-fg">{manifest.studyArea.name}</strong>, bbox [{manifest.studyArea.bbox.join(', ')}] (
@@ -150,8 +163,8 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
 
       <H>Attribution</H>
       <p className="text-xs">
-        Data: NOAA Office for Coastal Management, Sea Level Rise Viewer (coast.noaa.gov/slr). Map: OpenFreeMap © OpenMapTiles, data from
-        OpenStreetMap. Rendering: MapLibre GL JS. Charts: D3.js.
+        Data: NOAA Office for Coastal Management, Sea Level Rise Viewer (coast.noaa.gov/slr). City boundary: US Census Bureau TIGER/Line.
+        Map: OpenFreeMap © OpenMapTiles, data from OpenStreetMap. Rendering: MapLibre GL JS. Charts: D3.js.
       </p>
     </Dialog>
   )

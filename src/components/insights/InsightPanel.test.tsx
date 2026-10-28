@@ -43,7 +43,38 @@ describe('<InsightPanel>', () => {
     // 500,000 m² beyond baseline at +2 ft in the fixture → 0.50 km², 124 acres
     expect(screen.getByText('Flooded beyond today’s high tide')).toBeInTheDocument()
     expect(screen.getAllByText('0.50').length).toBeGreaterThan(0)
-    expect(screen.getByText(/124 acres of South Beach at \+2 ft/)).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('≈ 124 acres at +2 ft')
+  })
+
+  it('relates the headline to the city’s land area when the Census boundary is known', () => {
+    const withLand = makeManifest({
+      studyArea: {
+        ...manifest.studyArea,
+        boundary: {
+          publisher: 'US Census Bureau',
+          dataset: 'TIGER/Line',
+          downloadUrl: 'https://example.test/places.zip',
+          geoid: '1245025',
+          name: 'Test city',
+          censusLandM2: 10_000_000,
+          censusWaterM2: 1,
+          license: 'Public domain',
+        },
+      },
+    })
+    render(
+      <AppStateProvider initial={{ ...initialState, available: [0, 1, 2, 3], scenarioFt: 2 }}>
+        <InsightPanel
+          manifestState={{ status: 'ready', manifest: withLand, error: null }}
+          inspection={{ status: 'idle' }}
+          bands={bandsFor(withLand)}
+          highlightFt={null}
+          onHighlight={() => {}}
+        />
+      </AppStateProvider>,
+    )
+    // 500,000 m² of 10 km² land → 5.0%
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('equal to 5.0% of the city’s land area')
   })
 
   it('breaks the total down by the area each foot adds', () => {
@@ -52,6 +83,13 @@ describe('<InsightPanel>', () => {
     expect(within(list).getByText('+1 ft adds')).toBeInTheDocument()
     expect(within(list).getByText('0.48 km²')).toBeInTheDocument()
     expect(within(list).getByText('1.80 km²')).toBeInTheDocument()
+    // Units are spelled out: "acres", never the abbreviation "ac".
+    expect(within(list).getByText('445 acres')).toBeInTheDocument()
+  })
+
+  it('invites a selection in the slot where the selection card appears', () => {
+    ready()
+    expect(screen.getByText('Click any building')).toBeInTheDocument()
   })
 
   it('spotlights a band when its breakdown row is hovered', async () => {

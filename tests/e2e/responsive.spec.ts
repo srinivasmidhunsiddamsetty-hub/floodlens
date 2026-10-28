@@ -11,7 +11,8 @@ test.describe('FloodLens — small screens', () => {
     expect(overflow).toBeLessThanOrEqual(1)
 
     // Map controls stay inside the map on phones too.
-    await expect(page.getByRole('button', { name: 'Reset view' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Show all of Miami Beach' })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Go to area' })).toBeVisible()
 
     // Drawer starts closed so the map is visible first.
     const open = page.getByRole('button', { name: 'Open sea level and layers' })
@@ -26,7 +27,7 @@ test.describe('FloodLens — small screens', () => {
 
     // Bottom sheet peeks with the headline number, expands on demand.
     const sheetToggle = page.getByRole('button', { name: /Insights · \+3 ft/ })
-    await expect(sheetToggle).toContainText('2.36 km² flooded beyond today')
+    await expect(sheetToggle).toContainText('7.43 km² flooded beyond today')
     await expect(sheetToggle).toHaveAttribute('aria-expanded', 'false')
     await sheetToggle.click()
     await expect(page.getByRole('region', { name: 'Headline' })).toContainText('Flooded beyond today’s high tide')

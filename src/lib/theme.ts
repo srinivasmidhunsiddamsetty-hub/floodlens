@@ -3,7 +3,7 @@
  * legend, D3 chart and MapLibre layers always agree.
  *
  * Basemap: a soft "streets / topographic" palette (warm land, sage parks,
- * pale grey-blue water, white roads) so data overlays carry the strongest colour.
+ * muted grey-blue water, white roads) so data overlays carry the strongest colour.
  */
 export const colors = {
   // basemap
@@ -11,8 +11,9 @@ export const colors = {
   landResidential: '#ebe7e0',
   landPark: '#d5e7c6',
   landWood: '#c8dfb6',
-  water: '#b3cde3',
-  waterLine: '#b3cde3',
+  // Desaturated so the saturated flood blues never read as "just water".
+  water: '#c5d4e0',
+  waterLine: '#c5d4e0',
   roadMinor: '#ffffff',
   roadMajor: '#ffffff',
   roadCasing: '#d8d1c5',
@@ -26,17 +27,18 @@ export const colors = {
   labelMinor: '#555555',
   labelWater: '#2f5d8f',
   halo: '#ffffff',
-  // Warm taupe buildings: clearly darker than land and a different hue from water.
-  building: '#b4ada3',
-  buildingTall: '#8f877c',
-  buildingOutline: '#8a8277',
-  buildingFlat: '#c3bcb2',
+  // Warm sandstone buildings (a nod to Miami Beach's Art Deco stucco): the
+  // complementary hue to the blue flood ramp, so they stay legible on every band.
+  building: '#f0e6d6',
+  buildingTall: '#e3d3bb',
+  buildingOutline: '#c2a985',
+  buildingFlat: '#eadcc6',
 
   // data
   lowLying: '#6b35aa',
   accent: '#0069b0',
-  selection: '#ff8a1f',
-  selectionLine: '#b85a00',
+  selection: '#ff7417',
+  selectionLine: '#b34700',
   studyArea: '#3d4655',
   mask: '#ffffff',
 
@@ -47,21 +49,20 @@ export const colors = {
 } as const
 
 /**
- * Sequential ramp for "where water first reaches" at each NOAA water level.
- * Darkest = reached at the lowest level (most exposed, and deepest at any higher
- * level); lighter = reached only at higher levels. Lightness carries the order,
- * so the ramp also works in greyscale and for colour-vision deficiencies; the
- * hue drifts navy → aqua so even the lightest band stays distinct from the
- * pale grey-blue basemap water.
+ * Sequential ramp for "where water first reaches" at each NOAA water level:
+ * one blue hue, light → dark as the water level rises (more water, darker blue).
+ * Evenly spaced steps (200 / 350 / 500 / 650) of a validated sequential blue
+ * scale, so lightness alone carries the order: it survives greyscale printing
+ * and colour-vision deficiencies.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#14307a',
-  1: '#1f5fd0',
-  2: '#3a97e8',
-  3: '#4cc9d6',
+  0: '#9ec5f4',
+  1: '#5598e7',
+  2: '#256abf',
+  3: '#104281',
 }
 
-export const bandColor = (feet: number) => BAND_COLORS[feet] ?? '#3a97e8'
+export const bandColor = (feet: number) => BAND_COLORS[feet] ?? BAND_COLORS[2]
 
 export const opacity = {
   band: 0.85,

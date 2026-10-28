@@ -36,6 +36,20 @@ export interface StudyArea {
   bbox: [number, number, number, number]
   areaM2: number
   file: string
+  /** Where the outline comes from (US Census TIGER/Line place boundary). */
+  boundary?: StudyAreaBoundary
+}
+
+export interface StudyAreaBoundary {
+  publisher: string
+  dataset: string
+  downloadUrl: string
+  geoid: string
+  name: string
+  /** Census-reported land and water area inside the boundary (m²). */
+  censusLandM2: number
+  censusWaterM2: number
+  license: string
 }
 
 export interface ValidationCheck {

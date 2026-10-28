@@ -18,10 +18,12 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 ```
 
 - NOAA overlays sit **beneath basemap water**. Ocean and bay therefore stay "water", and blue appears where NOAA's extent reaches land. The data are unchanged.
-- The **outside-study mask** dims everything beyond the processed rectangle, so "no data" is never read as "no flooding".
+- The **outside-study mask** dims everything beyond the city limits, so "no data" is never read as "no flooding".
 - **Buildings:** extrusions in 3D, translucent footprints and outlines in 2D, so overlays under buildings stay visible from above.
 - **Labels** stay above every overlay and use a white halo for legibility on the blue bands.
-- **Map controls live in the map** (top-right): zoom, compass/Home, then 2D/3D. Camera controls act on the map, so they belong on it (ArcGIS, komoot, Google Maps). The header keeps only app-level actions (about, sources).
+- **Map controls live in the map** (top-right): zoom, compass / show all of Miami Beach, then 2D/3D. The full-extent control uses a frame (focus) icon, not a house: it fits the whole city into view rather than going "home".
+- **Area bookmarks** (top-left chips) fly to South Beach, Mid-Beach and North Beach. The city is 12.6 km long; at city scale the 3D buildings aren't drawn, so the chips are the fastest way from overview to street level.
+- **The opening view fits the city** to the viewport in Web Mercator (tilted 40°, looking north-north-west), accounting for the mobile bottom sheet. Camera controls act on the map, so they belong on it (ArcGIS, komoot, Google Maps). The header keeps only app-level actions (about, sources).
 - **Selection highlight** is drawn 0.4 m wider and 0.6 m taller than the clicked building. Coincident faces z-fight (flicker) while zooming.
 - **3D picking** follows the view ray through candidate building volumes (`src/lib/buildingPick.ts`), because a roof click unprojects to the ground behind the building.
 
@@ -29,11 +31,11 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 
 | Role | Colour | Notes |
 | --- | --- | --- |
-| Basemap | land `#f1eee8`, parks `#d5e7c6`, water `#a9cbe8`, roads white | Light "streets / topographic" palette in the spirit of ArcGIS basemaps; low saturation so data overlays lead |
-| Flood bands ("first reached at") | today `#14307a` · +1 `#1f5fd0` · +2 `#3a97e8` · +3 `#4cc9d6`, 85% | Sequential ramp: darker = reached at a lower level (most exposed, deepest later). Lightness carries the order, so it works in greyscale. The hue drifts to aqua so the lightest band never matches the pale water `#b3cde3` |
-| Buildings | taupe `#b4ada3` → `#8f877c` by height | Darker than land and a different hue from water, so buildings separate cleanly from flood colour |
+| Basemap | land `#f1eee8`, parks `#d5e7c6`, water `#c5d4e0`, roads white | Light "streets / topographic" palette in the spirit of ArcGIS basemaps; water is a muted grey-blue so the saturated flood blues never read as "just water" |
+| Flood bands ("first reached at") | today `#9ec5f4` · +1 `#5598e7` · +2 `#256abf` · +3 `#104281`, 85% | One blue hue, light → dark as the water rises: more water reads as darker. Evenly spaced steps (200/350/500/650) of a validated sequential blue scale, so lightness alone carries the order (greyscale and colour-vision safe). v0.3 ran the other way (darker = reached sooner); v0.4 reversed it because depth isn't shown, so the intuitive "higher water, darker blue" mapping wins |
+| Buildings | sandstone `#f0e6d6` → `#e3d3bb` by height | A light, warm stone colour (a nod to Miami Beach's Art Deco stucco): the complementary hue to the blue ramp, so buildings read clearly on every band without the heaviness of grey |
 | Low-lying (unconnected) | `#6b35aa`, diagonal hatch + dashed outline | Pattern carries the meaning without colour |
-| Selection | orange `#ff8a1f` building / ring | A colour no data layer uses, so the selection is unmistakable |
+| Selection | orange `#ff7417` building / ring | A colour no data layer uses, so the selection is unmistakable; the card's icon tile repeats it to link card and map |
 | Study area | dashed `#3d4655`; outside washed with 50% white | Reads as a boundary, not data |
 | UI accent | `#0069b0` (Esri/Calcite-style blue) | Interaction, focus, selected states; 5.0–5.8:1 on all surfaces |
 | UI surfaces | white panels, `#f3f3f3` canvas, `#e0e0e0` borders | Calcite-like light chrome |
