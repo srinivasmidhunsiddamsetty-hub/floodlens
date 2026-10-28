@@ -156,8 +156,8 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
       .attr('aria-pressed', (d) => (d.feet === selectedFt ? 'true' : 'false'))
       .attr('aria-label', (d) =>
         d.feet === 0
-          ? 'Today: reference level. Select.'
-          : `${formatScenario(d.feet)}: ${formatKm2(d.totalM2)} square kilometres flooded beyond today's high tide. Select.`,
+          ? 'Today: where we start. Show on the map.'
+          : `${formatScenario(d.feet)}: ${formatKm2(d.totalM2)} square kilometres newly underwater. Show on the map.`,
       )
       .on('click', (_, d) => cb.current.onSelect(d.feet))
       .on('keydown', (e: KeyboardEvent, d) => {
@@ -223,9 +223,9 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
     <figure className="m-0">
       <figcaption className="mb-2">
         <span id={titleId} className="block t-heading">
-          Growth with each foot
+          Each foot adds more
         </span>
-        <span className="block t-caption">Area flooded beyond today’s high tide, km²</span>
+        <span className="block t-caption">Newly underwater, km²</span>
       </figcaption>
       <div ref={wrapRef} className="relative">
         <svg
@@ -255,7 +255,7 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
               <>
                 <div className="font-medium text-fg">{tip.bar.feet === 0 ? 'Today' : formatScenario(tip.bar.feet)}</div>
                 <div className="tabular text-fg-muted">
-                  {tip.bar.feet === 0 ? 'Reference level' : `${formatKm2(tip.bar.totalM2)} km² · ${formatAcres(tip.bar.totalM2)} acres`}
+                  {tip.bar.feet === 0 ? 'Where we start' : `${formatKm2(tip.bar.totalM2)} km² · ${formatAcres(tip.bar.totalM2)} acres`}
                 </div>
               </>
             )}
@@ -264,12 +264,12 @@ export function ScenarioAreaChart({ bands, selectedFt, highlightFt, onHighlight,
       </div>
       <div className="sr-only">
         <table id={descId}>
-          <caption>Area flooded beyond today’s high tide, by water level</caption>
+          <caption>Newly underwater area, by sea level</caption>
           <thead>
             <tr>
-              <th scope="col">Water level</th>
-              <th scope="col">Total beyond today (km²)</th>
-              <th scope="col">Added by this level (km²)</th>
+              <th scope="col">Sea level</th>
+              <th scope="col">Newly underwater (km²)</th>
+              <th scope="col">Added by this foot (km²)</th>
             </tr>
           </thead>
           <tbody>

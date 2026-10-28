@@ -10,8 +10,29 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.4 | 28 Oct 2026 | Whole City of Miami Beach, new ramp, illustrated building card | [`docs/versions/v0.4/`](docs/versions/v0.4/) |
 | v0.5 | 28 Oct 2026 | City locator, stream-per-foot card, city-limits toggle | [`docs/versions/v0.5/`](docs/versions/v0.5/) |
 | v0.6 | 28 Oct 2026 | Viridis-style palette, area chips back, resizable Insights | [`docs/versions/v0.6/`](docs/versions/v0.6/) |
+| v0.7 | 28 Oct 2026 | Blues back, human copy, Satoshi, compact answer card | [`docs/versions/v0.7/`](docs/versions/v0.7/) |
 
 ---
+
+## v0.7: A human voice (28 Oct 2026)
+
+Driven by a design review of v0.6.
+
+- **Blues are back.** The viridis-style ramp didn't read as water. The flood bands return to the single blue ramp (light blue today → navy at +3 ft), across the map, legend, chart, slider, card streams and gauge.
+- **Chips, cleaned up.**
+  - Flat: white with a 1 px border, no drop shadow and no tinted fill.
+  - The chip you pick turns accent blue with a 2 px border the moment you click. Before, it only lit up once the camera arrived.
+  - Panning by hand hands the highlight back to the nearest area.
+- **A compact answer.** The "first reached" headline drops from 30 to 22 px. The illustration has a fixed 88 px height, so it no longer grows as the Insights pane widens; the water just runs further left.
+- **Copy rewritten in a plain, human voice.** It covers every panel, the legend, map hover text, errors and the About dialog. The voice, rules and a before/after table are in [docs/UX_WRITING.md](docs/UX_WRITING.md). Examples:
+  - "Flooded beyond today's high tide" became "Newly underwater at high tide".
+  - "First reached at +3 ft" became "Water reaches it: At +3 ft".
+  - "Above +3 ft" became "Not by +3 ft".
+  - "Low-lying, not ocean-connected" became "Low spot, cut off from the sea".
+
+  The copy still never says "safe" or "will flood". The About dialog also no longer describes the pre-v0.4 colour order.
+- **Satoshi for the interface.** It's served by Fontshare, Indian Type Foundry's official web-font service, under the ITF Free Font License. That licence allows use on your own site but not redistributing the files (for example in a public repository) or converting them. So the font files stay out of the repo, and map labels stay in Roboto: MapLibre needs fonts converted to SDF glyphs.
+- Tests: 91 unit/component tests, 15 end-to-end tests, updated for the new wording.
 
 ## v0.6: Colour and room (28 Oct 2026)
 

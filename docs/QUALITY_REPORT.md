@@ -6,7 +6,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 
 **Phase 1: functional foundation**
 - React 19 + TypeScript + Vite 7 + Tailwind 4 project; static build with relative paths.
-- MapLibre GL JS 5 map on OpenFreeMap Positron (verified free, keyless, attribution kept), restyled at runtime into a light geographic palette with self-hosted Roboto label glyphs.
+- MapLibre GL JS 5 map on OpenFreeMap Positron (verified free, keyless, attribution kept), restyled at runtime into a light geographic palette with self-hosted Roboto label glyphs; the interface uses Satoshi (Fontshare).
 - 3D building extrusions from OpenMapTiles `render_height`; footprints in 2D.
 - Discrete scenario control (0 / +1 / +2 / +3 ft above MHHW).
 - **Real NOAA OCM data**: FL_SE GeoPackage, ocean-connected (`slr`) and low-lying (`low`) layers, clipped to the City of Miami Beach boundary (US Census TIGER/Line, 39.4 km²) by a reproducible pipeline.
@@ -22,6 +22,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - City-wide study area, area bookmarks, a "show all of Miami Beach" control, a single-hue flood ramp and an illustrated building card (v0.4).
 - Stream-per-foot card illustration, city-limits toggle, aqua water and a non-overlapping map edge (v0.5).
 - Viridis-style flood palette, area chips with a "you are here" state, and a resizable Insights pane (v0.6).
+- Blue palette restored, flat chips with instant selection, a compact answer card, a human-voice copy pass (docs/UX_WRITING.md) and Satoshi as the interface font (v0.7).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
@@ -35,7 +36,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **11 files, 90 tests passed** |
+| Unit and component tests | `npm test` | **11 files, 91 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **15 passed** (14 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 20.8 MB raw across 16 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3 ft band adds 4.3 MB raw, ≈ 0.48 MB gzip) |

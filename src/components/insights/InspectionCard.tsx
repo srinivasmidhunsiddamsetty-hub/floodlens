@@ -56,7 +56,7 @@ function Fact({ icon: Icon, tint, label, value, note }: { icon: LucideIcon; tint
 export function InspectionCard({ selection, inspection, scenarioFt, onClear, onShowLevel }: Props) {
   const { building, street, lngLat, insideStudyArea, onWater } = selection
   const kind = building ? 'building' : onWater ? 'water' : 'location'
-  const noun = building ? 'Building' : onWater ? 'Water' : 'Location'
+  const noun = building ? 'Building' : onWater ? 'Open water' : 'Spot'
   const Icon = building ? Building2 : onWater ? Waves : MapPin
 
   return (
@@ -80,8 +80,8 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           type="button"
           onClick={onClear}
           className="btn-ghost -mt-1 -mr-1.5 size-8 shrink-0 justify-center px-0"
-          aria-label="Clear selection (Esc)"
-          title="Clear selection (Esc)"
+          aria-label="Close (Esc)"
+          title="Close (Esc)"
         >
           <X className="size-[18px]" aria-hidden />
         </button>
@@ -89,19 +89,19 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
 
       {!insideStudyArea && (
         <p className="mt-4 rounded-lg bg-surface-2 px-3 py-2.5 t-body">
-          Outside the City of Miami Beach. FloodLens only processes NOAA data inside the city boundary.
+          This spot is outside Miami Beach. FloodLens only maps the city itself.
         </p>
       )}
 
       {insideStudyArea && inspection.status === 'loading' && (
         <p className="mt-4 flex items-center gap-2 t-body" role="status">
-          <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Checking every water level…
+          <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Checking each sea level…
         </p>
       )}
 
       {insideStudyArea && inspection.status === 'error' && (
         <p className="mt-4 t-body text-danger" role="alert">
-          Could not check water levels: {inspection.error}
+          We couldn’t check this spot. {inspection.error}
         </p>
       )}
 
@@ -115,15 +115,18 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
           const firstIndex = reached ? hits.findIndex((h) => h.feet === firstFeet) : -1
 
+          // Never "safe" or "dry": NOAA's map not reaching a place isn't a promise.
           const headline = !reached ? (
             <>
-              Above <span className="text-accent">{levelName(top)}</span>
+              Not by <span className="text-accent">{formatScenario(top)}</span>
             </>
           ) : firstFeet === 0 ? (
-            <span className="text-accent">Today</span>
+            <>
+              Already, at <span className="text-accent">high tide</span>
+            </>
           ) : (
             <>
-              at <span className="text-accent">{formatScenario(firstFeet)}</span>
+              At <span className="text-accent">{formatScenario(firstFeet)}</span>
             </>
           )
 
@@ -131,18 +134,18 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
             <div aria-live="polite">
               {/* The answer */}
               <div className="relative mt-4 overflow-hidden rounded-xl border border-[#d5e6fa] bg-gradient-to-b from-[#f5faff] to-[#e3effc]">
-                <div className="relative z-10 w-[62%] p-4 pb-0">
-                  <span className="inline-block rounded-full bg-[#d6e7fb] px-2.5 py-1 text-[11px] leading-none font-semibold tracking-[0.08em] text-accent-strong uppercase">
-                    First reached
+                <div className="relative z-10 w-[64%] px-4 pt-3.5">
+                  <span className="inline-block rounded-full bg-[#d6e7fb] px-2 py-[3px] text-[10.5px] leading-none font-semibold tracking-[0.08em] text-accent-strong uppercase">
+                    Water reaches it
                   </span>
-                  <p className="mt-2.5 text-[30px] leading-[34px] font-bold tracking-tight text-fg">{headline}</p>
+                  <p className="mt-2 text-[22px] leading-7 font-semibold tracking-tight text-fg">{headline}</p>
                 </div>
                 <FloodIllustration
                   key={`${lngLat.join(',')}-${firstFeet}`}
                   kind={kind}
                   firstFeet={firstFeet}
                   topFeet={top}
-                  className="pointer-events-none -mt-6 block h-auto w-full"
+                  className="pointer-events-none -mt-7 block h-[88px] w-full"
                 />
               </div>
               {reached && !shownOnMap && (
@@ -151,13 +154,13 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                   onClick={() => onShowLevel(firstFeet)}
                   className="mt-2 inline-flex items-center gap-1 t-label text-accent hover:text-accent-strong"
                 >
-                  Not on the map at {levelName(scenarioFt)} · show {levelName(firstFeet)}
+                  You’re looking at {formatScenario(scenarioFt)}. See it at {formatScenario(firstFeet)}
                   <ArrowRight className="size-3.5" aria-hidden />
                 </button>
               )}
 
               {/* Gauge: one stop per NOAA water level */}
-              <ol className="relative mt-5 grid" style={{ gridTemplateColumns: `repeat(${hits.length}, minmax(0, 1fr))` }} aria-label="Within NOAA’s mapped extent, by water level">
+              <ol className="relative mt-5 grid" style={{ gridTemplateColumns: `repeat(${hits.length}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
                 <span aria-hidden className="absolute top-[9px] h-0.5 rounded-full bg-[#dfe4ea]" style={{ left: `${50 / hits.length}%`, right: `${50 / hits.length}%` }} />
                 {firstIndex >= 0 && firstIndex < hits.length - 1 && (
                   <span
@@ -193,7 +196,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                         {levelName(h.feet)}
                         {h.feet === scenarioFt && <span className="sr-only"> (selected level)</span>}
                       </span>
-                      <span className="sr-only">{h.within ? 'within mapped extent' : 'outside mapped extent'}</span>
+                      <span className="sr-only">{h.within ? 'water reaches it' : 'water doesn’t reach it'}</span>
                     </li>
                   )
                 })}
@@ -215,8 +218,8 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear, onS
                 <Fact
                   icon={Mountain}
                   tint="green"
-                  label="Low-lying area"
-                  note={lowAt.length > 0 && lowPartAreaM2 !== null ? `${formatSmallArea(lowPartAreaM2)} patch, not ocean-connected` : undefined}
+                  label="In a low spot"
+                  note={lowAt.length > 0 && lowPartAreaM2 !== null ? `${formatSmallArea(lowPartAreaM2)}, cut off from the sea` : undefined}
                   value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'}
                 />
               </dl>

@@ -65,11 +65,11 @@ export async function fetchManifest(signal?: AbortSignal): Promise<DataManifest>
     res = await fetch(MANIFEST_URL, { signal })
   } catch (err) {
     if ((err as Error).name === 'AbortError') throw err
-    throw new ManifestError('Could not reach the processed NOAA data. Check your connection and reload.')
+    throw new ManifestError('We couldn’t reach the flood data. Check your connection and reload.')
   }
   if (!res.ok) {
     throw new ManifestError(
-      `Processed NOAA data not found (HTTP ${res.status}). Run "npm run data:prepare" to generate public/data/noaa/.`,
+      `The flood data isn’t here yet (HTTP ${res.status}). Run "npm run data:prepare" to create it in public/data/noaa/.`,
     )
   }
   let json: unknown

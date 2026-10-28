@@ -49,19 +49,18 @@ export const colors = {
 } as const
 
 /**
- * Sequential ramp for "where water first reaches" at each NOAA water level,
- * light → dark as the water level rises (more water, darker colour).
- * Multi-hue, after matplotlib's viridis: lime → green → teal → indigo. Lightness
- * still carries the order (greyscale-safe), and the hue change makes neighbouring
- * levels easier to tell apart than a single blue (adjacent ΔE ≥ 16.5 in OKLab
- * vs 14.4), including with colour-vision deficiencies. The teal and green steps
- * were saturated slightly beyond viridis so they don't read grey on the map.
+ * Sequential ramp for "where water first reaches" at each NOAA water level:
+ * one blue hue, light → dark as the water level rises (more water, darker blue).
+ * Evenly spaced steps (200 / 350 / 500 / 650) of a validated sequential blue
+ * scale, so lightness alone carries the order: it survives greyscale printing
+ * and colour-vision deficiencies. (v0.6 tried a viridis-style ramp; the blues
+ * read better as water and were restored in v0.7.)
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#bddf26',
-  1: '#36b874',
-  2: '#108b9b',
-  3: '#3f4aa0',
+  0: '#9ec5f4',
+  1: '#5598e7',
+  2: '#256abf',
+  3: '#104281',
 }
 
 export const bandColor = (feet: number) => BAND_COLORS[feet] ?? BAND_COLORS[2]

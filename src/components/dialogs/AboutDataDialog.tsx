@@ -14,65 +14,62 @@ interface Props {
 
 export function AboutDataDialog({ open, onClose, manifest }: Props) {
   return (
-    <Dialog open={open} onClose={onClose} title="About the data" subtitle="What the map shows, and what it cannot tell you">
-      <H>What the scenarios represent</H>
+    <Dialog open={open} onClose={onClose} title="About the data" subtitle="What the map shows, and what it can’t">
+      <H>What the levels mean</H>
       <p>
-        Each scenario is a <strong className="text-fg">water level above Mean Higher High Water (MHHW)</strong>: the average height of the
-        higher of the two daily high tides. NOAA maps where the water would reach if sea level were 1, 2 or 3 ft higher than today&rsquo;s
-        MHHW, as it would appear during the highest high tides. <strong className="text-fg">0 ft</strong> is NOAA&rsquo;s extent at
-        current MHHW and acts as the reference.
+        Each step is the sea rising one more foot above <strong className="text-fg">today’s high tide</strong>. Scientists measure that
+        line as Mean Higher High Water (MHHW): the average of the higher of each day’s two high tides. NOAA maps how far the water would
+        reach at each level during the highest high tides. 0 ft is today, our starting point.
       </p>
       <p className="mt-2">
-        Scenarios are <strong className="text-fg">amounts of rise, not dates</strong>. FloodLens does not attach years or probabilities to
-        them, because that requires a separate sea-level projection.
+        These are <strong className="text-fg">amounts of rise, not dates</strong>. FloodLens doesn’t say when they’ll happen or how
+        likely they are. That needs a separate sea-level forecast.
       </p>
 
-      <H>How NOAA produced the extents</H>
+      <H>Where the maps come from</H>
       <p>
-        NOAA&rsquo;s Office for Coastal Management uses a <em>modified bathtub</em> method. It compares a high-resolution digital elevation
-        model with a tidal surface (MHHW, built with NOAA VDatum) and keeps only areas{' '}
-        <strong className="text-fg">hydrologically connected to the ocean</strong>. Areas that sit below the water level but have no
-        connection are published separately as <em>low-lying areas</em>. FloodLens keeps them in a separate, optional layer and never
-        merges the two.
+        NOAA’s Office for Coastal Management compares detailed ground-height data with the tide line, then keeps only the places{' '}
+        <strong className="text-fg">connected to the sea</strong> (a “modified bathtub” method). Places below the water line with no path
+        to the sea are mapped separately as <em>low spots</em>. FloodLens shows those as their own optional layer and never mixes the two.
       </p>
 
       <H>How to read the map</H>
       <ul className="list-disc space-y-1 pl-5">
         <li>
-          Colour shows the water level at which NOAA&rsquo;s mapped extent <em>first</em> reaches each area: darkest for today&rsquo;s high
-          tide, lightening through +1, +2 and +3 ft. Places reached at lower levels are the most exposed.
+          Colour shows the sea level at which water <em>first</em> reaches a place: light blue at today’s high tide, getting darker at +1,
+          +2 and +3 ft.
         </li>
-        <li>Open water is drawn above the overlay, so colour appears only where water reaches land.</li>
-        <li>Areas are geodesic measurements of the processed polygons inside the study area only.</li>
-        <li>Building heights come from OpenStreetMap through OpenMapTiles. Where OSM has no height, the tiles use an estimate, so heights are approximate.</li>
+        <li>Open water sits on top, so colour only appears where water reaches land.</li>
+        <li>Areas are measured on the curved Earth, and only inside Miami Beach’s city limits.</li>
+        <li>Building heights come from OpenStreetMap. Where a building has no recorded height, the map estimates one.</li>
       </ul>
 
-      <H>Limitations</H>
+      <H>What it can’t tell you</H>
       <ul className="list-disc space-y-1 pl-5">
-        <li>The data illustrate the <strong className="text-fg">scale</strong> of potential flooding, not its exact location.</li>
-        <li>NOAA notes the data do not account for erosion, subsidence or future construction, and exclude wind-driven tides.</li>
-        <li>This is not a storm-surge, wave, rainfall or groundwater model. Seawalls and drainage are represented only as far as the elevation data capture them.</li>
-        <li>An extent polygon says nothing about water depth. FloodLens shows no depths.</li>
-        <li>Accuracy is limited by the source elevation data and tidal model (NOAA also publishes mapping-confidence rasters, not included here).</li>
-        <li>&ldquo;Within the mapped extent&rdquo; does not mean a property or building will flood.</li>
+        <li>It shows <strong className="text-fg">how much</strong> could flood, not exactly where the water’s edge will be.</li>
+        <li>It leaves out erosion, sinking ground, new construction and wind-driven tides.</li>
+        <li>It isn’t a model of storm surge, waves, rain or groundwater. Seawalls and drains count only as far as the ground-height data shows them.</li>
+        <li>It shows where water reaches, not how deep it gets.</li>
+        <li>It’s only as accurate as NOAA’s ground-height and tide data. NOAA publishes confidence maps too; they aren’t included here.</li>
+        <li>Water reaching a building on the map doesn’t mean that building will flood.</li>
       </ul>
 
-      <H>Appropriate uses</H>
+      <H>Good uses</H>
       <p>
-        Screening-level exploration: comparing scenarios, spotting areas for further study, and starting conversations with stakeholders.
-        NOAA states the data are for planning reference only and should not be used for navigation, permitting or other legal purposes.
-        Verify findings with site visits and local studies.
+        Getting a feel for the scale of the problem, comparing levels, spotting places that need a closer look, and starting
+        conversations. NOAA says the data are for planning only, not for navigation, permits or legal decisions. Check anything
+        important with site visits and local studies.
       </p>
 
       {manifest && (
         <p className="mt-4 rounded-lg border border-line bg-surface-2 p-3 text-xs leading-5">
-          <span className="font-medium text-fg">NOAA use constraints:</span> {manifest.source.useConstraints}
+          <span className="font-medium text-fg">In NOAA’s words:</span> {manifest.source.useConstraints}
         </p>
       )}
 
-      <H>Independence</H>
+      <H>Who made this</H>
       <p>
-        FloodLens is an independent portfolio concept. It is not affiliated with, sponsored by, or endorsed by NOAA, Esri, OpenFreeMap,
+        FloodLens is an independent portfolio project. It’s not affiliated with, sponsored by or endorsed by NOAA, Esri, OpenFreeMap,
         OpenMapTiles, OpenStreetMap or the City of Miami Beach.
       </p>
     </Dialog>

@@ -28,7 +28,7 @@ async function fetchCollection(file: string): Promise<ExtentCollection> {
   } catch {
     throw new DataFileError(file, `Network error while loading ${file}.`)
   }
-  if (!res.ok) throw new DataFileError(file, `${file} is missing (HTTP ${res.status}).`)
+  if (!res.ok) throw new DataFileError(file, `${file} didn’t load (HTTP ${res.status}).`)
   let json: unknown
   try {
     json = await res.json()

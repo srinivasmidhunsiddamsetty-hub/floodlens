@@ -84,8 +84,8 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
           onClick={() => setShowInfo((v) => !v)}
           aria-expanded={showInfo}
           aria-controls={`${id}-info`}
-          aria-label="What does the water level mean?"
-          title="What does the water level mean?"
+          aria-label="What do these levels mean?"
+          title="What do these levels mean?"
           className="btn-ghost size-8 justify-center px-0"
         >
           <Info className="size-4" aria-hidden />
@@ -94,8 +94,9 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
 
       {showInfo && (
         <p id={`${id}-info`} className="mt-3 rounded border border-line bg-surface-2 p-3 t-caption leading-5 text-fg-muted animate-slide-up">
-          Each step raises the sea by 1 ft above <span className="text-fg">Mean Higher High Water</span>, the average of the daily
-          higher high tide. 0 ft is today. Steps are water levels, not years.
+          Each step adds a foot of sea level on top of today’s high tide. Scientists call that line{' '}
+          <span className="text-fg">Mean Higher High Water</span>: the average of the higher of each day’s two high tides. These are
+          amounts of rise, not dates.
         </p>
       )}
 
@@ -150,7 +151,7 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
         className="btn-outline mt-4 w-full"
       >
         {playing ? <Pause className="size-4" aria-hidden /> : <Play className="size-4" aria-hidden />}
-        {playing ? 'Pause' : 'Play the rise'}
+        {playing ? 'Pause' : 'Watch the water rise'}
       </button>
     </div>
   )

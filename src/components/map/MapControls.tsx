@@ -53,7 +53,7 @@ export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOu
         </Btn>
       </Group>
       <Group label="Orientation">
-        <Btn label="Reset north" onClick={onResetNorth}>
+        <Btn label="Point north" onClick={onResetNorth}>
           <svg viewBox="0 0 16 16" className="size-4" style={{ transform: `rotate(${-bearing}deg)` }} aria-hidden>
             <path d="M8 1.5 11 8H5z" fill="#c62828" />
             <path d="M8 14.5 5 8h6z" fill="currentColor" />

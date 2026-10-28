@@ -6,7 +6,7 @@ import maplibregl, { type MapGeoJSONFeature, type Map as MLMap, type PointLike, 
 import { useEffect, useRef, useState } from 'react'
 import { expandFootprint, firstPrismHit, rejoinTileSplit, unionPieces, type Prism } from '../../lib/buildingPick'
 import { AREA_BOOKMARKS, BOOKMARK_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
-import { formatScenario, formatSmallArea } from '../../lib/format'
+import { formatScenario } from '../../lib/format'
 import { distanceToLineM, isInsideArea, nearestBookmark, outsideMask, type LngLat } from '../../lib/geo'
 import {
   addFloodLensLayers,
@@ -225,6 +225,8 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
   const [hover, setHover] = useState<HoverInfo | null>(null)
   const [camera, setCamera] = useState({ bearing: INITIAL_CAMERA.bearing, pitch: INITIAL_CAMERA.pitch, zoom: INITIAL_CAMERA.zoom, center: INITIAL_CAMERA.center })
   const [keyboardFocus, setKeyboardFocus] = useState(false)
+  /** Area chip the user just picked: highlighted at once, not only after the camera arrives. */
+  const [pickedArea, setPickedArea] = useState<string | null>(null)
 
   // Values read inside long-lived map event handlers.
   const studyFeature = (data.studyArea.data?.features[0] ?? null) as StudyFeature | null
@@ -261,7 +263,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       } catch (err) {
         if (ctrl.signal.aborted) return
         style = FALLBACK_STYLE
-        setBasemapWarning(`Basemap unavailable (${(err as Error).message}). NOAA overlays are shown without streets or buildings.`)
+        setBasemapWarning(`Streets and buildings didn’t load (${(err as Error).message}), so you’ll see the flood areas on their own.`)
       }
       if (ctrl.signal.aborted || !containerRef.current) return
 
@@ -279,7 +281,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
           fadeDuration: live.current.reduced ? 0 : 200,
         })
       } catch {
-        setFatal('Your browser could not start WebGL, which the interactive map requires. Try a recent Chrome, Edge, Firefox or Safari.')
+        setFatal('This browser can’t draw the 3D map, which needs WebGL. Try a recent version of Chrome, Edge, Firefox or Safari.')
         return
       }
       mapRef.current = map
@@ -289,7 +291,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       const canvas = map.getCanvas()
       canvas.setAttribute(
         'aria-label',
-        'Map of the City of Miami Beach. Arrow keys pan, plus and minus zoom, Enter inspects the centre, Escape clears the selection.',
+        'Map of Miami Beach. Use the arrow keys to move, plus and minus to zoom, Enter to check the middle of the map, and Escape to close the details.',
       )
       canvas.addEventListener('focus', () => setKeyboardFocus(canvas.matches(':focus-visible')))
       canvas.addEventListener('blur', () => setKeyboardFocus(false))
@@ -347,6 +349,11 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
         setHover(null)
       })
 
+      // Moving the map by hand hands the chip highlight back to "nearest area".
+      map.on('movestart', (e) => {
+        if (e.originalEvent) setPickedArea(null)
+      })
+
       let camFrame = 0
       map.on('move', () => {
         cancelAnimationFrame(camFrame)
@@ -378,16 +385,15 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
       const building = byLayer(LYR.buildings3d) ?? byLayer(LYR.buildingsFlat)
       const band = byLayer(LYR.floodFill)
       const low = byLayer(LYR.lowFill)
-      if (building) return 'Building · click for details'
+      if (building) return 'Click to see when water reaches it'
       const parts: string[] = []
       if (band && !isWaterAt(map, point)) {
         const ft = band.properties?.band as number | undefined
-        const a = band.properties?.areaM2 as number | undefined
         if (ft !== undefined) {
-          parts.push(ft === 0 ? 'Reached at today’s high tide' : `First reached at ${formatScenario(ft)}${a && ft > 0 ? ` · patch ${formatSmallArea(a)}` : ''}`)
+          parts.push(ft === 0 ? 'Underwater at today’s high tide' : `Water reaches here at ${formatScenario(ft)}`)
         }
       }
-      if (low) parts.push('Low-lying, not ocean-connected')
+      if (low) parts.push('Low spot, cut off from the sea')
       return parts.length ? parts.join(' · ') : null
     }
 
@@ -476,6 +482,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
   useEffect(() => {
     const map = mapRef.current
     if (!ready || !map || resetToken === 0) return
+    setPickedArea(null)
     const camera = overviewCamera(map, live.current.studyBbox, '3d')
     if (reduced) map.jumpTo(camera)
     else map.flyTo({ ...camera, duration: 1400, essential: false })
@@ -511,19 +518,21 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
 
   const ease = (fn: (m: MLMap) => void) => mapRef.current && fn(mapRef.current)
   const anim = reduced ? { duration: 0 } : { duration: 300 }
-  const goTo = (center: [number, number]) =>
+  const goTo = (id: string, center: [number, number]) => {
+    setPickedArea(id)
     ease((m) => {
       const camera = { center, zoom: BOOKMARK_ZOOM, ...(viewMode === '3d' ? OBLIQUE : TOP_DOWN) }
       if (reduced) m.jumpTo(camera)
       else m.flyTo({ ...camera, duration: 1600, essential: false })
     })
+  }
 
   return (
     <div className="relative h-full w-full bg-canvas" role="region" aria-label="Map">
       {/* maplibre-gl.css forces `position: relative` on the container, so size it explicitly. */}
       <div ref={containerRef} className="h-full w-full" />
 
-      {ready && <AreaBookmarks onGo={goTo} active={nearestBookmark(camera.center, camera.zoom, AREA_BOOKMARKS)} />}
+      {ready && <AreaBookmarks onGo={goTo} active={pickedArea ?? nearestBookmark(camera.center, camera.zoom, AREA_BOOKMARKS)} />}
       {ready && (
         <MapControls
           viewMode={viewMode}
@@ -546,7 +555,7 @@ export function MapView({ data, studyBbox, highlightFt }: Props) {
             <span className="absolute inset-3 rounded-full border-2 border-accent bg-white/60" />
           </div>
           <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-fg/85 px-3 py-1 text-xs text-white">
-            Enter to inspect the centre · Esc to clear
+            Press Enter to check the middle of the map · Esc to close
           </span>
         </div>
       )}

@@ -56,7 +56,7 @@ export default function App() {
     if (!manifest) return manifestState.status === 'error' ? 'Data unavailable' : 'Loading…'
     const s = scenarioByFeet(manifest, state.scenarioFt)
     if (!s) return '—'
-    return s.feet === 0 ? 'Today’s high tide (reference)' : `${formatKm2(s.beyondBaselineM2)} km² flooded beyond today`
+    return s.feet === 0 ? 'Today’s high tide' : `${formatKm2(s.beyondBaselineM2)} km² newly underwater`
   })()
 
   const insightProps = { manifestState, inspection, bands: mapData.bands, highlightFt, onHighlight: setHighlightFt }

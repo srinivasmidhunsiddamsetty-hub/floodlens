@@ -49,7 +49,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
         <MousePointerClick className="size-4" />
       </span>
       <p className="t-body">
-        <span className="font-medium text-fg">Click any building</span> to see the water level that first reaches it.
+        <span className="font-medium text-fg">Click any building</span> to see when water would reach it.
       </p>
     </div>
   ) : null
@@ -69,17 +69,17 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
 
         {manifestState.status === 'loading' && (
           <p className="flex items-center gap-2 t-body" role="status">
-            <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Loading NOAA data…
+            <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Loading flood data…
           </p>
         )}
 
         {manifestState.status === 'error' && (
           <div role="alert" className="rounded border border-danger/40 bg-danger/5 p-4">
             <p className="flex items-center gap-2 t-heading">
-              <AlertTriangle className="size-4 text-danger" aria-hidden /> Inundation data unavailable
+              <AlertTriangle className="size-4 text-danger" aria-hidden /> The flood data didn’t load
             </p>
             <p className="mt-1 t-body">{manifestState.error}</p>
-            <p className="mt-2 t-caption">No flood extents or areas are shown. FloodLens never substitutes estimated or sample data.</p>
+            <p className="mt-2 t-caption">We’d rather show nothing than guess, so FloodLens never fills the gap with estimates or sample data.</p>
           </div>
         )}
 
@@ -87,11 +87,11 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           <>
             {/* Hero metric */}
             <section aria-label="Headline">
-              <p className="t-overline">Flooded beyond today’s high tide</p>
+              <p className="t-overline">{s.feet === 0 ? 'Today’s high tide' : 'Newly underwater at high tide'}</p>
               {s.feet === 0 ? (
                 <>
-                  <p className="mt-1 t-metric">Reference</p>
-                  <p className="mt-1 t-body">Today’s high tide. Raise the sea level to see how far water reaches onto land.</p>
+                  <p className="mt-1 t-metric">Where we start</p>
+                  <p className="mt-1 t-body">This is how far high tide reaches today. Raise the sea level to see what changes.</p>
                 </>
               ) : (
                 <>
@@ -100,8 +100,8 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                     <span className="ml-1 text-base text-fg-muted">km²</span>
                   </p>
                   <p className="mt-0.5 t-body">
-                    ≈ {formatAcres(s.beyondBaselineM2)} acres at {formatScenario(s.feet)}
-                    {landM2 ? <>, equal to {formatPercent(s.beyondBaselineM2 / landM2)} of the city’s land area</> : null}
+                    About {formatAcres(s.beyondBaselineM2)} acres at {formatScenario(s.feet)}
+                    {landM2 ? <>, roughly {formatPercent(s.beyondBaselineM2 / landM2, true)} of the city’s land</> : null}
                   </p>
                 </>
               )}
@@ -150,7 +150,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
               {low && (
                 <p className="mt-2 flex items-center gap-2 t-caption">
                   <span className="h-3 w-3 shrink-0 rounded-sm border border-dashed border-lowlying bg-lowlying/20" aria-hidden />
-                  Plus {formatKm2(low.areaM2)} km² low-lying, not ocean-connected (not counted above)
+                  Plus {formatKm2(low.areaM2)} km² of low spots cut off from the sea, not counted above
                 </p>
               )}
             </section>
@@ -163,7 +163,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
             onClick={() => dispatch({ type: 'openDialog', dialog: 'about' })}
             className="flex w-full items-center justify-between border-t border-line pt-4 text-left t-label text-accent hover:text-accent-strong"
           >
-            Data sources &amp; limitations
+            What this map can and can’t tell you
             <ArrowRight className="size-4" aria-hidden />
           </button>
         )}

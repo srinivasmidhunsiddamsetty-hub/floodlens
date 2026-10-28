@@ -49,7 +49,7 @@ describe('<ScenarioSelector>', () => {
 
   it('reveals the MHHW explanation on demand', async () => {
     render(<Harness />)
-    const btn = screen.getByRole('button', { name: /what does the water level mean/i })
+    const btn = screen.getByRole('button', { name: /what do these levels mean/i })
     expect(btn).toHaveAttribute('aria-expanded', 'false')
     await userEvent.click(btn)
     expect(btn).toHaveAttribute('aria-expanded', 'true')
@@ -60,11 +60,11 @@ describe('<ScenarioSelector>', () => {
     vi.useFakeTimers()
     const onChange = vi.fn()
     render(<Harness onChange={onChange} start={3} />)
-    fireEvent.click(screen.getByRole('button', { name: /play the rise/i }))
+    fireEvent.click(screen.getByRole('button', { name: /watch the water rise/i }))
     // Starting at the top restarts from today
     expect(onChange).toHaveBeenLastCalledWith(0)
     act(() => vi.advanceTimersByTime(1400 * 4))
     expect(onChange.mock.calls.map((c) => c[0])).toEqual([0, 1, 2, 3])
-    expect(screen.getByRole('button', { name: /play the rise/i })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: /watch the water rise/i })).toHaveAttribute('aria-pressed', 'false')
   })
 })

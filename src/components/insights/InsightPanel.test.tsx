@@ -41,9 +41,9 @@ describe('<InsightPanel>', () => {
   it('leads with the headline metric computed from the manifest', () => {
     ready()
     // 500,000 m² beyond baseline at +2 ft in the fixture → 0.50 km², 124 acres
-    expect(screen.getByText('Flooded beyond today’s high tide')).toBeInTheDocument()
+    expect(screen.getByText('Newly underwater at high tide')).toBeInTheDocument()
     expect(screen.getAllByText('0.50').length).toBeGreaterThan(0)
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('≈ 124 acres at +2 ft')
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('About 124 acres at +2 ft')
   })
 
   it('relates the headline to the city’s land area when the Census boundary is known', () => {
@@ -74,7 +74,7 @@ describe('<InsightPanel>', () => {
       </AppStateProvider>,
     )
     // 500,000 m² of 10 km² land → 5.0%
-    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('equal to 5.0% of the city’s land area')
+    expect(screen.getByRole('region', { name: 'Headline' })).toHaveTextContent('roughly 5% of the city’s land')
   })
 
   it('breaks the total down by the area each foot adds', () => {
@@ -99,9 +99,10 @@ describe('<InsightPanel>', () => {
     expect(onHighlight).toHaveBeenCalledWith(2)
   })
 
-  it('describes today as the reference level', () => {
+  it('describes today as the starting point', () => {
     ready({ scenarioFt: 0 })
-    expect(screen.getByText('Reference')).toBeInTheDocument()
+    expect(screen.getByText('Where we start')).toBeInTheDocument()
+    expect(screen.getByText('Today’s high tide')).toBeInTheDocument()
   })
 
   it('renders a missing-data state without any numbers', () => {
@@ -116,8 +117,8 @@ describe('<InsightPanel>', () => {
         />
       </AppStateProvider>,
     )
-    expect(screen.getByRole('alert')).toHaveTextContent(/Inundation data unavailable/)
-    expect(screen.getByRole('alert')).toHaveTextContent(/never substitutes estimated or sample data/)
+    expect(screen.getByRole('alert')).toHaveTextContent(/The flood data didn’t load/)
+    expect(screen.getByRole('alert')).toHaveTextContent(/never fills the gap with estimates or sample data/)
     expect(screen.queryByText(/km²/)).toBeNull()
   })
 })

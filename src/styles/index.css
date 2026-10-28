@@ -8,8 +8,8 @@
    (≥ 4.5:1) on every surface token.
 --------------------------------------------------------------------------- */
 @theme {
-  --font-sans: 'Roboto Variable', 'Roboto', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'Roboto Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Surfaces */
   --color-canvas: #f3f3f3;
@@ -94,7 +94,8 @@
     font-weight: 500;
     color: var(--color-fg);
   }
-  /* Type scale — Roboto. One role per class so hierarchy stays consistent. */
+  /* Type scale — Satoshi (UI). One role per class so hierarchy stays consistent. Map labels stay
+     in Roboto: MapLibre needs SDF glyph files, and Satoshi's licence doesn't allow converting it. */
   .t-display {
     font-size: 36px;
     line-height: 40px;
@@ -320,7 +321,7 @@
 /* Selected-place card: the water rises one stream at a time, once per selection. */
 @keyframes fi-rise {
   from {
-    transform: translateY(30px);
+    transform: translateY(20px);
     opacity: 0.4;
   }
   to {

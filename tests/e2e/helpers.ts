@@ -16,7 +16,7 @@ export function trackErrors(page: Page) {
 /** Waits until MapLibre has drawn the canvas and the loading overlay is gone. */
 export async function waitForMap(page: Page) {
   await expect(page.locator('.maplibregl-canvas')).toBeVisible()
-  await expect(page.getByText('Loading basemap and NOAA overlays…')).toHaveCount(0, { timeout: 30_000 })
+  await expect(page.getByText('Loading the map and flood data…')).toHaveCount(0, { timeout: 30_000 })
   // Give tiles a moment to settle for screenshots.
   await page.waitForTimeout(1500)
 }

@@ -27,10 +27,10 @@ test.describe('FloodLens — small screens', () => {
 
     // Bottom sheet peeks with the headline number, expands on demand.
     const sheetToggle = page.getByRole('button', { name: /Insights · \+3 ft/ })
-    await expect(sheetToggle).toContainText('7.43 km² flooded beyond today')
+    await expect(sheetToggle).toContainText('7.43 km² newly underwater')
     await expect(sheetToggle).toHaveAttribute('aria-expanded', 'false')
     await sheetToggle.click()
-    await expect(page.getByRole('region', { name: 'Headline' })).toContainText('Flooded beyond today’s high tide')
+    await expect(page.getByRole('region', { name: 'Headline' })).toContainText('Newly underwater at high tide')
     expect(errors).toEqual([])
   })
 })

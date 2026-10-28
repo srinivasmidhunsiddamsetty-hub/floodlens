@@ -42,11 +42,10 @@ describe('<InspectionCard>', () => {
 
   it('leads with the first water level that reaches it', () => {
     card(levels(3))
-    expect(screen.getByText('First reached')).toBeInTheDocument()
-    expect(screen.getByText('First reached').nextSibling).toHaveTextContent('at +3 ft')
-    const gauge = screen.getByRole('list', { name: 'Within NOAA’s mapped extent, by water level' })
+    expect(screen.getByText('Water reaches it').nextSibling).toHaveTextContent('At +3 ft')
+    const gauge = screen.getByRole('list', { name: 'Water at this spot, by sea level' })
     expect(within(gauge).getAllByRole('listitem')).toHaveLength(4)
-    expect(within(gauge).getAllByText('outside mapped extent')).toHaveLength(3)
+    expect(within(gauge).getAllByText('water doesn’t reach it')).toHaveLength(3)
   })
 
   it('lists height, footprint and low-lying status with approximate values', () => {
@@ -54,33 +53,38 @@ describe('<InspectionCard>', () => {
     // "≈" already says approximate, so the labels don't repeat it.
     expect(screen.getByText('Height').nextSibling).toHaveTextContent('≈ 5 m')
     expect(screen.getByText('Footprint').nextSibling).toHaveTextContent('≈ 2,001 m²')
-    expect(screen.getByText('Low-lying area').nextSibling).toHaveTextContent('No')
+    expect(screen.getByText('In a low spot').nextSibling).toHaveTextContent('No')
     expect(screen.queryByText(/approx/i)).toBeNull()
   })
 
   it('offers to show the level on the map when the slider is below it', async () => {
     const onShowLevel = vi.fn()
     card(levels(3), { scenarioFt: 1, onShowLevel })
-    await userEvent.click(screen.getByRole('button', { name: /Not on the map at \+1 ft · show \+3 ft/ }))
+    await userEvent.click(screen.getByRole('button', { name: /You’re looking at \+1 ft\. See it at \+3 ft/ }))
     expect(onShowLevel).toHaveBeenCalledWith(3)
   })
 
-  it('says "above +3 ft" when no mapped level reaches it, without claiming it stays dry', () => {
+  it('says "not by +3 ft" when no mapped level reaches it, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('First reached').nextSibling).toHaveTextContent('Above +3 ft')
+    expect(screen.getByText('Water reaches it').nextSibling).toHaveTextContent('Not by +3 ft')
     expect(screen.queryByText(/dry|safe/i)).toBeNull()
   })
 
   it('explains places outside the city boundary instead of showing results', () => {
     card(levels(2), { selection: { ...building, insideStudyArea: false } })
-    expect(screen.getByText(/Outside the City of Miami Beach/)).toBeInTheDocument()
-    expect(screen.queryByText('First reached')).toBeNull()
+    expect(screen.getByText(/This spot is outside Miami Beach/)).toBeInTheDocument()
+    expect(screen.queryByText('Water reaches it')).toBeNull()
   })
 
-  it('clears from the × button', async () => {
+  it('says "already, at high tide" for places water reaches today', () => {
+    card(levels(0))
+    expect(screen.getByText('Water reaches it').nextSibling).toHaveTextContent('Already, at high tide')
+  })
+
+  it('closes from the × button', async () => {
     const onClear = vi.fn()
     card(levels(2), { onClear })
-    await userEvent.click(screen.getByRole('button', { name: 'Clear selection (Esc)' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Close (Esc)' }))
     expect(onClear).toHaveBeenCalled()
   })
 })

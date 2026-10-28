@@ -62,7 +62,7 @@ describe('fetchManifest — missing-data handling', () => {
 
   it('reports network failures without leaking stack traces', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
-    await expect(fetchManifest()).rejects.toThrow(/Could not reach the processed NOAA data/)
+    await expect(fetchManifest()).rejects.toThrow(/couldn’t reach the flood data/)
   })
 
   it('reports invalid JSON', async () => {

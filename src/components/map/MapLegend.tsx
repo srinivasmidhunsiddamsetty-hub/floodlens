@@ -40,7 +40,7 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
         <div className="border-t border-line px-3 pt-2 pb-3">
           {showFlood && bands.length > 0 && (
             <>
-              <p className="t-overline mb-1">Flooded first at</p>
+              <p className="t-overline mb-1">Water first reaches</p>
               <ul className="mb-2" onMouseLeave={() => onHighlight(null)}>
                 {bands.map((b) => {
                   const shown = b.feet <= scenarioFt
@@ -61,8 +61,8 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
                           className="h-3 w-5 shrink-0 rounded-sm"
                           style={{ background: bandColor(b.feet), opacity: shown ? 1 : 0.3 }}
                         />
-                        {b.isReference ? 'Today (0 ft)' : formatScenario(b.feet)}
-                        {!shown && <span className="ml-auto text-[11px]">hidden</span>}
+                        {b.isReference ? 'Today’s high tide' : formatScenario(b.feet)}
+                        {!shown && <span className="ml-auto text-[11px]">not shown</span>}
                       </button>
                     </li>
                   )
@@ -73,7 +73,7 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
           <ul className="grid grid-cols-2 gap-x-2 gap-y-1 border-t border-line pt-2 t-caption text-fg-muted">
             {showLowLying && (
               <li className="flex items-center gap-2">
-                <Swatch kind="lowLying" size={13} /> Low-lying
+                <Swatch kind="lowLying" size={13} /> Low spot
               </li>
             )}
             <li className="flex items-center gap-2">

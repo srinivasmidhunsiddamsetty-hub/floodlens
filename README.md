@@ -19,11 +19,11 @@ Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md)
 ## Features
 
 - **Real NOAA data.** Ocean-connected inundation polygons from the NOAA Office for Coastal Management Sea Level Rise Viewer data (FL_SE GeoPackage) for 0 ft (current MHHW), +1 ft, +2 ft and +3 ft, clipped to the City of Miami Beach boundary (US Census Bureau TIGER/Line; 39.4 km² including Biscayne Bay waters inside city limits). Nothing is simulated.
-- **3D map (MapLibre GL JS).** A light, ArcGIS-style geographic basemap (OpenFreeMap Positron, restyled) with Roboto labels. Buildings are extruded from OpenStreetMap heights, and the overlay draws beneath basemap water so mapped inundation reads as "water reaching land".
+- **3D map (MapLibre GL JS).** A light, ArcGIS-style geographic basemap (OpenFreeMap Positron, restyled) with Roboto labels; the interface is set in Satoshi. Buildings are extruded from OpenStreetMap heights, and the overlay draws beneath basemap water so mapped inundation reads as "water reaching land".
 - **Sea-level control.** A keyboard-operable slider (native range input) whose track is painted with the map's colour ramp, plus **Play the rise** to animate today → +3 ft. Levels swap in place, so the camera and app state are preserved.
-- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, on a viridis-style ramp that darkens as the water rises (lime = today → green → teal → indigo = +3 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
+- **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, in one blue hue that darkens as the water rises (light blue = today's high tide, navy = +3 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a level in the legend, chart or breakdown to spotlight it.
 - **In-map controls.** Zoom, compass, **Show all of Miami Beach** (fits the whole city back into view) and 2D/3D sit together inside the map, ArcGIS-style. Tilting the map by hand keeps 2D/3D in sync.
-- **Area chips.** South Beach, Mid-Beach and North Beach chips (top-left) fly the camera along the 12.6 km city, keeping the current 2D/3D mode. When you're zoomed in, the chip for the nearest area is highlighted. The named areas are camera positions only; no statistics are invented for these unofficial areas.
+- **Area chips.** South Beach, Mid-Beach and North Beach chips (top-left) fly the camera along the 12.6 km city, keeping the current 2D/3D mode. The chip you pick is highlighted straight away; when you pan by hand, the nearest area's chip takes over. The named areas are camera positions only; no statistics are invented for these unofficial areas.
 - **Insights.** A headline number (area flooded beyond today's high tide, in km² and acres, and as a share of the city's Census land area), a stacked D3 chart of growth per foot, and a breakdown of what each foot adds, with tooltips, keyboard focus and a screen-reader table.
 - **Building and location inspection.** Click any building (3D-accurate picking) or place, or focus the map and press Enter. A card shows the first water level that reaches it, illustrated as one stream of water per foot rising to the building, a level-by-level gauge, OSM height and footprint, and whether it sits in a low-lying area. If the slider is below that level, one click shows it on the map. Esc clears it.
 - **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate purple-hatched layer and are never merged with ocean-connected extents.
@@ -120,6 +120,7 @@ Basemap tiles come from the public OpenFreeMap instance (free, no key, attributi
 
 Inundation data: NOAA Office for Coastal Management, Sea Level Rise Viewer (coast.noaa.gov/slr).
 City boundary: US Census Bureau, TIGER/Line Shapefiles (public domain).
+Interface font: Satoshi by Indian Type Foundry, loaded from Fontshare under the ITF Free Font License (the font files are not in this repo).
 Basemap: OpenFreeMap © OpenMapTiles, data © OpenStreetMap contributors.
 
 ## Documentation
@@ -127,6 +128,7 @@ Basemap: OpenFreeMap © OpenMapTiles, data © OpenStreetMap contributors.
 - [DATA_SOURCES.md](DATA_SOURCES.md): provenance, CRS, clipping, scenario definitions, transformation steps
 - [CASE_STUDY_NOTES.md](CASE_STUDY_NOTES.md): portfolio case-study material
 - [docs/DESIGN_DECISIONS.md](docs/DESIGN_DECISIONS.md): interaction, visual and technical decisions
+- [docs/UX_WRITING.md](docs/UX_WRITING.md): voice, copy rules and before/after examples
 - [docs/LIMITATIONS.md](docs/LIMITATIONS.md): what FloodLens can and cannot tell you
 - [docs/QUALITY_REPORT.md](docs/QUALITY_REPORT.md): what was built, tested and deferred
 - [CHANGELOG.md](CHANGELOG.md): numbered versions with screenshots of each iteration

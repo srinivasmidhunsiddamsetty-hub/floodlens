@@ -10,11 +10,11 @@ interface Props {
 }
 
 const LAYERS: { key: LayerKey; label: string; description: string; swatch: SwatchKind; needsLowLying?: boolean }[] = [
-  { key: 'inundation', label: 'Flood extent', description: 'NOAA, connected to the ocean', swatch: 'flood' },
-  { key: 'lowLying', label: 'Low-lying areas', description: 'Below the water level, not connected', swatch: 'lowLying', needsLowLying: true },
-  { key: 'buildings', label: 'Buildings', description: 'OpenStreetMap footprints & heights', swatch: 'building' },
-  { key: 'labels', label: 'Labels', description: 'Streets and places', swatch: 'labels' },
-  { key: 'studyArea', label: 'City limits', description: 'Boundary of the data, dims outside it', swatch: 'study' },
+  { key: 'inundation', label: 'Flooding', description: 'Where NOAA maps the sea reaching', swatch: 'flood' },
+  { key: 'lowLying', label: 'Low spots', description: 'Below the water line, but cut off from the sea', swatch: 'lowLying', needsLowLying: true },
+  { key: 'buildings', label: 'Buildings', description: 'Shapes and heights from OpenStreetMap', swatch: 'building' },
+  { key: 'labels', label: 'Labels', description: 'Street and place names', swatch: 'labels' },
+  { key: 'studyArea', label: 'City limits', description: 'We only map inside this line', swatch: 'study' },
 ]
 
 export function ControlPanel({ manifest }: Props) {
@@ -38,7 +38,7 @@ export function ControlPanel({ manifest }: Props) {
 
       <section aria-labelledby="sec-layers" className="border-t border-line px-5 pt-5 pb-5">
         <h2 id="sec-layers" className="t-title mb-2">
-          Layers
+          On the map
         </h2>
         {LAYERS.filter((l) => !l.needsLowLying || hasLowLying).map((l) => (
           <Switch

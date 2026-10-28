@@ -31,9 +31,11 @@ export function formatScenarioLong(ft: number): string {
   return ft === 0 ? 'Current MHHW (0 ft)' : `+${ft} ft above MHHW`
 }
 
-export function formatPercent(fraction: number): string {
+/** Percent with one decimal below 10% (5.0%), or rounded for prose (`round`: 5%, 37%). */
+export function formatPercent(fraction: number, round = false): string {
   const pct = fraction * 100
   if (pct > 0 && pct < 0.1) return '<0.1%'
+  if (round) return pct < 1 ? `${pct.toFixed(1)}%` : `${Math.round(pct)}%`
   return `${pct.toFixed(pct < 10 ? 1 : 0)}%`
 }
 

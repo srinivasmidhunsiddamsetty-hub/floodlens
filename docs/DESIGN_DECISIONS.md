@@ -22,11 +22,15 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 - **Buildings:** extrusions in 3D, translucent footprints and outlines in 2D, so overlays under buildings stay visible from above.
 - **Labels** stay above every overlay and use a white halo for legibility on the blue bands.
 - **Map controls live in the map** (top-right): zoom, compass / show all of Miami Beach, then 2D/3D. The full-extent control uses a frame (focus) icon, not a house: it fits the whole city into view rather than going "home".
-- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. When zoomed in, the nearest area's chip is highlighted (by distance to its bookmark, not a boundary, since none is official). v0.5 tried a locator mini-map here; the chips read more clearly, so v0.6 returned to them with roomier padding and a 16 px map gutter shared with the map controls and legend.
+- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. They're flat (white, 1 px border, no shadow or tint). The chip you pick turns accent blue with a 2 px border straight away, not when the camera arrives; panning by hand hands the highlight back to "nearest area when zoomed in" (by distance to its bookmark, since the areas have no official boundary). A 16 px map gutter is shared with the map controls and legend.
 - **Bottom edge:** attribution runs along the very bottom with the scale bar above it on the right, and the legend sits above both on the left, so the three never overlap. Below 1024 px the controls lift above the insights sheet.
 - **The opening view fits the city** to the viewport in Web Mercator (tilted 40°, looking north-north-west), accounting for the mobile bottom sheet. Camera controls act on the map, so they belong on it (ArcGIS, komoot, Google Maps). The header keeps only app-level actions (about, sources).
 - **Selection highlight** is drawn 0.4 m wider and 0.6 m taller than the clicked building. Coincident faces z-fight (flicker) while zooming.
 - **3D picking** follows the view ray through candidate building volumes (`src/lib/buildingPick.ts`), because a roof click unprojects to the ground behind the building.
+
+## Copy
+
+The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md): plain, calm, honest, brief and human. FloodLens never says a place is "safe" or "will flood".
 
 ## Colour
 
@@ -35,7 +39,7 @@ The selected-place card draws water as one stream per foot in the same ramp colo
 | Role | Colour | Notes |
 | --- | --- | --- |
 | Basemap | land `#f1eee8`, parks `#d5e7c6`, water `#a8dcea`, roads white | Light "streets / topographic" palette in the spirit of ArcGIS basemaps. Water is a fresh light aqua: livelier than grey-blue, and greener in hue than the azure flood ramp so it stays distinct (OKLab ΔE 22 from the +1 ft band) |
-| Flood bands ("first reached at") | today `#bddf26` · +1 `#36b874` · +2 `#108b9b` · +3 `#3f4aa0`, 85% | Multi-hue sequential after matplotlib's viridis: lime → green → teal → indigo, darker as the water rises. Lightness carries the order (greyscale-safe); the hue change separates neighbouring levels better than v0.4–v0.5's single blue (worst adjacent OKLab ΔE 16.5 vs 14.4, colour-vision checks pass). Teal and green are a little more saturated than viridis so they don't read grey. Today's lime is light against land, but it sits mostly under water and is always labelled |
+| Flood bands ("first reached at") | today `#9ec5f4` · +1 `#5598e7` · +2 `#256abf` · +3 `#104281`, 85% | One blue hue, light → dark as the water rises: more water reads as darker. Evenly spaced steps (200/350/500/650) of a validated sequential blue scale, so lightness alone carries the order (greyscale and colour-vision safe). v0.6 tried a viridis-style ramp (lime → indigo) for more hue contrast; in review the blues read better as water, so v0.7 restored them |
 | Buildings | sandstone `#f0e6d6` → `#e3d3bb` by height | A light, warm stone colour (a nod to Miami Beach's Art Deco stucco): the complementary hue to the blue ramp, so buildings read clearly on every band without the heaviness of grey |
 | Low-lying (unconnected) | `#6b35aa`, diagonal hatch + dashed outline | Pattern carries the meaning without colour |
 | Selection | orange `#ff7417` building / ring | A colour no data layer uses, so the selection is unmistakable; the card's icon tile repeats it to link card and map |
@@ -53,7 +57,9 @@ Map and UI colours live in `src/lib/theme.ts` and the CSS tokens in `src/styles/
 
 ## Typography
 
-Roboto everywhere. The UI uses Roboto Variable (self-hosted through `@fontsource-variable/roboto`, no external font request). Map labels use Roboto Regular, Medium and Italic SDF glyphs self-hosted in `public/fonts/`, because OpenFreeMap only serves Noto Sans glyphs.
+**Satoshi** for the interface (since v0.7): a geometric sans by Indian Type Foundry with a friendlier, more contemporary feel than Roboto, with tabular figures and every symbol FloodLens uses (≈, ², °, →). It's free under the ITF Free Font License, which allows use on your own site but not redistributing the files (for example in a public repository) or converting them. So the app loads it from Fontshare, ITF's official web-font service, and the font files never enter this repo. If Fontshare can't be reached, the UI falls back to the system sans.
+
+Map labels stay in **Roboto** (Regular, Medium and Italic SDF glyphs self-hosted in `public/fonts/`, because OpenFreeMap only serves Noto Sans). MapLibre needs fonts converted to SDF glyph files, and Satoshi's licence doesn't allow format conversion. Roboto's open shapes also hold up better at 10–12 px over a busy map.
 
 Type scale (classes in `src/styles/index.css`): `t-display` 36/500 (sea level) · `t-metric` 28/500 (headline number) · `t-title` 16/500 (panel titles) · `t-heading` 14/500 · `t-label` 13/500 · `t-body` 13/400 · `t-caption` 12/400 · `t-overline` 11/500 uppercase. Tabular numerals for all quantities.
 

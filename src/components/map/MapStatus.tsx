@@ -16,7 +16,7 @@ export function MapStatus({ ready, fatal, warning, loading, errors, scenarioLabe
       <div className="absolute inset-0 z-20 grid place-items-center bg-canvas p-6" role="alert">
         <div className="max-w-sm text-center">
           <MapPinOff className="mx-auto mb-3 size-8 text-fg-subtle" aria-hidden />
-          <p className="text-sm font-medium text-fg">Map unavailable</p>
+          <p className="text-sm font-medium text-fg">The map couldn’t load</p>
           <p className="mt-1 text-sm text-fg-muted">{fatal}</p>
         </div>
       </div>
@@ -29,7 +29,7 @@ export function MapStatus({ ready, fatal, warning, loading, errors, scenarioLabe
         <div className="absolute inset-0 z-20 grid place-items-center bg-canvas/80" role="status" aria-live="polite">
           <div className="flex items-center gap-2 text-sm text-fg-muted">
             <Loader2 className="size-4 animate-spin text-accent" aria-hidden />
-            Loading basemap and NOAA overlays…
+            Loading the map and flood data…
           </div>
         </div>
       )}
@@ -38,7 +38,7 @@ export function MapStatus({ ready, fatal, warning, loading, errors, scenarioLabe
           {ready && loading && (
             <span className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface/95 px-3 py-1 text-xs text-fg-muted shadow-panel animate-fade-in">
               <Loader2 className="size-3.5 animate-spin text-accent" aria-hidden />
-              Loading {scenarioLabel} extent…
+              Loading {scenarioLabel}…
             </span>
           )}
         </div>
@@ -52,7 +52,7 @@ export function MapStatus({ ready, fatal, warning, loading, errors, scenarioLabe
               <div className="space-y-1">
                 {warning && <p>{warning}</p>}
                 {errors.map((e) => (
-                  <p key={e}>{e} The map shows no overlay for this layer rather than an estimate.</p>
+                  <p key={e}>{e} We’d rather leave it off the map than guess.</p>
                 ))}
               </div>
             </div>
