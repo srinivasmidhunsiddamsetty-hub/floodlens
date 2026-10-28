@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-24T00:17:00+00:00",
+  "generator": "scripts/prepare_noaa_slr.py",
+  "source": {
+    "publisher": "NOAA Office for Coastal Management (OCM)",
+    "dataset": "Sea Level Rise Viewer \u2014 inundation extent vector polygons",
+    "geography": "FL_SE",
+    "geographyCounties": [
+      "Broward",
+      "Miami-Dade",
+      "Palm Beach"
+    ],
+    "indexUrl": "https://coast.noaa.gov/slrdata/Sea_Level_Rise_Vectors/FL/index.html",
+    "downloadUrl": "https://chs.coast.noaa.gov/htdata/Inundation/SLR/BulkDownload/Sea_Level_Rise_Vectors/FL/FL_SE_slr_data_dist.zip",
+    "file": "FL_SE_slr_final_dist.gpkg",
+    "fileSizeBytes": 4087308288,
+    "publicationYear": 2023,
+    "metadata": {
+      "inport_0ft": "https://www.fisheries.noaa.gov/inport/item/48105",
+      "inport_1to10ft": "https://www.fisheries.noaa.gov/inport/item/48106",
+      "inport_confidence": "https://www.fisheries.noaa.gov/inport/item/48107",
+      "methods_pdf": "https://coast.noaa.gov/data/digitalcoast/pdf/slr-inundation-methods.pdf",
+      "viewer": "https://coast.noaa.gov/slr"
+    },
+    "verticalReference": "Mean Higher High Water (MHHW), modelled with NOAA VDatum (NAVD88 orthometric)",
+    "credit": "Data: NOAA Office for Coastal Management, Sea Level Rise Viewer (coast.noaa.gov/slr)",
+    "useConstraints": "These data illustrate the scale of potential flooding, not the exact location, and do not account for erosion, subsidence, or future construction. Screening-level tool only; not for navigation, permitting, or other legal purposes.",
+    "inspection": {
+      "layerCount": 42,
+      "layers": {
+        "FL_SE_slr_0_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 9785,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_slr_1_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 10412,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_slr_2_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 6423,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_slr_3_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 6329,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_low_0_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 7317,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_low_1_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 9980,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_low_2_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 8703,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        },
+        "FL_SE_low_3_0ft": {
+          "geometryType": "MultiPolygon",
+          "crs": "EPSG:4269",
+          "featureCount": 8674,
+          "fields": [
+            "Id",
+            "gridcode"
+          ]
+        }
+      }
+    }
+  },
+  "studyArea": {
+    "name": "South Beach, Miami Beach, FL",
+    "bbox": [
+      -80.16,
+      25.76,
+      -80.118,
+      25.8
+    ],
+    "areaM2": 18668297.4,
+    "file": "study_area.geojson"
+  },
+  "crs": {
+    "source": "EPSG:4269",
+    "output": "EPSG:4326",
+    "processing": "EPSG:26917"
+  },
+  "processing": {
+    "simplifyToleranceM": 0.75,
+    "minPartAreaM2": 1.0,
+    "coordinateDecimals": 6,
+    "areaMethod": "Geodesic area on the WGS84 ellipsoid (pyproj.Geod) of the exported polygons",
+    "steps": [
+      "Read only features intersecting the study area from the NOAA FL_SE GeoPackage (EPSG:4269).",
+      "Cut source polygons to the study-area rectangle, repair invalid geometry (GEOS make_valid) and dissolve.",
+      "Reproject to NAD83 / UTM zone 17N (EPSG:26917) for metric operations.",
+      "Derive additional extent between scenario pairs with GEOS polygon difference (higher \u2212 lower).",
+      "Drop difference slivers smaller than 1.0 m\u00b2.",
+      "Simplify with a 0.75 m topology-preserving tolerance.",
+      "Reproject to WGS84 (EPSG:4326), round to 6 decimals and re-validate.",
+      "Compute geodesic areas of the exported polygons."
+    ],
+    "validation": [
+      {
+        "pair": "0ft\u21921ft",
+        "lowerOutsideHigherM2": 0.003,
+        "differenceAreaM2": 21648.5,
+        "areaDeltaM2": 21648.5,
+        "relativeError": 0.0,
+        "passed": true
+      },
+      {
+        "pair": "0ft\u21922ft",
+        "lowerOutsideHigherM2": 0.019,
+        "differenceAreaM2": 525765.0,
+        "areaDeltaM2": 525765.0,
+        "relativeError": 0.0,
+        "passed": true
+      },
+      {
+        "pair": "0ft\u21923ft",
+        "lowerOutsideHigherM2": 0.033,
+        "differenceAreaM2": 2356939.6,
+        "areaDeltaM2": 2356939.5,
+        "relativeError": 0.0,
+        "passed": true
+      },
+      {
+        "pair": "1ft\u21922ft",
+        "lowerOutsideHigherM2": 0.018,
+        "differenceAreaM2": 504116.5,
+        "areaDeltaM2": 504116.5,
+        "relativeError": 0.0,
+        "passed": true
+      },
+      {
+        "pair": "1ft\u21923ft",
+        "lowerOutsideHigherM2": 0.033,
+        "differenceAreaM2": 2335291.0,
+        "areaDeltaM2": 2335291.0,
+        "relativeError": 0.0,
+        "passed": true
+      },
+      {
+        "pair": "2ft\u21923ft",
+        "lowerOutsideHigherM2": 0.043,
+        "differenceAreaM2": 1831174.5,
+        "areaDeltaM2": 1831174.5,
+        "relativeError": 0.0,
+        "passed": true
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "slr_0ft",
+      "feet": 0,
+      "label": "0 ft",
+      "kind": "slr",
+      "sourceLayer": "FL_SE_slr_0_0ft",
+      "file": "slr_0ft.geojson",
+      "areaM2": 10629327.9,
+      "beyondBaselineM2": 0.0,
+      "bytes": 225457,
+      "sha256": "84eb8346849b4118",
+      "featureCount": 1,
+      "vertexCount": 8034
+    },
+    {
+      "id": "slr_1ft",
+      "feet": 1,
+      "label": "+1 ft",
+      "kind": "slr",
+      "sourceLayer": "FL_SE_slr_1_0ft",
+      "file": "slr_1ft.geojson",
+      "areaM2": 10650991.6,
+      "beyondBaselineM2": 21681.9,
+      "bytes": 224720,
+      "sha256": "f0c249fe1a8db904",
+      "featureCount": 1,
+      "vertexCount": 7978
+    },
+    {
+      "id": "slr_2ft",
+      "feet": 2,
+      "label": "+2 ft",
+      "kind": "slr",
+      "sourceLayer": "FL_SE_slr_2_0ft",
+      "file": "slr_2ft.geojson",
+      "areaM2": 11155528.3,
+      "beyondBaselineM2": 526289.9,
+      "bytes": 487079,
+      "sha256": "3f675f55bee25307",
+      "featureCount": 1,
+      "vertexCount": 17309
+    },
+    {
+      "id": "slr_3ft",
+      "feet": 3,
+      "label": "+3 ft",
+      "kind": "slr",
+      "sourceLayer": "FL_SE_slr_3_0ft",
+      "file": "slr_3ft.geojson",
+      "areaM2": 12987790.6,
+      "beyondBaselineM2": 2360159.3,
+      "bytes": 770632,
+      "sha256": "ad59fd4e239bca08",
+      "featureCount": 1,
+      "vertexCount": 27337
+    }
+  ],
+  "lowLying": [
+    {
+      "id": "low_0ft",
+      "feet": 0,
+      "kind": "low",
+      "sourceLayer": "FL_SE_low_0_0ft",
+      "file": "low_0ft.geojson",
+      "areaM2": 34202.1,
+      "bytes": 13603,
+      "sha256": "844b819cfafd1df1",
+      "featureCount": 3,
+      "vertexCount": 471
+    },
+    {
+      "id": "low_1ft",
+      "feet": 1,
+      "kind": "low",
+      "sourceLayer": "FL_SE_low_1_0ft",
+      "file": "low_1ft.geojson",
+      "areaM2": 42896.8,
+      "bytes": 18742,
+      "sha256": "c22cab964e7f8a0e",
+      "featureCount": 4,
+      "vertexCount": 636
+    },
+    {
+      "id": "low_2ft",
+      "feet": 2,
+      "kind": "low",
+      "sourceLayer": "FL_SE_low_2_0ft",
+      "file": "low_2ft.geojson",
+      "areaM2": 224320.2,
+      "bytes": 122087,
+      "sha256": "36dd71a96f499c31",
+      "featureCount": 16,
+      "vertexCount": 4196
+    },
+    {
+      "id": "low_3ft",
+      "feet": 3,
+      "kind": "low",
+      "sourceLayer": "FL_SE_low_3_0ft",
+      "file": "low_3ft.geojson",
+      "areaM2": 152434.8,
+      "bytes": 82605,
+      "sha256": "896eb1039cb039aa",
+      "featureCount": 12,
+      "vertexCount": 2858
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "diff_0ft_1ft",
+      "fromFt": 0,
+      "toFt": 1,
+      "file": "diff_0ft_1ft.geojson",
+      "areaM2": 21681.9,
+      "bytes": 199626,
+      "sha256": "3b1ec75179c78fd0",
+      "featureCount": 556,
+      "vertexCount": 3557
+    },
+    {
+      "id": "diff_0ft_2ft",
+      "fromFt": 0,
+      "toFt": 2,
+      "file": "diff_0ft_2ft.geojson",
+      "areaM2": 526289.9,
+      "bytes": 631114,
+      "sha256": "8b228ef6e928429d",
+      "featureCount": 938,
+      "vertexCount": 16487
+    },
+    {
+      "id": "diff_0ft_3ft",
+      "fromFt": 0,
+      "toFt": 3,
+      "file": "diff_0ft_3ft.geojson",
+      "areaM2": 2360159.3,
+      "bytes": 1052995,
+      "sha256": "6848049a1a326153",
+      "featureCount": 1101,
+      "vertexCount": 30409
+    },
+    {
+      "id": "diff_1ft_2ft",
+      "fromFt": 1,
+      "toFt": 2,
+      "file": "diff_1ft_2ft.geojson",
+      "areaM2": 504568.5,
+      "bytes": 659141,
+      "sha256": "88cb732ab5a71c61",
+      "featureCount": 1119,
+      "vertexCount": 16304
+    },
+    {
+      "id": "diff_1ft_3ft",
+      "fromFt": 1,
+      "toFt": 3,
+      "file": "diff_1ft_3ft.geojson",
+      "areaM2": 2338454.5,
+      "bytes": 1062553,
+      "sha256": "629ef27ce8441c38",
+      "featureCount": 1179,
+      "vertexCount": 30222
+    },
+    {
+      "id": "diff_2ft_3ft",
+      "fromFt": 2,
+      "toFt": 3,
+      "file": "diff_2ft_3ft.geojson",
+      "areaM2": 1833620.7,
+      "bytes": 1417691,
+      "sha256": "d15b78eb23440af7",
+      "featureCount": 1713,
+      "vertexCount": 39448
+    }
+  ],
+  "files": {
+    "slr_0ft.geojson": {
+      "bytes": 225457,
+      "sha256": "84eb8346849b4118",
+      "featureCount": 1,
+      "vertexCount": 8034
+    },
+    "slr_1ft.geojson": {
+      "bytes": 224720,
+      "sha256": "f0c249fe1a8db904",
+      "featureCount": 1,
+      "vertexCount": 7978
+    },
+    "slr_2ft.geojson": {
+      "bytes": 487079,
+      "sha256": "3f675f55bee25307",
+      "featureCount": 1,
+      "vertexCount": 17309
+    },
+    "slr_3ft.geojson": {
+      "bytes": 770632,
+      "sha256": "ad59fd4e239bca08",
+      "featureCount": 1,
+      "vertexCount": 27337
+    },
+    "low_0ft.geojson": {
+      "bytes": 13603,
+      "sha256": "844b819cfafd1df1",
+      "featureCount": 3,
+      "vertexCount": 471
+    },
+    "low_1ft.geojson": {
+      "bytes": 18742,
+      "sha256": "c22cab964e7f8a0e",
+      "featureCount": 4,
+      "vertexCount": 636
+    },
+    "low_2ft.geojson": {
+      "bytes": 122087,
+      "sha256": "36dd71a96f499c31",
+      "featureCount": 16,
+      "vertexCount": 4196
+    },
+    "low_3ft.geojson": {
+      "bytes": 82605,
+      "sha256": "896eb1039cb039aa",
+      "featureCount": 12,
+      "vertexCount": 2858
+    },
+    "diff_0ft_1ft.geojson": {
+      "bytes": 199626,
+      "sha256": "3b1ec75179c78fd0",
+      "featureCount": 556,
+      "vertexCount": 3557
+    },
+    "diff_0ft_2ft.geojson": {
+      "bytes": 631114,
+      "sha256": "8b228ef6e928429d",
+      "featureCount": 938,
+      "vertexCount": 16487
+    },
+    "diff_0ft_3ft.geojson": {
+      "bytes": 1052995,
+      "sha256": "6848049a1a326153",
+      "featureCount": 1101,
+      "vertexCount": 30409
+    },
+    "diff_1ft_2ft.geojson": {
+      "bytes": 659141,
+      "sha256": "88cb732ab5a71c61",
+      "featureCount": 1119,
+      "vertexCount": 16304
+    },
+    "diff_1ft_3ft.geojson": {
+      "bytes": 1062553,
+      "sha256": "629ef27ce8441c38",
+      "featureCount": 1179,
+      "vertexCount": 30222
+    },
+    "diff_2ft_3ft.geojson": {
+      "bytes": 1417691,
+      "sha256": "d15b78eb23440af7",
+      "featureCount": 1713,
+      "vertexCount": 39448
+    }
+  }
+}

@@ -1,0 +1,138 @@
+# FloodLens: case study notes
+
+Working notes for a future portfolio case study. Everything here describes design intent and what was built. **No user research or usability testing has been conducted yet**, and nothing below should be presented as research findings or measured outcomes.
+
+---
+
+## 1. Project overview
+
+- **Product:** FloodLens, a Coastal Exposure Explorer
+- **Tagline:** See the coastline. Understand the exposure.
+- **Category:** Geospatial decision support · climate resilience · interactive 3D visualization
+- **Scope:** Single-screen web app for South Beach, Miami Beach, FL, using real NOAA sea-level-rise inundation polygons for 0, +1, +2 and +3 ft above MHHW.
+- **Role (self-initiated):** Product design (IA, interaction, visual, data-viz), front-end engineering (React/TypeScript/MapLibre/D3), GIS data preparation (Python/GEOS).
+- **Timeframe:** 1–2 day MVP build.
+
+## 2. Problem and design opportunity
+
+Coastal planners can download authoritative inundation datasets, but making sense of them usually takes GIS expertise. Scenarios sit in separate layers or files, comparisons require manual overlay, and caveats sit in metadata documents away from the map.
+
+**Opportunity:** combine scenario selection, comparison, the built environment and the data's limitations into one approachable spatial view that helps someone *screen* exposure and decide where to look more closely.
+
+Questions the product is designed to help answer:
+1. How does the mapped extent change between scenarios?
+2. Where are the largest visible differences?
+3. Which parts of the urban fabric overlap the mapped extent?
+4. Can I compare quickly without switching maps?
+5. What can and can't I conclude from this data?
+
+## 3. Provisional target users
+
+These are **assumption-based profiles**, not validated personas.
+
+- **Primary: municipal resilience planner.** Compares potential inundation extents, identifies areas for further investigation, and communicates first observations to colleagues and stakeholders.
+- **Secondary: urban designer / policy analyst.** Wants a clear visual overview without running desktop GIS.
+
+Key assumptions to test: users understand "above MHHW" with a short explanation; "added extent" is a more useful headline than total area; 3D context helps more than it distracts.
+
+## 4. Design goals
+
+1. **Spatial context first.** The map takes most of the screen, and panels are collapsible.
+2. **Progressive disclosure.** Scenario first, then comparison and layers, then inspection details, then full methodology in dialogs.
+3. **Data with context.** Every number states what it measures and where it comes from.
+4. **Compare without overwhelming.** At most two scenario states on the map at once.
+5. **No GIS jargon required.** "Mapped inundation extent" rather than "slr polygon", "Low-lying, not ocean-connected" rather than "hydrologically unconnected".
+6. **Premium but purposeful visuals.** No decoration that competes with geography.
+
+## 5. Information architecture
+
+```
+Top bar ─ Brand · Location · [Data sources] [About the data] [Reset view]
+├─ Left: Explore scenarios
+│   ├─ Scenario (large readout + discrete slider + MHHW reference on demand)
+│   ├─ Compare (toggle → "compare with" segmented control → colour key)
+│   ├─ Map layers (inundation, low-lying, buildings, labels, study area)
+│   └─ Display (2D/3D, reset camera, inspect centre, legend)
+├─ Centre: Map (3D, legend, status / warnings, attribution)
+└─ Right: Exposure insights
+    ├─ Headline sentence (plain-language result)
+    ├─ Indicators (beyond 0 ft, change from previous, total extent, low-lying)
+    ├─ D3 chart (added extent by scenario; click/keyboard to select)
+    ├─ Inspection card (selected location / building)
+    └─ About these numbers → About the data dialog
+```
+
+Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet whose collapsed peek shows the headline number.
+
+## 6. Key interaction decisions
+
+| Decision | Rationale |
+| --- | --- |
+| **Discrete slider** (native `<input type=range>`) with tick shortcuts | Communicates an ordered water-level scale while preventing in-between values that NOAA did not map. The native control gives keyboard, touch and screen-reader behaviour for free. |
+| **Scenario swap preserves the camera** | Users compare by toggling in place, so the view must not jump. |
+| **"Compare with…" instead of two independent selectors** | One extra choice instead of two, and the current scenario stays the anchor. The pair is always ordered low → high. |
+| **Overlay comparison, not swipe/split** | A swipe needs two synchronized WebGL maps. An overlay with a validated difference layer was more reliable in scope and shows "what's new" directly. |
+| **Overlays beneath basemap water** | NOAA's 0 ft extent includes open water. Drawing it beneath the water layer makes blue appear only where water reaches land, which is the planner's question, without altering the data. |
+| **Inspection probes all scenarios** | Answers "at what level does this place first fall inside the mapped extent?", which is more useful than a yes/no for the current scenario. |
+| **Building clicks use the footprint**, not the click point | In 3D a roof click unprojects to the ground behind the building. Using the footprint is both more correct and more meaningful. |
+| **"Inspect map center" button** | Keyboard and screen-reader alternative to clicking the canvas. |
+| **2D switches buildings to footprints** | Flat-roofed extrusions in a top-down view hide the overlay beneath them. |
+
+## 7. Data visualization decisions
+
+- **Headline metric = extent beyond the 0 ft reference.** The total extent is dominated by existing open water (10.6 of 18.7 km²), so it barely changes. The added extent (0.02 → 0.53 → 2.36 km²) shows the non-linear growth that matters.
+- **Bar chart, not a line.** Scenarios are discrete states, and a line would imply interpolation.
+- **Colour:** a light, ArcGIS-style geographic basemap (warm land, sage parks, pale-blue water, white roads) keeps the strongest colours for data. Saturated blue marks mapped inundation, clearly darker than the pale water; orange marks the added extent (a colour-vision-deficiency-safe pair); a purple hatch marks low-lying areas (readable without colour); and a blue ring with a white-outlined core marks the selection.
+- **Typography:** Roboto throughout, including map labels (self-hosted glyphs), to match the Esri/Calcite feel.
+- **Units:** km² with acres as secondary, for US planning audiences. Geodesic areas only.
+- **Language:** "within the mapped extent", never "will flood". No depths, dates or probabilities.
+- **Study area made visible:** a dashed boundary and a dimmed outside area, so clipped data aren't mistaken for "no flooding".
+
+## 8. Technical decisions and constraints
+
+- **Static, keyless deployment.** No backend. Processed GeoJSON (225 KB – 1.4 MB per layer) is lazy-loaded per state.
+- **Offline geoprocessing.** Clipping, differencing and validation run in Python/GEOS, where they can be tested, rather than in the browser.
+- **Free basemap.** OpenFreeMap restyled at runtime through a pure, unit-tested transform. A plain fallback keeps NOAA overlays usable if the basemap fails.
+- **Data acquisition constraint.** The only vector source of ocean-connected extents is a 977 MB zip / 4.1 GB GeoPackage. The pipeline reads it through the spatial index and clips before repairing geometry. Repairing first did not finish within 10 minutes; clipping first takes under a second per layer.
+- **Separation of concerns.** Pure `lib/` functions (tested), a single reducer for app state, and MapView as the only module that touches MapLibre.
+
+## 9. Accessibility considerations
+
+- Native range input and ARIA radio groups for scenario, comparison and 2D/3D controls, with arrow, Home and End keys.
+- Switches use `role="switch"` with visible labels and descriptions.
+- Visible blue focus rings, including on MapLibre controls.
+- The D3 chart has keyboard-focusable bars, `aria-pressed`, and a hidden data table with every value.
+- Live regions for loading, scenario changes and inspection results. Errors use `role="alert"`.
+- Native `<dialog>` for focus containment and Esc to close. A skip link to the map.
+- `prefers-reduced-motion` disables camera animation, chart transitions and fades.
+- Tooltips only repeat information that is available elsewhere.
+- Known gap: the WebGL canvas itself can't expose features to assistive tech. Inspection results are the text alternative.
+
+## 10. Usability-testing plan (not yet run)
+
+**Participants:** 5–6 people. Mix of municipal or regional planners, resilience consultants and urban-design students.
+
+**Tasks:**
+1. "What does +2 ft mean here?" (comprehension of MHHW framing)
+2. "Which part of South Beach shows the largest added extent between +2 and +3 ft?" (comparison)
+3. "Is the Flamingo Park area within the mapped extent at +1 ft? At +3 ft?" (inspection)
+4. "Prepare one observation you would share with a colleague, including its caveat." (communication and limitations)
+5. "Switch to a top-down view and back without losing your place." (navigation)
+
+**Measures:** task success, time on task, errors, SEQ per task, SUS overall, and qualitative notes on terminology ("MHHW", "ocean-connected", "added extent") and trust.
+
+**Hypotheses to check:** the headline sentence improves comprehension over numbers alone; overlay comparison beats side-by-side for spotting change; users don't over-interpret "within the mapped extent" as certainty.
+
+## 11. Known limitations
+
+See [docs/LIMITATIONS.md](docs/LIMITATIONS.md). In short: screening-level NOAA bathtub data (no surge, erosion, subsidence or depth), a single rectangular study area, approximate OSM building heights, no building-level exposure counts, and canvas content that is not exposed to screen readers.
+
+## 12. Potential future improvements
+
+- Building-footprint exposure summaries using an authoritative footprint dataset (for example county or Microsoft footprints), computed offline with documented methods.
+- NOAA mapping-confidence rasters as an uncertainty layer.
+- Depth rasters, with correct units (metres above ground) and an explicit legend.
+- Half-foot scenarios (NOAA publishes 0.5 ft steps) and more study areas.
+- Swipe or split comparison once two synchronized maps can be made robust.
+- Shareable URL state (scenario, comparison, camera) and an export of observations with caveats attached.
+- Run the usability study above and iterate on terminology.

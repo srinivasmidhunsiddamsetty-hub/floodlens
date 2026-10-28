@@ -1,0 +1,50 @@
+{
+  "name": "floodlens",
+  "private": true,
+  "version": "0.1.0",
+  "description": "FloodLens — Coastal Exposure Explorer. An exploratory 3D map for NOAA sea-level-rise inundation scenarios in Miami Beach, FL.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "data:prepare": "python3 scripts/prepare_noaa_slr.py",
+    "test:e2e": "playwright test",
+    "screenshots": "SCREENSHOTS=1 playwright test screenshots --project=desktop",
+    "test:all": "npm run typecheck && npm run test && npm run test:e2e"
+  },
+  "dependencies": {
+    "@fontsource-variable/roboto": "^5.3.0",
+    "@turf/area": "^7.4.0",
+    "@turf/boolean-intersects": "^7.4.0",
+    "@turf/boolean-point-in-polygon": "^7.4.0",
+    "@turf/centroid": "^7.4.0",
+    "@turf/helpers": "^7.4.0",
+    "d3": "^7.9.0",
+    "lucide-react": "^0.577.0",
+    "maplibre-gl": "^5.24.0",
+    "react": "~19.2",
+    "react-dom": "~19.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "~1.55",
+    "@tailwindcss/vite": "~4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/d3": "^7.4.3",
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^22.20.5",
+    "@types/react": "~19.2",
+    "@types/react-dom": "~19.2",
+    "@vitejs/plugin-react": "^5.2.0",
+    "jsdom": "^26.1.0",
+    "tailwindcss": "~4.1",
+    "typescript": "~5.9",
+    "vite": "^7.3.7",
+    "vitest": "^3.2.7"
+  }
+}

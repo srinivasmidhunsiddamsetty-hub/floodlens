@@ -1,0 +1,62 @@
+# Quality report
+
+Status as of 23 Oct 2026. Every "passed" below was actually executed in this environment (macOS, Node 24, Chrome).
+
+## Implemented
+
+**Phase 1: functional foundation**
+- React 19 + TypeScript + Vite 7 + Tailwind 4 project; static build with relative paths.
+- MapLibre GL JS 5 map on OpenFreeMap Positron (verified free, keyless, attribution kept), restyled at runtime into a light geographic palette with self-hosted Roboto label glyphs.
+- 3D building extrusions from OpenMapTiles `render_height`; footprints in 2D.
+- Discrete scenario control (0 / +1 / +2 / +3 ft above MHHW).
+- **Real NOAA OCM data**: FL_SE GeoPackage, ocean-connected (`slr`) and low-lying (`low`) layers, clipped to an 18.7 km² South Beach study area by a reproducible pipeline.
+- Overlay switching in place (GeoJSON `setData`), preserving the camera.
+
+**Phase 2: spatial analysis and interaction**
+- Geodesic area indicators computed by the pipeline and cross-checked in the browser.
+- D3 bar chart (added extent beyond 0 ft), with highlight, tooltips, keyboard selection and a screen-reader table.
+- Location and building inspection across all scenarios (point-in-polygon or footprint intersection), nearest OSM street and OSM height.
+- 2D/3D toggle with animated pitch and bearing, kept in sync with manual tilting.
+- Scenario comparison using validated, precomputed polygon differences (6 pairs).
+- Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
+
+**Phase 3: polish and quality**
+- Responsive layout: docked panels at 1024 px and wider; drawer plus bottom sheet below that.
+- Accessibility: native and ARIA controls, focus rings, live regions, `<dialog>`, skip link, reduced motion, text alternatives.
+- Loading, missing-manifest, missing-file and basemap-failure states (fallback style keeps NOAA overlays visible).
+- Unit, component and end-to-end tests; screenshot generation; Netlify config; documentation.
+
+## Verification performed
+
+| Check | Command | Result |
+| --- | --- | --- |
+| TypeScript | `npm run typecheck` | No errors |
+| Unit and component tests | `npm test` | **8 files, 68 tests passed** |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **11 passed** (10 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
+| Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
+| Production build | `npm run build` | Succeeds; JS ≈ 390 KB gzip (MapLibre 285 KB); data 7.8 MB raw, lazy-loaded per state |
+| Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage; all 6 difference validations passed |
+| Contrast (computed) | WCAG formula on design tokens | All text tokens ≥ 4.7:1 on every surface (accent blue 5.0–5.8:1); unselected switch border 3.5:1; map place labels 9.5:1, road labels 5.9:1 |
+
+What the E2E suite covers: initial load with no console errors or failed requests; NOAA figures shown; attribution present; keyboard slider (Arrow, Home, End) swapping the scenario file without a page reload; chart bar selection; 2D/3D pitch (checked through the compass transform); comparison loading the difference layer and updating the legend and summary; centre inspection producing 4 scenario rows; layer toggles and legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing scenario file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
+
+Geographic calculations are verified by `src/lib/dataIntegrity.test.ts`. Turf areas match the manifest's ellipsoidal areas within 0.5% for all 10 extent and difference files. Difference area ≈ change in totals within 1%. Areas grow monotonically. All coordinates fall inside the study area. A point inside the +1 → +2 ft added extent is outside the 1 ft extent and inside the 2 ft extent.
+
+## Not verified
+
+- Browsers other than Chrome (Safari and Firefox not run), and real phones or tablets (emulation only).
+- Screen-reader walkthroughs (VoiceOver / NVDA) have not been performed. Semantics were built to spec, not user-tested.
+- Performance on low-end hardware or GPUs. Tests used software WebGL (SwiftShader).
+- No usability testing has been conducted. See the plan in `CASE_STUDY_NOTES.md`.
+
+## Known limitations
+
+See `docs/LIMITATIONS.md`. Summary: NOAA screening-level bathtub data (no surge, depth, erosion, subsidence or dates); one rectangular study area; approximate OSM building heights; vector-tile footprints may be merged or clipped at tile edges; the WebGL canvas is not exposed to assistive tech.
+
+## Deliberately deferred
+
+- **Swipe or split-map comparison.** Replaced by a robust overlay comparison with validated difference layers.
+- **Building exposure counts.** These need an authoritative footprint dataset and a documented offline join.
+- **Depth and mapping-confidence rasters.** Available from NOAA but out of MVP scope.
+- **Half-foot scenarios and more study areas.** The pipeline supports them with small configuration changes.
+- **URL-shareable state.**
