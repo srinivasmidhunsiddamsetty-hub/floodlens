@@ -174,6 +174,7 @@ The product went through numbered versions, each tagged in git with screenshots 
   - I measured the box (277 × 140 px) and offered three ways to shorten it. The designer picked the answer on the label's row, with a 24 px water band and tighter gaps: 277 × 104 px, and the card drops from 330 to 294 px.
 - **v0.15 → v0.16:** the next size down, chosen from a side-by-side preview: 277 × 92 px, with an 18 px water band and 8/6 px padding.
 - **v0.16 → v0.17:** "Not up to +3 ft" raised the question of whether higher levels were missing. They weren't: NOAA's file covers 0–10 ft, and the brief had capped FloodLens at +3 ft. I measured every level for Miami Beach with the pipeline's own code (land underwater: 37% at +3 ft, 62% at +4, 77% at +5, 85% at +6, 97% at +10). I compared that with the Southeast Florida Compact projection (up to about 4.5 ft by 2070) and NOAA's 2022 scenarios (about 2–7 ft by 2100 for the US coast). The designer chose +5 ft. The flood ramp was re-spaced to six blues, and the pipeline now writes only the neighbouring bands the app uses.
+- **v0.17 → v0.19:** with six levels, the per-foot list under the chart grew to five rows, which repeated what the chart and legend already show. Now the legend keeps every level's true colour (v0.18), and only the selected level's "adds" row remains (v0.19).
 
 ## 11. Known limitations
 

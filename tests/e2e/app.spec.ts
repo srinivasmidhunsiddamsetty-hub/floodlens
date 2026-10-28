@@ -48,7 +48,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('button', { name: 'Watch the water rise' })).toHaveAttribute('aria-pressed', 'false')
   })
 
-  test('chart bars select levels; breakdown rows show what each foot adds', async ({ page }) => {
+  test('chart bars select levels; one row shows what the selected foot adds', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const bar = page.getByRole('button', { name: /^\+1 ft: .*Show on the map\./ })
@@ -57,11 +57,14 @@ test.describe('FloodLens — core flows', () => {
     await expect(bar).toHaveAttribute('aria-pressed', 'true')
     // Selection is a ring around the bar; a mouse click doesn't leave a focus box round the column.
     await expect(bar).not.toBeFocused()
+    await expect(insights(page).getByRole('button', { name: /\+1 ft adds/ })).toContainText('0.038 km²')
+    await expect(insights(page).getByText(/ft adds/)).toHaveCount(1)
+    await page.getByRole('button', { name: /^\+3 ft: .*Show on the map\./ }).click()
+    await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     const row = insights(page).getByRole('button', { name: /\+3 ft adds/ })
     await expect(row).toContainText('6.44 km²')
     await expect(row).not.toContainText('acres')
-    await row.click()
-    await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
+    await expect(insights(page).getByText(/ft adds/)).toHaveCount(1)
   })
 
   test('area unit switches everything to acres and is remembered', async ({ page }) => {
@@ -71,7 +74,7 @@ test.describe('FloodLens — core flows', () => {
     await panel.getByRole('radio', { name: 'Acres' }).click()
     const area = panel.getByText('at +2 ft').locator('xpath=following-sibling::dd')
     await expect(area).toHaveText('244acres')
-    await expect(panel.getByRole('button', { name: /\+3 ft adds/ })).toContainText('1,592 acres')
+    await expect(panel.getByRole('button', { name: /\+2 ft adds/ })).toContainText('235 acres')
     await expect(panel.getByRole('button', { name: /^\+3 ft: 1,837 acres of land underwater/ })).toBeVisible()
     // Low spots are listed only while their map layer is on.
     await expect(panel.getByText('Low spots at +2 ft')).toHaveCount(0)

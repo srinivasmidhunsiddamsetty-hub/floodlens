@@ -16,11 +16,11 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // The top level (+5 ft) with the +2 ft band spotlighted from the breakdown list
+    // The top level (+5 ft) with the +2 ft band spotlighted from the map legend
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
-    await page.getByRole('button', { name: /\+2 ft adds/ }).hover()
+    await page.getByRole('region', { name: 'Map legend' }).getByRole('button', { name: '+2 ft' }).hover()
     await page.waitForTimeout(600)
     await page.screenshot({ path: `${OUT}/02-bands-5ft-spotlight-2ft.png` })
     await page.mouse.move(700, 120)

@@ -22,8 +22,20 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.16 | 28 Oct 2026 | Answer box down to 92 px | [`docs/versions/v0.16/`](docs/versions/v0.16/) |
 | v0.17 | 28 Oct 2026 | Sea levels up to +5 ft, six-step blue ramp | [`docs/versions/v0.17/`](docs/versions/v0.17/) |
 | v0.18 | 28 Oct 2026 | Legend shows every level's true colour | [`docs/versions/v0.18/`](docs/versions/v0.18/) |
+| v0.19 | 28 Oct 2026 | One "adds" row for the selected level | [`docs/versions/v0.19/`](docs/versions/v0.19/) |
 
 ---
+
+## v0.19: One row (28 Oct 2026)
+
+- **Only the selected level's "adds" row is shown under the chart**, for example "+5 ft adds 2.87 km²", instead of all five.
+  - The chart already shows every level side by side, and the map legend explains the colours.
+  - Hovering a bar segment still gives any foot's increment ("+3 ft adds 6.44 km²").
+  - The row still spotlights its band on the map on hover.
+  - At today's high tide nothing is added, so there's no row.
+  - It saves about 100 px in the panel.
+- **Screenshot 02 now spotlights +2 ft from the map legend**, since that row no longer exists at +5 ft.
+- Tests: 101 unit/component tests (new: one row only, none at today's high tide) and 17 end-to-end tests.
 
 ## v0.18: True colours in the legend (28 Oct 2026)
 

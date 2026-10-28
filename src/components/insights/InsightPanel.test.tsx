@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { bandsFor } from '../../lib/manifest'
@@ -79,13 +79,17 @@ describe('<InsightPanel>', () => {
     expect(screen.getByText('of the city’s land').nextSibling).toHaveTextContent('5%')
   })
 
-  it('breaks the total down by the area each foot adds, in one unit', () => {
-    ready()
-    const list = screen.getByRole('list', { name: '' }) // breakdown list
-    expect(within(list).getByText('+1 ft adds')).toBeInTheDocument()
-    expect(within(list).getByText('0.48 km²')).toBeInTheDocument()
-    expect(within(list).getByText('1.80 km²')).toBeInTheDocument()
-    expect(within(list).queryByText(/acres/)).toBeNull()
+  it('shows what the selected level adds, in one row and one unit', () => {
+    ready() // slider at +2 ft
+    const row = screen.getByRole('button', { name: /\+2 ft adds/ })
+    expect(row).toHaveTextContent('0.48 km²')
+    expect(row).not.toHaveTextContent('acres')
+    expect(screen.queryByText(/\+(1|3) ft adds/)).toBeNull()
+  })
+
+  it('shows no "adds" row at today’s high tide, where nothing is added', () => {
+    ready({ scenarioFt: 0 })
+    expect(screen.queryByText(/ft adds/)).toBeNull()
   })
 
   it('switches the headline, chart and breakdown between km² and acres', async () => {
@@ -97,10 +101,10 @@ describe('<InsightPanel>', () => {
     expect(screen.getByText('at +2 ft').nextSibling).toHaveTextContent('124acres')
     expect(screen.getByText('at +2 ft').nextSibling).not.toHaveTextContent('km²')
     expect(screen.getByRole('group', { name: /^Land underwater by sea level ?, in acres$/ })).toBeInTheDocument()
-    const list = screen.getByRole('list', { name: '' })
+    const row = screen.getByRole('button', { name: /\+2 ft adds/ })
     // Units are spelled out: "acres", never the abbreviation "ac".
-    expect(within(list).getByText('445 acres')).toBeInTheDocument()
-    expect(within(list).queryByText(/km²/)).toBeNull()
+    expect(row).toHaveTextContent('119 acres')
+    expect(row).not.toHaveTextContent('km²')
 
     // Arrow keys move within the group, like any radio group.
     screen.getByRole('radio', { name: 'Acres' }).focus()
@@ -148,12 +152,6 @@ describe('<InsightPanel>', () => {
     expect(screen.getByText('Land underwater by sea level')).toBeInTheDocument()
     expect(screen.getByRole('group', { name: /^Land underwater by sea level ?, in square kilometres$/ })).toBeInTheDocument()
     expect(screen.queryByText(/biggest jump|City of Miami Beach/i)).toBeNull()
-  })
-
-  it('keeps levels above the slider at full strength, so they never look disabled', () => {
-    ready({ scenarioFt: 1 })
-    const row = screen.getByRole('button', { name: /\+3 ft adds/ })
-    expect(row.className).not.toMatch(/opacity/)
   })
 
   it('invites a selection in the slot where the selection card appears', () => {

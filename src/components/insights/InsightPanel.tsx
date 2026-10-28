@@ -126,40 +126,33 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                   onSelect={(feet) => dispatch({ type: 'setScenario', feet })}
                 />
 
-                {/* Breakdown: doubles as the chart's key; hover to spotlight a band on the map */}
+                {/* What the selected level adds on top of the one below it. One row only: the chart
+                    shows every level, and the map legend explains the colours. Hover to spotlight it. */}
                 <section aria-labelledby="breakdown-title">
                   <h3 id="breakdown-title" className="sr-only">
-                    Area added by each foot
+                    Area this level adds
                   </h3>
-                  <ul className="-mx-2" onMouseLeave={() => onHighlight(null)}>
-                    {bands
-                      .filter((b) => !b.isReference)
-                      .map((b) => {
-                        // Only levels on the map can be spotlighted there, but every row
-                        // stays at full strength: the numbers hold at any slider position.
-                        const shown = b.feet <= state.scenarioFt
-                        return (
-                          <li key={b.feet}>
-                            <button
-                              type="button"
-                              onMouseEnter={() => shown && onHighlight(b.feet)}
-                              onFocus={() => shown && onHighlight(b.feet)}
-                              onBlur={() => onHighlight(null)}
-                              onClick={() => dispatch({ type: 'setScenario', feet: b.feet })}
-                              className={`flex w-full items-center gap-3 rounded px-2 py-[3px] text-left transition-colors hover:bg-surface-2 ${
-                                highlightFt === b.feet ? 'bg-surface-2' : ''
-                              }`}
-                            >
-                              <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
-                              <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
-                              <span className="text-[13px] text-fg tabular">
-                                {formatArea(b.addedM2, unit)} {unitShort}
-                              </span>
-                            </button>
-                          </li>
-                        )
-                      })}
-                  </ul>
+                  {bands
+                    .filter((b) => !b.isReference && b.feet === state.scenarioFt)
+                    .map((b) => (
+                      <div key={b.feet} className="-mx-2" onMouseLeave={() => onHighlight(null)}>
+                        <button
+                          type="button"
+                          onMouseEnter={() => onHighlight(b.feet)}
+                          onFocus={() => onHighlight(b.feet)}
+                          onBlur={() => onHighlight(null)}
+                          className={`flex w-full items-center gap-3 rounded px-2 py-[3px] text-left transition-colors hover:bg-surface-2 ${
+                            highlightFt === b.feet ? 'bg-surface-2' : ''
+                          }`}
+                        >
+                          <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet) }} />
+                          <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
+                          <span className="text-[13px] text-fg tabular">
+                            {formatArea(b.addedM2, unit)} {unitShort}
+                          </span>
+                        </button>
+                      </div>
+                    ))}
                   {low && (
                     <div className="mt-1.5 border-t border-line pt-2">
                       <p className="flex items-center gap-3">
