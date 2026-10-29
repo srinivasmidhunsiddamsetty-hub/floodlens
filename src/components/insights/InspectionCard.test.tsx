@@ -25,7 +25,6 @@ const levels = (first: number | null): InspectionState => ({
     firstFeet: first,
     lowHits: [0, 1, 2, 3].map((feet) => ({ feet, within: false })),
     usedFootprint: true,
-    lowPartAreaM2: null,
   },
 })
 
@@ -46,6 +45,14 @@ describe('<InspectionCard>', () => {
     const levelsList = screen.getByRole('list', { name: 'Water at this spot, by sea level' })
     expect(within(levelsList).getAllByRole('listitem')).toHaveLength(4)
     expect(within(levelsList).getAllByText('water doesn’t reach it')).toHaveLength(3)
+  })
+
+  it('says from which level it’s a low spot, with no area caption (v0.31)', () => {
+    const inLow = levels(3)
+    if (inLow.status === 'ready') inLow.result.lowHits = [0, 1, 2, 3].map((feet) => ({ feet, within: feet >= 2 }))
+    card(inLow)
+    expect(screen.getByText('Low spot').nextSibling).toHaveTextContent('Yes, from +2 ft')
+    expect(screen.queryByText(/of it|cut off from the sea/)).toBeNull()
   })
 
   it('lists height, footprint and low-lying status with approximate values', () => {

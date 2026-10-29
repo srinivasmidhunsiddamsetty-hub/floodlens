@@ -34,8 +34,20 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.28 | 28 Oct 2026 | A static legend | [`docs/versions/v0.28/`](docs/versions/v0.28/) |
 | v0.29 | 29 Oct 2026 | A shorter map credit that folds into an (i) | [`docs/versions/v0.29/`](docs/versions/v0.29/) |
 | v0.30 | 29 Oct 2026 | "Up to +5 ft · Doesn't reach it" | [`docs/versions/v0.30/`](docs/versions/v0.30/) |
+| v0.31 | 29 Oct 2026 | Wrong low-spot area caption removed | [`docs/versions/v0.31/`](docs/versions/v0.31/) |
 
 ---
+
+## v0.31: Wrong low-spot caption removed (29 Oct 2026)
+
+- **Bug, present since v0.2:** the caption under "Low spot" ("108,363 m² of it, cut off from the sea") was wrong.
+  - It showed the area of the whole low-spot polygon the building touches, not the part of the building inside it. So it could be far larger than the building: 108,363 m² for a 1,957 m² footprint near Miami Beach Marina Walk.
+  - It also used the slider's level, not the level named in "Yes, from +2 ft", so it changed as the slider moved.
+- **Removed rather than fixed.** Even a correct "part of the building" area is a detail few readers need. The row's job is whether the building is in a low spot and from which level. "Cut off from the sea" is explained in the Low spots toggle and in About the data.
+- "Yes, from +2 ft" stays: it says from which sea level the ground under the building is below the water line but cut off from the sea.
+- The inspection no longer re-runs when the slider moves; the area was the only part that used the slider's level.
+- New screenshot `11-marina-walk-card.png` (the building from the report).
+- Tests: 105 unit/component tests (new: the low-spot row has its level and no area caption) and 18 end-to-end tests.
 
 ## v0.30: A direct answer when water doesn't reach a place (29 Oct 2026)
 

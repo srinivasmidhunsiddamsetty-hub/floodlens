@@ -24,7 +24,7 @@ export default function App() {
   const manifestState = useManifest()
   const manifest = manifestState.manifest
   const mapData = useMapData(manifest, state)
-  const inspection = useInspection(state.selection, manifest, state.scenarioFt)
+  const inspection = useInspection(state.selection, manifest)
   /** Water level spotlighted on the map while hovering the chart or its "adds" row. */
   const [highlightFt, setHighlightFt] = useState<number | null>(null)
   const insightsWidth = usePanelWidth('floodlens.insightsWidth', INSIGHTS_WIDTH)

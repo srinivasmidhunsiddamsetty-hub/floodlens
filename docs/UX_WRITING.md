@@ -170,3 +170,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Card, not reached | Water reaches at · Not up to +5 ft | Up to +5 ft · Doesn't reach it (the label keeps the limit; never "safe" or "dry") |
+
+## Before and after (v0.30 → v0.31)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |

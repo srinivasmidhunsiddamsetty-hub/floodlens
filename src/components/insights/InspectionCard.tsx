@@ -38,13 +38,11 @@ function Row({
   tint,
   label,
   value,
-  children,
 }: {
   icon: LucideIcon
   tint: keyof typeof TINTS
   label: string
   value: ReactNode
-  children?: ReactNode
 }) {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
@@ -53,7 +51,6 @@ function Row({
         {label}
       </dt>
       <dd className="text-right text-[20px] leading-7 font-medium text-fg tabular">{value}</dd>
-      {children}
     </div>
   )
 }
@@ -114,7 +111,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
       {insideStudyArea &&
         inspection.status === 'ready' &&
         (() => {
-          const { hits, firstFeet, lowHits, lowPartAreaM2 } = inspection.result
+          const { hits, firstFeet, lowHits } = inspection.result
           const top = hits.at(-1)?.feet ?? 0
           const reached = firstFeet !== null
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
@@ -149,11 +146,9 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                   value={building?.renderHeightM != null ? `≈ ${Math.round(building.renderHeightM)} m` : <NoValue />}
                 />
                 <Row icon={Scan} tint="violet" label="Footprint" value={building ? `≈ ${formatSmallArea(building.footprintAreaM2)}` : <NoValue />} />
-                <Row icon={Mountain} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'}>
-                  {lowAt.length > 0 && lowPartAreaM2 !== null && (
-                    <dd className="col-span-2 pl-[26px] t-caption">{formatSmallArea(lowPartAreaM2)} of it, cut off from the sea</dd>
-                  )}
-                </Row>
+                {/* No area caption (v0.31): it showed the whole low-spot area the building touches,
+                    not the building's part of it, and the level is what matters. */}
+                <Row icon={Mountain} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
               </dl>
             </div>
           )

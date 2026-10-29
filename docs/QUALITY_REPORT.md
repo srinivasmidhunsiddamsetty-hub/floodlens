@@ -44,6 +44,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - A static legend: the levels are a plain key, not hover buttons (v0.28).
 - A shorter map credit in a fixed order that folds into an (i) after the first drag, within the OSMF attribution guidelines (v0.29).
 - "Up to +5 ft · Doesn't reach it" for places none of the mapped levels reach (v0.30).
+- The low-spot area caption removed: it showed the whole low-spot polygon's area, not the building's part (a bug since v0.2) (v0.31).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -59,7 +60,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **12 files, 104 tests passed** |
+| Unit and component tests | `npm test` | **12 files, 105 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (16 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |

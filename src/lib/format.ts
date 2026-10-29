@@ -28,7 +28,7 @@ export const AREA_UNITS: Record<AreaUnit, { short: string; long: string; title: 
 export const formatArea = (m2: number, unit: AreaUnit) => (unit === 'km2' ? formatKm2(m2) : formatAcres(m2))
 export const toUnit = (m2: number, unit: AreaUnit) => m2 / (unit === 'km2' ? M2_PER_KM2 : M2_PER_ACRE)
 
-/** Building-scale areas (footprints, the low part of a footprint): always m², so every building reads in the same unit. */
+/** Building footprints: always m², so every building reads in the same unit. */
 export function formatSmallArea(m2: number): string {
   return `${Math.round(m2).toLocaleString('en-US')} m²`
 }
