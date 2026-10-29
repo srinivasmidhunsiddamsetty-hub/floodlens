@@ -40,6 +40,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The chart's x-axis labels down to 10 px, matching the track (v0.24).
 - Building areas always in m²; soft-shadow cards, frosted map controls and bolder type, with text on glass checked at 4.5:1 or better over the darkest flood blue (v0.25).
 - The earlier solid legend back, the bottom link removed, bold card and tile titles, card facts at 16 px (labels) and 20 px (values), and no chart-title icon (v0.26).
+- Insights cards floating over a padded map at 380 px, solid area chips that toggle back to the whole city, and card labels (including "Water reaches at") at 14 px medium (v0.27).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

@@ -9,7 +9,7 @@ export interface WidthLimits {
 }
 
 /** Insights pane: never narrower than its content allows, never squeezing the map below a usable width. */
-export const INSIGHTS_WIDTH: WidthLimits = { min: 300, max: 560, initial: 344, reserve: 280 + 420 }
+export const INSIGHTS_WIDTH: WidthLimits = { min: 300, max: 560, initial: 380, reserve: 280 + 420 }
 
 /** Clamp to [min, max], and lower max further on small windows so the map keeps `reserve` px. */
 export function clampWidth(width: number, { min, max, reserve }: WidthLimits, viewport: number) {

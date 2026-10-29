@@ -48,7 +48,7 @@ function Row({
 }) {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
-      <dt className="flex min-w-0 items-center gap-2.5 text-[16px] leading-6 text-fg">
+      <dt className="flex min-w-0 items-center gap-2.5 text-[14px] leading-5 font-medium text-fg">
         <Icon className="size-4 shrink-0" style={{ color: TINTS[tint] }} aria-hidden />
         {label}
       </dt>
@@ -70,7 +70,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
   const Icon = building ? Building2 : onWater ? Waves : MapPin
 
   return (
-    <section aria-labelledby="insp-title" className="card p-3 animate-slide-up">
+    <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
       {/* What and where. The vermilion icon matches the selection on the map. */}
       <div className="flex items-start gap-2">
         <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d03a22]" aria-hidden />
@@ -130,7 +130,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                   below), with every level in context under it. A long answer wraps under the label. */}
               <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-2 pb-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <p className="t-overline">Water reaches at</p>
+                  <p className="text-[14px] leading-5 font-medium text-fg">Water reaches at</p>
                   <p className="text-[24px] leading-8 font-bold tracking-[-0.03em] text-fg tabular">{answer}</p>
                 </div>
                 <div className="mt-1">

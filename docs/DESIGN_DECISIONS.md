@@ -4,7 +4,7 @@ A log of the product, visual and engineering choices in FloodLens and why each w
 
 ## Layout
 
-- **Three docked regions on desktop.** The left panel is 280 px. The Insights pane is resizable: drag its left edge or focus the divider and use the arrow keys (Shift for bigger steps, Home/End for the limits, double-click to reset). It stays between 300 px (the chart and card stay readable) and 560 px, and never squeezes the map below about 420 px. The width is remembered in the browser. Both side panels collapse with edge tabs.
+- **Desktop: a docked left panel, and Insights cards floating over the map (v0.27).** The left panel is 280 px. On the right there's no panel behind the cards: the map runs to the edge, and the camera is padded by the cards' width so the overview, fly-tos and the keyboard's "middle of the map" use the uncovered part. Map controls, scale and attribution sit just left of the cards. The Insights width defaults to 380 px (v0.27; 344 before), measured so long titles ("Building near Pennsylvania Avenue", about 364 px) and "Not up to +5 ft" stay on one line. It's resizable: drag its left edge or focus the divider and use the arrow keys (Shift for bigger steps, Home/End for the limits, double-click to reset). It stays between 300 px (the chart and card stay readable) and 560 px, and never squeezes the map below about 420 px. The width is remembered in the browser. Both side panels collapse with edge tabs.
 - **Below 1024 px** the controls become a left drawer with a scrim (inert when closed). The insights become a bottom sheet with a 64 px peek showing the scenario and headline number. Selecting a location opens the sheet automatically.
 - **The legend floats over the map** (bottom-left) and lists only what is currently drawn.
 
@@ -22,7 +22,7 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 - **Buildings:** extrusions in 3D, translucent footprints and outlines in 2D, so overlays under buildings stay visible from above.
 - **Labels** stay above every overlay and use a white halo for legibility on the blue bands.
 - **Map controls live in the map** (top-right): zoom, compass / show all of Miami Beach, then 2D/3D. The full-extent control uses a frame (focus) icon, not a house: it fits the whole city into view rather than going "home".
-- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. They're frosted glass (88% white, blurred map behind, a soft shadow; v0.25; flat white with a 1 px border before). The chip you pick turns accent blue with a 2 px border straight away, not when the camera arrives; panning by hand hands the highlight back to "nearest area when zoomed in" (by distance to its bookmark, since the areas have no official boundary). A 16 px map gutter is shared with the map controls and legend.
+- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. They're frosted glass (88% white, blurred map behind, a soft shadow; v0.25; flat white with a 1 px border before). The chip you pick fills with the accent straight away (v0.27; a 2 px outline before), not when the camera arrives. Clicking it again, or "Show all", goes back to the whole city with no chip lit; panning by hand hands the highlight back to "nearest area when zoomed in" (by distance to its bookmark, since the areas have no official boundary). A 16 px map gutter is shared with the map controls and legend.
 - **Bottom edge:** attribution runs along the very bottom with the scale bar above it on the right, and the legend sits above both on the left, so the three never overlap. Below 1024 px the controls lift above the insights sheet.
 - **The opening view fits the city** to the viewport in Web Mercator (tilted 40°, looking north-north-west), accounting for the mobile bottom sheet. Camera controls act on the map, so they belong on it (ArcGIS, komoot, Google Maps). The header keeps only app-level actions (about, sources).
 - **Selection highlight** is drawn 0.4 m wider and 0.6 m taller than the clicked building. Coincident faces z-fight (flicker) while zooming.
@@ -53,7 +53,7 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 
 The selected-place card leads with the answer, emphasised, in a light-blue block. The layout takes cues from a reference the designer supplied, but the wording stays FloodLens's own:
 - **Answer:** "WATER REACHES AT" on the left and **+3 ft** (24 px, black) on the right of the same row (v0.15), like the facts below it. The other answers are "Today" and "Not up to +5 ft"; the last is too wide for the row, so it wraps under the label. No number in the panel is blue: blue is kept for links and selection outlines.
-- **Box size:** the box is 277 × 90 px in the default 344 px pane (v0.23; 92 px in v0.16–v0.22); it was 277 × 140 px in v0.14 and 277 × 104 px in v0.15. The rows from top to bottom: 8 px padding, the 32 px answer row, a 4 px gap, the 18 px water band, a 6 px gap, 16 px pin labels and 6 px padding. The 6 px above the pin labels can't shrink further: the larger blue pin would run into its label.
+- **Box size:** the box is 316 × 90 px in the default 380 px pane (v0.27; 277 × 90 px at 344 px in v0.23–v0.26; 92 px tall in v0.16–v0.22); it was 277 × 140 px in v0.14 and 277 × 104 px in v0.15. The rows from top to bottom: 8 px padding, the 32 px answer row, a 4 px gap, the 18 px water band, a 6 px gap, 16 px pin labels and 6 px padding. The 6 px above the pin labels can't shrink further: the larger blue pin would run into its label.
 - **Level track:** below the answer (see below).
 - **Facts:** Height, Footprint and Low spot follow in one column. Height and footprint always show, with "—" when the click isn't on a building (v0.13); before, those rows disappeared for open ground and water.
 - **Position:** a chip with the position. The distance to the street was dropped in v0.12: the title already names the street, and the distance says nothing about water.
@@ -95,7 +95,7 @@ Type scale (classes in `src/styles/index.css`): `t-display` 36/700 (sea level) �
 
 **Bolder hierarchy (v0.25).** Titles and the key numbers (the sea level, the card's answer and the two figures) are bold with tighter tracking (−0.03em on large numbers), so the eye lands on them first. Body text stays regular, so bold keeps its meaning. Satoshi loads as a variable font (300–900), so semibold (600) is a real, lighter weight: the card's title and "Land underwater" moved from 600 to bold in v0.26, and the chart title stays at 600.
 
-**Card facts (v0.26).** The labels (Height, Footprint, Low spot) are 16 px and the values 20 px, so the facts read at a glance next to the 24 px answer.
+**Card facts.** The values are 20 px (v0.26). The labels (Height, Footprint, Low spot) are 14 px medium (v0.27; 16 px regular in v0.26), and "Water reaches at" matches them: sentence case, 14 px medium, black (v0.27; a grey uppercase overline before).
 
 ## Engineering
 

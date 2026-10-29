@@ -157,3 +157,10 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Bottom link | What this map can and can't tell you → | (removed; "About the data" in the top bar opens the same dialog) |
+
+## Before and after (v0.26 → v0.27)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card answer label | WATER REACHES AT (grey uppercase overline) | Water reaches at (sentence case, like Height / Footprint / Low spot) |
+| Selected area chip | (no tooltip) | Tooltip: Show all of Miami Beach |

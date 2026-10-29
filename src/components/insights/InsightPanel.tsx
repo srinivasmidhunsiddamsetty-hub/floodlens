@@ -17,9 +17,11 @@ interface Props {
   bands: FloodBand[]
   highlightFt: number | null
   onHighlight: (ft: number | null) => void
+  /** Desktop (v0.27): the cards float over the map, with no panel behind them. */
+  floating?: boolean
 }
 
-export function InsightPanel({ manifestState, inspection, bands, highlightFt, onHighlight }: Props) {
+export function InsightPanel({ manifestState, inspection, bands, highlightFt, onHighlight, floating = false }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
   const manifest = manifestState.manifest
@@ -46,7 +48,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
       onClear={() => dispatch({ type: 'select', selection: null })}
     />
   ) : manifestState.status === 'ready' ? (
-    <div className="flex items-center gap-3 rounded-2xl border border-dashed border-[#d3d9e2] bg-surface px-4 py-3">
+    <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-dashed border-[#d3d9e2] bg-surface px-4 py-3">
       <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#fdebe7] text-[#d03a22]" aria-hidden>
         <MousePointerClick className="size-4" />
       </span>
@@ -57,8 +59,9 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
   ) : null
 
   // A light grey canvas, so the white card and tile read as cards (v0.20); soft shadows, not borders (v0.25).
+  // On desktop the cards float over the map instead (v0.27): no background, and only the cards take clicks.
   return (
-    <div className="flex h-full flex-col bg-canvas">
+    <div className={`flex h-full flex-col ${floating ? '' : 'bg-canvas'}`}>
       {/* No visible title: the card and the block headers already say what this is,
           and the space goes to content. Screen readers still get the heading. */}
       <h2 className="sr-only">Insights</h2>
@@ -67,13 +70,13 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
         {card}
 
         {manifestState.status === 'loading' && (
-          <p className="mt-4 flex items-center gap-2 t-body" role="status">
+          <p className="pointer-events-auto mt-4 flex items-center gap-2 t-body" role="status">
             <Loader2 className="size-4 animate-spin text-accent" aria-hidden /> Loading flood data…
           </p>
         )}
 
         {manifestState.status === 'error' && (
-          <div role="alert" className="mt-4 rounded border border-danger/40 bg-danger/5 p-4">
+          <div role="alert" className="pointer-events-auto mt-4 rounded border border-danger/40 bg-surface p-4">
             <p className="flex items-center gap-2 t-heading">
               <AlertTriangle className="size-4 text-danger" aria-hidden /> The flood data didn’t load
             </p>
@@ -86,7 +89,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           <>
             {/* One tile for everything the km² / acres switch controls: the figures at the
                 chosen level, then every level in the chart, with what each foot adds. */}
-            <section aria-labelledby="summary-title" className="card mt-2.5 px-3 pt-3 pb-1.5">
+            <section aria-labelledby="summary-title" className="card pointer-events-auto mt-2.5 px-3 pt-3 pb-1.5">
               <div className="flex items-center justify-between gap-3">
                 <h3 id="summary-title" className="flex items-center gap-2 t-heading font-bold">
                   <Waves className="size-4 shrink-0 text-accent" aria-hidden />

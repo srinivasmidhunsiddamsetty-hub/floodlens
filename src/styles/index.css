@@ -278,6 +278,10 @@
   border-color: var(--color-fg-subtle);
   font-size: 10px;
 }
+/* Scale bar and attribution stay left of the floating Insights cards (v0.27). */
+.maplibregl-ctrl-bottom-right {
+  right: var(--map-inset-right, 0px);
+}
 /* Below 1024px the insights sheet (64px peek) covers the bottom of the map. */
 @media (max-width: 1023px) {
   .maplibregl-ctrl-bottom-right,

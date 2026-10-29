@@ -30,8 +30,23 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.24 | 28 Oct 2026 | Smaller x-axis labels in the chart | [`docs/versions/v0.24/`](docs/versions/v0.24/) |
 | v0.25 | 28 Oct 2026 | Building areas in m², soft depth and glass, bolder type | [`docs/versions/v0.25/`](docs/versions/v0.25/) |
 | v0.26 | 28 Oct 2026 | Earlier legend back, no bottom link, larger card facts | [`docs/versions/v0.26/`](docs/versions/v0.26/) |
+| v0.27 | 28 Oct 2026 | Insights cards float over the map at 380 px; solid area chips that toggle | [`docs/versions/v0.27/`](docs/versions/v0.27/) |
 
 ---
+
+## v0.27: Floating Insights cards, toggling area chips (28 Oct 2026)
+
+- **The Insights cards float over the map.** The grey back panel on the right is gone, so the map runs to the right edge under the cards.
+  - The camera is padded by the cards' width, so the city overview, the area fly-tos and "the middle of the map" (keyboard Enter) all use the uncovered part.
+  - The map controls, scale bar and attribution sit just left of the cards. Collapsing or resizing the cards eases the map with them.
+  - Only the cards take clicks; the map works in the space below them.
+  - The left panel stays docked. Floating both sides was previewed but not chosen.
+  - Below 1024 px nothing changes (bottom sheet).
+- **Default width 380 px (was 344).** Measured with Satoshi: long titles such as "Building near Pennsylvania Avenue" need about 364 px to stay on one line, and "Water reaches at · Not up to +5 ft" about 361 px. The pane is still resizable from 300 to 560 px.
+- **Area chips:** the selected chip is filled with the accent (white text) instead of an outline. Clicking it again goes back to all of Miami Beach, with no chip lit. "Show all" now also clears a picked chip; before, it stayed lit over the whole-city view.
+- **Card labels:** Height, Footprint and Low spot are 14 px medium (were 16 px regular). "Water reaches at" uses the same style: sentence case, 14 px medium, black. It was a grey 10.5 px uppercase overline.
+- Previews of the width, floating both sides and the label case are kept as `11`–`13`.
+- Tests: 101 unit/component tests and 17 end-to-end tests. The chip test now checks that clicking the lit chip shows the whole city; the resize test uses the 380 px default.
 
 ## v0.26: Earlier legend, larger card facts (28 Oct 2026)
 

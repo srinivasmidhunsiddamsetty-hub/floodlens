@@ -103,7 +103,12 @@ export default function App() {
 
         {/* ---------------- Center: map */}
         <main id="map-region" tabIndex={-1} className="relative min-w-0 flex-1 outline-none">
-          <MapView data={mapData} studyBbox={manifest?.studyArea.bbox ?? null} highlightFt={highlightFt} />
+          <MapView
+            data={mapData}
+            studyBbox={manifest?.studyArea.bbox ?? null}
+            highlightFt={highlightFt}
+            rightInset={isDesktop && insightsOpen ? insightsWidth.width : 0}
+          />
 
           <div className={`pointer-events-none absolute left-4 z-10 ${isDesktop ? 'bottom-12' : 'bottom-[120px]'}`}>
             <MapLegend
@@ -132,10 +137,12 @@ export default function App() {
               >
                 {controlsOpen ? <ChevronLeft className="size-3.5" aria-hidden /> : <ChevronRight className="size-3.5" aria-hidden />}
               </button>
+              {/* Sits in the 20 px gutter beside the floating cards, or at the edge when they're hidden. */}
               <button
                 type="button"
                 onClick={() => dispatch({ type: 'setPanel', panel: 'insights', open: !insightsOpen })}
-                className="absolute top-1/2 right-0 z-10 grid h-12 w-5 -translate-y-1/2 place-items-center rounded-l border border-r-0 border-line bg-surface text-fg-subtle shadow-panel hover:text-fg"
+                style={{ right: insightsOpen ? insightsWidth.width - 20 : 0 }}
+                className="absolute top-1/2 z-10 grid h-12 w-5 -translate-y-1/2 place-items-center rounded-l border border-r-0 border-line bg-surface text-fg-subtle shadow-panel hover:text-fg"
                 aria-label={insightsOpen ? 'Collapse insights' : 'Expand insights'}
                 aria-expanded={insightsOpen}
                 aria-controls="insight-panel"
@@ -144,12 +151,11 @@ export default function App() {
               </button>
             </>
           )}
-        </main>
 
-        {/* ---------------- Right: insights (docked on desktop, bottom sheet below 1024px) */}
-        {isDesktop ? (
-          insightsOpen && (
-            <aside id="insight-panel" aria-label="Insights" className="panel relative shrink-0 border-l" style={{ width: insightsWidth.width }}>
+          {/* ---------------- Right: insights. On desktop the cards float over the map, with no
+              panel behind them (v0.27); the map is padded so they never hide the city. */}
+          {isDesktop && insightsOpen && (
+            <aside id="insight-panel" aria-label="Insights" className="pointer-events-none absolute inset-y-0 right-0 z-20" style={{ width: insightsWidth.width }}>
               <ResizeHandle
                 width={insightsWidth.width}
                 min={insightsWidth.min}
@@ -159,10 +165,13 @@ export default function App() {
                 controls="insight-panel"
                 label="Resize insights panel"
               />
-              <InsightPanel {...insightProps} />
+              <InsightPanel {...insightProps} floating />
             </aside>
-          )
-        ) : (
+          )}
+        </main>
+
+        {/* ---------------- Below 1024px: insights in a bottom sheet */}
+        {!isDesktop && (
           <aside
             id="insight-panel"
             aria-label="Insights"

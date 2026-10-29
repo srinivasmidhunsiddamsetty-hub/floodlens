@@ -192,6 +192,13 @@ test.describe('FloodLens — core flows', () => {
     await chips.getByRole('button', { name: 'Mid-Beach' }).click()
     await expect(chips.getByRole('button', { name: 'Mid-Beach' })).toHaveAttribute('aria-current', 'location', { timeout: 10_000 })
     await expect(chips.locator('[aria-current="location"]')).toHaveCount(1)
+    // Clicking the lit chip again goes back to the whole city, with no chip lit (v0.27).
+    await expect.poll(() => mapZoom(page), { timeout: 10_000 }).toBeGreaterThan(15)
+    await chips.getByRole('button', { name: 'Mid-Beach' }).click()
+    await expect(chips.locator('[aria-current="location"]')).toHaveCount(0)
+    await expect.poll(() => mapZoom(page), { timeout: 10_000 }).toBeLessThan(14)
+    await page.waitForTimeout(500)
+    await expect(chips.locator('[aria-current="location"]')).toHaveCount(0)
   })
 
   test('the insights panel resizes by drag and keyboard within its limits', async ({ page }) => {
@@ -200,7 +207,7 @@ test.describe('FloodLens — core flows', () => {
     const panel = page.locator('aside#insight-panel')
     const handle = page.getByRole('separator', { name: 'Resize insights panel' })
     const width = async () => Math.round((await panel.boundingBox())!.width)
-    expect(await width()).toBe(344)
+    expect(await width()).toBe(380)
     await expect(handle).toHaveAttribute('aria-valuemin', '300')
     await expect(handle).toHaveAttribute('aria-valuemax', '560')
 
@@ -210,7 +217,7 @@ test.describe('FloodLens — core flows', () => {
     await page.mouse.down()
     await page.mouse.move(box.x + box.width / 2 - 120, box.y + 300, { steps: 6 })
     await page.mouse.up()
-    expect(await width()).toBe(464)
+    expect(await width()).toBe(500)
 
     // Limits hold however far you drag or press.
     await handle.focus()
@@ -225,11 +232,11 @@ test.describe('FloodLens — core flows', () => {
 
     // Double-click restores the default; the width is remembered across reloads.
     await handle.dblclick()
-    expect(await width()).toBe(344)
+    expect(await width()).toBe(380)
     await page.keyboard.press('Shift+ArrowLeft')
     await page.reload()
     await waitForMap(page)
-    expect(await width()).toBe(408)
+    expect(await width()).toBe(444)
   })
 
   test('data dialogs open, show provenance, and close with Escape', async ({ page }) => {
