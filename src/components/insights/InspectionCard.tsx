@@ -120,9 +120,11 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
 
           // Label and answer: "Water reaches at +2 ft", or "Today" (today's high tide, the
-          // same name as the first pin). Never "safe" or "dry": NOAA's map not reaching a
-          // place isn't a promise, and we only map up to the top level (+5 ft).
-          const answer = !reached ? `Not up to ${formatScenario(top)}` : firstFeet === 0 ? 'Today' : formatScenario(firstFeet)
+          // same name as the first pin). When no level reaches it: "Up to +5 ft · Doesn't
+          // reach it" (v0.30). The label keeps the limit: we only map up to the top level, and
+          // NOAA's map not reaching a place isn't a promise, so never "safe" or "dry".
+          const label = reached ? 'Water reaches at' : `Up to ${formatScenario(top)}`
+          const answer = !reached ? 'Doesn’t reach it' : firstFeet === 0 ? 'Today' : formatScenario(firstFeet)
 
           return (
             <div aria-live="polite">
@@ -130,7 +132,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                   below), with every level in context under it. A long answer wraps under the label. */}
               <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-2 pb-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <p className="text-[14px] leading-5 font-medium text-fg">Water reaches at</p>
+                  <p className="text-[14px] leading-5 font-medium text-fg">{label}</p>
                   <p className="text-[24px] leading-8 font-bold tracking-[-0.03em] text-fg tabular">{answer}</p>
                 </div>
                 <div className="mt-1">

@@ -164,3 +164,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- | --- |
 | Card answer label | WATER REACHES AT (grey uppercase overline) | Water reaches at (sentence case, like Height / Footprint / Low spot) |
 | Selected area chip | (no tooltip) | Tooltip: Show all of Miami Beach |
+
+## Before and after (v0.29 → v0.30)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card, not reached | Water reaches at · Not up to +5 ft | Up to +5 ft · Doesn't reach it (the label keeps the limit; never "safe" or "dry") |

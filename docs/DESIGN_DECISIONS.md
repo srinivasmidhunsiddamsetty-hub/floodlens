@@ -52,7 +52,7 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 ## Colour
 
 The selected-place card leads with the answer, emphasised, in a light-blue block. The layout takes cues from a reference the designer supplied, but the wording stays FloodLens's own:
-- **Answer:** "WATER REACHES AT" on the left and **+3 ft** (24 px, black) on the right of the same row (v0.15), like the facts below it. The other answers are "Today" and "Not up to +5 ft"; the last is too wide for the row, so it wraps under the label. No number in the panel is blue: blue is kept for links and selection outlines.
+- **Answer:** "WATER REACHES AT" on the left and **+3 ft** (24 px, black) on the right of the same row (v0.15), like the facts below it. The other answers are "Today" and, when no mapped level reaches the place, "Up to +5 ft · Doesn't reach it" (v0.30; "Not up to +5 ft" before): the label carries the limit so the plain answer doesn't overclaim, and it fits on one line. No number in the panel is blue: blue is kept for links and selection outlines.
 - **Box size:** the box is 316 × 90 px in the default 380 px pane (v0.27; 277 × 90 px at 344 px in v0.23–v0.26; 92 px tall in v0.16–v0.22); it was 277 × 140 px in v0.14 and 277 × 104 px in v0.15. The rows from top to bottom: 8 px padding, the 32 px answer row, a 4 px gap, the 18 px water band, a 6 px gap, 16 px pin labels and 6 px padding. The 6 px above the pin labels can't shrink further: the larger blue pin would run into its label.
 - **Level track:** below the answer (see below).
 - **Facts:** Height, Footprint and Low spot follow in one column. Height and footprint always show, with "—" when the click isn't on a building (v0.13); before, those rows disappeared for open ground and water.

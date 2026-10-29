@@ -43,6 +43,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Insights cards floating over a padded map at 380 px, solid area chips that toggle back to the whole city, and card labels (including "Water reaches at") at 14 px medium (v0.27).
 - A static legend: the levels are a plain key, not hover buttons (v0.28).
 - A shorter map credit in a fixed order that folds into an (i) after the first drag, within the OSMF attribution guidelines (v0.29).
+- "Up to +5 ft · Doesn't reach it" for places none of the mapped levels reach (v0.30).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

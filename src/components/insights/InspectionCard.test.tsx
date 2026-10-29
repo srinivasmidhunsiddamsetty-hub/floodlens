@@ -64,8 +64,10 @@ describe('<InspectionCard>', () => {
 
   it('says water doesn’t reach it up to +3 ft, without claiming it stays dry', () => {
     card(levels(null))
-    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent('Not up to +3 ft')
-    expect(screen.queryByText(/dry|safe/i)).toBeNull()
+    // The label keeps the limit; the answer says it plainly (v0.30).
+    expect(screen.getByText('Up to +3 ft').nextSibling).toHaveTextContent('Doesn’t reach it')
+    expect(screen.queryByText('Water reaches at')).toBeNull()
+    expect(screen.queryByText(/dry|safe|Not up to/i)).toBeNull()
   })
 
   it('lists the facts in one column: height, footprint, low spot', () => {

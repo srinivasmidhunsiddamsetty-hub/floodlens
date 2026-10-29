@@ -33,8 +33,15 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.27 | 28 Oct 2026 | Insights cards float over the map at 380 px; solid area chips that toggle | [`docs/versions/v0.27/`](docs/versions/v0.27/) |
 | v0.28 | 28 Oct 2026 | A static legend | [`docs/versions/v0.28/`](docs/versions/v0.28/) |
 | v0.29 | 29 Oct 2026 | A shorter map credit that folds into an (i) | [`docs/versions/v0.29/`](docs/versions/v0.29/) |
+| v0.30 | 29 Oct 2026 | "Up to +5 ft · Doesn't reach it" | [`docs/versions/v0.30/`](docs/versions/v0.30/) |
 
 ---
+
+## v0.30: A direct answer when water doesn't reach a place (29 Oct 2026)
+
+- **When none of the mapped levels reach a place, the card says "Up to +5 ft · Doesn't reach it"** instead of "Water reaches at · Not up to +5 ft". The label carries the limit (FloodLens maps up to +5 ft), so the plain answer doesn't claim more than the data shows. It never says "safe" or "dry", since NOAA's layers don't model storms, rain or groundwater.
+- It fits on one line in the 380 px pane, so the box stays 90 px tall. Places the water reaches keep "Water reaches at · +3 ft" (or "Today").
+- Tests: 104 unit/component tests (the not-reached test checks the new label and answer) and 18 end-to-end tests. Screenshot `09` shows the new answer.
 
 ## v0.29: A shorter map credit that folds away (29 Oct 2026)
 
