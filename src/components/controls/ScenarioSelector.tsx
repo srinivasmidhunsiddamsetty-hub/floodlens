@@ -96,7 +96,7 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
         // Two lines at most, so opening it never makes the panel scroll. The technical name
         // (Mean Higher High Water) is explained in "About the data".
         <p id={`${id}-info`} className="mt-2 rounded border border-line bg-surface-2 px-2.5 py-2 t-caption text-fg-muted animate-slide-up">
-          Steps are feet of rise above today’s high tide, not dates.
+          +1 ft means the sea is 1 ft above today’s high tide, not a year.
         </p>
       )}
 

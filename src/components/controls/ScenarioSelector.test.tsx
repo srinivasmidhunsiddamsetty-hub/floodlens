@@ -53,7 +53,7 @@ describe('<ScenarioSelector>', () => {
     expect(btn).toHaveAttribute('aria-expanded', 'false')
     await userEvent.click(btn)
     expect(btn).toHaveAttribute('aria-expanded', 'true')
-    const info = screen.getByText('Steps are feet of rise above today’s high tide, not dates.')
+    const info = screen.getByText('+1 ft means the sea is 1 ft above today’s high tide, not a year.')
     // Two lines at most in the panel, so opening it never makes the panel scroll.
     expect(info.textContent!.length).toBeLessThanOrEqual(70)
   })

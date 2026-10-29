@@ -16,17 +16,17 @@ const FILL = 18
 const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
 
 /**
- * Sea levels as pins on a baseline, with the water rising from left to right and
+ * Sea levels labelled along a baseline, with the water rising from left to right and
  * stopping, with a dashed marker, at the first level that reaches the place. When
  * no level reaches it the water runs on to the end with no marker. The water is
- * schematic, not a depth, so it's hidden from screen readers; the pins are a list.
+ * schematic, not a depth, so it's hidden from screen readers; the labels are a list.
  */
 export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
   const gradientId = useId()
   const n = levels.length
   const first = firstFeet === null ? -1 : levels.findIndex((l) => l.feet === firstFeet)
   const x = (i: number) => ((i + 0.5) * 100) / n
-  // The surface rises a little more at each level, and is never so low that the marker hides its pin.
+  // The surface rises a little more at each level, and is never so low that the marker is lost.
   const rise = (i: number) => Math.max(11, (FILL * (i + 2)) / (n + 1))
 
   // A gentle S from the left edge up to where it stops: at the first level that
@@ -65,7 +65,8 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
         <span className="absolute inset-x-0 bottom-0 h-px bg-[#c3ccd5]" />
         {first >= 0 && (
           <>
-            {/* Where the water first reaches the place: a dashed drop from the surface to its pin */}
+            {/* Where the water first reaches the place: a dashed drop from the surface to the baseline.
+                No circles on the baseline (v0.22): the labels below mark the levels. */}
             <span
               className="absolute w-0 -translate-x-1/2 border-l-[1.5px] border-dashed border-accent"
               style={{ left: `${x(first)}%`, top: FILL - rise(first), height: rise(first) }}
@@ -76,15 +77,6 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
             />
           </>
         )}
-        {levels.map((l, i) => (
-          <span
-            key={l.feet}
-            className={`absolute -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-white ${
-              i === first ? 'size-3.5 bg-accent shadow-[0_0_0_1px_var(--color-accent)]' : l.within ? 'size-3 bg-[#7fb3e6]' : 'size-3 bg-[#a3adb8]'
-            }`}
-            style={{ left: `${x(i)}%`, bottom: 0 }}
-          />
-        ))}
       </div>
       <ol className="mt-1.5 grid text-center" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">
         {levels.map((l, i) => {

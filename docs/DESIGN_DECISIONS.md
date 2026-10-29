@@ -58,8 +58,8 @@ The selected-place card leads with the answer, emphasised, in a light-blue block
 - **Position:** a chip with the position. The distance to the street was dropped in v0.12: the title already names the street, and the distance says nothing about water.
 
 The **level track** works like this:
-- **Pins and labels:** one pin per sea level on a baseline, labelled with the level. The first level that reaches the place has a larger blue pin and a bold label; later levels the water also reaches have light-blue pins.
-- **Water:** a light-blue band rises in a gentle S from the left and stops at the first level that reaches the place. A dashed line drops from its surface to that level's larger blue pin. When no level reaches the place, the water runs to the end with no marker.
+- **Labels:** each sea level is labelled along a baseline, with no circles (v0.22). The first level that reaches the place has a bold label.
+- **Water:** a light-blue band rises in a gentle S from the left and stops at the first level that reaches the place. A dashed line, topped by a small dot, drops from its surface to the baseline at that level. When no level reaches the place, the water runs to the end with no marker.
 - **Schematic:** the shape is not a depth, so it's hidden from screen readers; the pins are a list that says, for each level, whether water reaches the place.
 
 v0.4–v0.10 drew a house on rising streams of water instead. v0.11 put the answer in a row with a simpler pin track. v0.12 made it the large lead again. v0.13 kept that layout but went back to v0.11's wording and dropped the details lifted straight from the reference (status labels under every pin, a supporting sentence and a copy button).

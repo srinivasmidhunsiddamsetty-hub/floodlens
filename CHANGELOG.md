@@ -25,8 +25,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.19 | 28 Oct 2026 | One "adds" row for the selected level | [`docs/versions/v0.19/`](docs/versions/v0.19/) |
 | v0.20 | 28 Oct 2026 | Vermilion selection, stat tiles, grey canvas, tiled left panel, rounded bars | [`docs/versions/v0.20/`](docs/versions/v0.20/) |
 | v0.21 | 28 Oct 2026 | Two-line sea-level (i) note | [`docs/versions/v0.21/`](docs/versions/v0.21/) |
+| v0.22 | 28 Oct 2026 | Clearer (i) note, level track without circles | [`docs/versions/v0.22/`](docs/versions/v0.22/) |
 
 ---
+
+## v0.22: Plainer note, cleaner track (28 Oct 2026)
+
+- **The (i) note says what "+1 ft" means:** "+1 ft means the sea is 1 ft above today's high tide, not a year." "Steps" was the control talking, not the reader. It's still two lines, so the panel doesn't scroll.
+- **No circles on the card's level track.**
+  - The circle at every level and the larger highlight circle on the first level that reaches the place are gone.
+  - The labels mark the levels, and the first-reached label stays bold.
+  - The dashed line from the water's surface to the baseline, with its small dot, still marks where the water first reaches.
+- New screenshot `11-note-and-level-track.png` shows the note and the track in all three states.
+- Tests: 101 unit/component tests and 17 end-to-end tests.
 
 ## v0.21: A shorter note (28 Oct 2026)
 
