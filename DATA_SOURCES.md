@@ -112,7 +112,7 @@ The unit tests (`src/lib/dataIntegrity.test.ts`) recompute every area in the bro
 | --- | --- |
 | Style | https://tiles.openfreemap.org/styles/positron (fetched at runtime, restyled to a light geographic palette in `src/lib/mapStyle.ts`) |
 | Tiles | `https://tiles.openfreemap.org/planet` (OpenMapTiles schema, z0–14) |
-| Terms | Public instance is free, with no API key, registration or cookies. Attribution "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" is required and shown in the map. |
+| Terms | Public instance is free, with no API key, registration or cookies. OpenStreetMap's ODbL requires crediting OpenStreetMap with a link to its licence page, and OpenMapTiles asks for a visible linked credit; OpenFreeMap's quick start shows its own name in the credit without saying it's required. The map shows "© OpenStreetMap · © OpenMapTiles · OpenFreeMap" at the start of its credit line, which folds into an (i) after the first drag (v0.29). |
 | Label glyphs | Roboto Regular / Medium / Italic SDF glyph ranges self-hosted in `public/fonts/` (from [openmaptiles/fonts](https://github.com/openmaptiles/fonts) v2.0; Roboto is Apache-2.0). OpenFreeMap serves only Noto Sans glyphs. |
 | Buildings | `building` layer, `render_height` / `render_min_height`. Values come from OSM `height` / `building:levels` where present; otherwise the tile generator estimates them. Treat them as approximate. |
 

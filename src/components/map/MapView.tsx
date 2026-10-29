@@ -18,7 +18,7 @@ import {
   setVisible,
   SRC,
 } from '../../lib/mapLayers'
-import { FALLBACK_STYLE, loadBasemapStyle } from '../../lib/mapStyle'
+import { BASEMAP_CREDIT, FALLBACK_STYLE, loadBasemapStyle } from '../../lib/mapStyle'
 import { useReducedMotion } from '../../hooks/useMediaQuery'
 import type { MapData } from '../../hooks/useMapData'
 import { useAppDispatch, useAppState } from '../../state/AppState'
@@ -317,19 +317,14 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
 
       // Attribution sits on the bottom edge with the scale bar above it, so neither runs under the
       // legend (bottom-left). Bottom controls stack newest-on-top, hence attribution first.
-      // Desktop shows it in full; narrow screens collapse it to an (i) button with shorter names.
-      const compact = window.innerWidth < 1024
+      // One short line in a fixed order (v0.29): the basemap's credits (only when it loaded), then
+      // the flood data and the boundary. It starts open and folds into an (i) button on the first
+      // drag, which the OSMF attribution guidelines allow; the (i) opens it again, and the Data
+      // sources dialog has the full credits.
       const noaa = '<a href="https://coast.noaa.gov/slr/" target="_blank" rel="noopener">'
       const census = '<a href="https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html" target="_blank" rel="noopener">'
-      map.addControl(
-        new maplibregl.AttributionControl({
-          compact,
-          customAttribution: compact
-            ? `Inundation: ${noaa}NOAA OCM</a> | Boundary: ${census}US Census Bureau</a>`
-            : `Inundation: ${noaa}NOAA Office for Coastal Management</a> | Boundary: ${census}US Census Bureau</a>`,
-        }),
-        'bottom-right',
-      )
+      const credits = [...(style === FALLBACK_STYLE ? [] : [BASEMAP_CREDIT]), `Flood data: ${noaa}NOAA</a>`, `Boundary: ${census}US Census</a>`]
+      map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: credits.join(' | ') }), 'bottom-right')
       map.addControl(new maplibregl.ScaleControl({ unit: 'imperial', maxWidth: 110 }), 'bottom-right')
 
       map.on('load', () => {

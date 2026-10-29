@@ -15,7 +15,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(headline).toContainText('of the city’s land')
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/OpenStreetMap/)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/NOAA/)
-    await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/Census Bureau/)
+    await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/US Census/)
     expect(errors).toEqual([])
   })
 
@@ -121,6 +121,23 @@ test.describe('FloodLens — core flows', () => {
     // The view reset lives only in the map — no duplicate in the header or panels.
     await expect(page.getByRole('banner').getByRole('button', { name: /reset|show all/i })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Show all of Miami Beach' })).toHaveCount(1)
+  })
+
+  test('the map credit starts open, folds into an (i) on the first drag, and the (i) opens it again', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const credit = page.locator('.maplibregl-ctrl-attrib')
+    await expect(credit).toHaveClass(/maplibregl-compact-show/)
+    await expect(credit).toContainText('© OpenStreetMap · © OpenMapTiles · OpenFreeMap | Flood data: NOAA | Boundary: US Census')
+    await expect(credit.getByRole('link', { name: '© OpenStreetMap' })).toHaveAttribute('href', 'https://www.openstreetmap.org/copyright')
+    const box = (await page.locator('.maplibregl-canvas').boundingBox())!
+    await page.mouse.move(box.x + 300, box.y + 400)
+    await page.mouse.down()
+    await page.mouse.move(box.x + 380, box.y + 440, { steps: 6 })
+    await page.mouse.up()
+    await expect(credit).not.toHaveClass(/maplibregl-compact-show/)
+    await page.locator('.maplibregl-ctrl-attrib-button').click()
+    await expect(credit).toHaveClass(/maplibregl-compact-show/)
   })
 
   test('area bookmarks fly along the city and keep the current 2D/3D mode', async ({ page }) => {

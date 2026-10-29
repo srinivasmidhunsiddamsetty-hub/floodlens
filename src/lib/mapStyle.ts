@@ -111,7 +111,9 @@ const sourceLayer = (l: LayerSpecification) => (l as { 'source-layer'?: string }
  *  - soft geographic palette (land, parks, water, roads) for a light analysis map,
  *  - water drawn above every land-surface fill, so overlays placed beneath it
  *    only appear on land,
- *  - Roboto labels (self-hosted glyphs), flat buildings and low-value layers removed.
+ *  - Roboto labels (self-hosted glyphs), flat buildings and low-value layers removed,
+ *  - the sources' own credits blanked: the map writes one short credit line itself
+ *    (BASEMAP_CREDIT), in a fixed order. A blank source credit also overrides the TileJSON's.
  * Pure function — unit tested — so basemap updates can't silently break layer order.
  */
 export function transformBasemapStyle(style: StyleSpecification, glyphsUrl?: string): StyleSpecification {
@@ -126,8 +128,18 @@ export function transformBasemapStyle(style: StyleSpecification, glyphsUrl?: str
     })
     layers.splice(lastLand + 1, 0, water)
   }
-  return { ...style, ...(glyphsUrl ? { glyphs: glyphsUrl } : {}), layers }
+  const sources = Object.fromEntries(Object.entries(style.sources).map(([id, s]) => [id, { ...s, attribution: '' }]))
+  return { ...style, ...(glyphsUrl ? { glyphs: glyphsUrl } : {}), sources: sources as StyleSpecification['sources'], layers }
 }
+
+/**
+ * The basemap's credit (v0.29). OpenStreetMap's licence (ODbL) requires crediting OpenStreetMap with a
+ * link to its licence page; OpenMapTiles asks for a visible, linked credit; OpenFreeMap serves the tiles.
+ */
+export const BASEMAP_CREDIT =
+  '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · ' +
+  '<a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a> · ' +
+  '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>'
 
 /** Absolute URL template for the self-hosted Roboto glyphs (works under any deploy sub-path). */
 export function roboGlyphsUrl(): string {

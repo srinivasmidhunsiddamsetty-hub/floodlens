@@ -114,7 +114,7 @@ npm run build      # outputs dist/
 
 Upload `dist/` to any static host. Asset paths are relative (`base: './'`), so it also works from a sub-path such as GitHub Pages project sites. A `netlify.toml` is included. For other hosts, serve `dist/` with gzip/brotli enabled, because the GeoJSON compresses about 5×.
 
-Basemap tiles come from the public OpenFreeMap instance (free, no key, attribution required and kept in the map). For high-traffic deployments, consider self-hosting the tiles; OpenFreeMap publishes weekly planet downloads.
+Basemap tiles come from the public OpenFreeMap instance (free, no key). The map's credit line keeps the required OpenStreetMap and OpenMapTiles credits, plus OpenFreeMap, NOAA and the Census Bureau. For high-traffic deployments, consider self-hosting the tiles; OpenFreeMap publishes weekly planet downloads.
 
 ## Attribution
 

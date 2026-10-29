@@ -32,8 +32,24 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.26 | 28 Oct 2026 | Earlier legend back, no bottom link, larger card facts | [`docs/versions/v0.26/`](docs/versions/v0.26/) |
 | v0.27 | 28 Oct 2026 | Insights cards float over the map at 380 px; solid area chips that toggle | [`docs/versions/v0.27/`](docs/versions/v0.27/) |
 | v0.28 | 28 Oct 2026 | A static legend | [`docs/versions/v0.28/`](docs/versions/v0.28/) |
+| v0.29 | 29 Oct 2026 | A shorter map credit that folds into an (i) | [`docs/versions/v0.29/`](docs/versions/v0.29/) |
 
 ---
+
+## v0.29: A shorter map credit that folds away (29 Oct 2026)
+
+- **Shorter credit line**, same credits, every one still linked:
+  - Now: "© OpenStreetMap · © OpenMapTiles · OpenFreeMap | Flood data: NOAA | Boundary: US Census", 504 px on desktop.
+  - Before: "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Inundation: NOAA Office for Coastal Management | Boundary: US Census Bureau", about 690 px.
+  - The order is now fixed. MapLibre sorts credits by length, so the basemap's credit (from its TileJSON) is blanked and the app writes the whole line itself. The basemap part is left out if the basemap fails to load.
+- **What's required:**
+  - OpenStreetMap's licence (ODbL) requires crediting OpenStreetMap with a link to its licence page; "© OpenStreetMap" is an accepted form.
+  - OpenMapTiles asks for a visible, linked credit.
+  - OpenFreeMap's quick start shows its name in the credit but doesn't say it's required, so it's kept as a courtesy.
+  - NOAA and Census data are US-government public domain. They're credited because the map shows their data.
+- **Folds into an (i):** the credit starts open and collapses to an (i) button on the first drag; the (i) opens it again. The OSMF attribution guidelines allow collapsing "on map interaction such as panning, clicking, or zooming", as long as the licence information can still be found (the (i), and the Data sources dialog). Phones and desktop now behave the same; phones previously used a shorter NOAA name.
+- New screenshots `11-credit-open.png` and `12-credit-folded.png`.
+- Tests: 104 unit/component tests (new: sources' own credits are blanked; the basemap credit links OpenStreetMap's licence page) and 18 end-to-end tests (new: the credit's text, its fold on drag and the (i) reopening it).
 
 ## v0.28: A static legend (28 Oct 2026)
 
