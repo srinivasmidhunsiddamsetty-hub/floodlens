@@ -90,13 +90,8 @@ test.describe('FloodLens — core flows', () => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto('/')
     await waitForMap(page)
-    // The "What this map can and can't tell you" link is pinned to the panel's bottom edge, even with little content.
-    const linkSitsAtBottom = async () => {
-      const panel = (await page.locator('aside#insight-panel').boundingBox())!
-      const link = (await insights(page).getByRole('button', { name: 'What this map can and can’t tell you' }).boundingBox())!
-      return panel.y + panel.height - (link.y + link.height)
-    }
-    expect(await linkSitsAtBottom()).toBeLessThan(20)
+    // No bottom link (v0.26): "About the data" in the top bar opens the same dialog.
+    await expect(insights(page).getByRole('button', { name: /can and can’t tell you/ })).toHaveCount(0)
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
     await expect.poll(() => mapZoom(page), { timeout: 10_000 }).toBeGreaterThan(15)
     await page.locator('.maplibregl-canvas').focus()
@@ -107,7 +102,6 @@ test.describe('FloodLens — core flows', () => {
       .locator('.overflow-y-auto')
       .evaluate((el) => ({ content: el.scrollHeight, visible: el.clientHeight }))
     expect(fit.content).toBeLessThanOrEqual(fit.visible)
-    expect(await linkSitsAtBottom()).toBeLessThan(20)
   })
 
   test('in-map controls: 2D/3D keeps the level, "show all" restores the 3D city view', async ({ page }) => {
@@ -249,7 +243,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('Escape')
     await expect(dlg).toBeHidden()
 
-    await page.getByRole('button', { name: 'What this map can and can’t tell you' }).click()
+    await page.getByRole('button', { name: 'About the data', exact: true }).click()
     const about = page.getByRole('dialog', { name: 'About the data' })
     await expect(about).toContainText('Mean Higher High Water')
     await expect(about).toContainText('not affiliated with')

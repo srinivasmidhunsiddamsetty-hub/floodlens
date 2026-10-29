@@ -29,8 +29,18 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.23 | 28 Oct 2026 | Smaller level labels in the card's track | [`docs/versions/v0.23/`](docs/versions/v0.23/) |
 | v0.24 | 28 Oct 2026 | Smaller x-axis labels in the chart | [`docs/versions/v0.24/`](docs/versions/v0.24/) |
 | v0.25 | 28 Oct 2026 | Building areas in m², soft depth and glass, bolder type | [`docs/versions/v0.25/`](docs/versions/v0.25/) |
+| v0.26 | 28 Oct 2026 | Earlier legend back, no bottom link, larger card facts | [`docs/versions/v0.26/`](docs/versions/v0.26/) |
 
 ---
+
+## v0.26: Earlier legend, larger card facts (28 Oct 2026)
+
+- **The legend is back to its v0.24 look:** solid white with a 1 px border, small corners and the regular-weight "Water first reaches" overline. The area chips and map controls stay frosted glass.
+- **No bottom link.** "What this map can and can't tell you" is gone from the Insights panel. "About the data" in the top bar opens the same dialog.
+- **Bold titles:** the card's title ("Building near Bay Road") and "Land underwater" are now bold (700). They were semibold (600). Satoshi loads as a variable font, so 600 is a real, lighter weight; the v0.25 note saying it already rendered as bold was wrong.
+- **Larger card facts:** the labels (Height, Footprint, Low spot) are 16 px, up from 13 px. The values (≈ 132 m, ≈ 7,160 m², No) are 20 px, up from 14 px. With a place selected, the panel still fits without scrolling at 1440×900.
+- **No icon beside "Land underwater by sea level".**
+- Tests: 101 unit/component tests and 17 end-to-end tests. The fit test now checks that the bottom link is gone, and the dialog test opens About the data from the top bar.
 
 ## v0.25: Building areas in m², a more premium finish (28 Oct 2026)
 

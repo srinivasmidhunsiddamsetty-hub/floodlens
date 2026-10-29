@@ -34,7 +34,7 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 
 ## Chart
 
-- **A plain one-line title: "Land underwater by sea level"** (v0.13), styled like the "Land underwater" tile's header. v0.8–v0.12 used a computed finding as the title ("The biggest jump comes at +3 ft") plus a subtitle; in review that was more text than the tile needed. The unit is set by the toggle in the tile above, and screen readers hear it as part of the chart's name.
+- **A plain one-line title: "Land underwater by sea level"** (v0.13), in semibold with no icon (v0.26), a step below the bold "Land underwater" header. v0.8–v0.12 used a computed finding as the title ("The biggest jump comes at +3 ft") plus a subtitle; in review that was more text than the tile needed. The unit is set by the toggle in the tile above, and screen readers hear it as part of the chart's name.
 - **Selection rings the bar, not the column.** The selected level gets a 2 px accent ring with a 2 px gap, matching the selected area chip, plus an accent axis label. A column-wide box reads like a card or a focus box and hides which mark is chosen; a ring on the mark ties the state to the data. Near-zero bars (today, +1 ft) still show a small capsule on the baseline, and the hit target stays the full column so they're easy to click.
 - **No fading for levels above the slider**, in the chart, the breakdown or (since v0.18) the map legend, which used to fade them and say "not shown". The numbers hold whatever the slider shows, and faded bars and rows read as disabled. Hovering a band still fades the others, to spotlight it.
 - **One unit at a time.** A km² / acres switch at the top of the section sets the unit for the headline, chart (axis, labels, tooltips, subtitle, screen-reader table) and breakdown. It's a segmented control in the Calcite "solid" style: the chosen unit is filled with the accent. It's a radio group, so it's one Tab stop and the arrow keys switch units. The choice is remembered in the browser, and km² is the default.
@@ -43,10 +43,10 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 - **Small level labels (v0.24).** The x-axis labels (Today, +1 ft … +5 ft) are 10 px, the same as the card's level track, with the selected level in bold. The y-axis numbers and the values above the bars stay at 11 px.
 - **One tile for the area figures (v0.14).** The summary and the chart share the km² / acres switch, so they share a tile: the figures at the chosen level, a hairline, then the chart and one row with what the selected foot adds (v0.19; it listed every foot before). The chart already shows every level, the map legend explains the colours, and hovering a bar segment gives any foot's increment, so a single row is enough. v0.12–v0.13 used two tiles. The tile has a border and no shadow, so the selected-place card above stays the one floating element.
 - **The panel fits without scrolling.** The building card and the area tile fit at 1440×900 with a place selected, in every state (checked by an end-to-end test).
-- **"What this map can and can't tell you" is a pinned footer** (v0.13). It always sits at the bottom edge of the panel, whatever is above it. Before, it was the last item in the scrolling content, so it rose up the panel whenever the content got shorter. There's no visible "Insights" title (v0.11): the card and block headers say what the panel is, and screen readers still get the heading. The summary and the chart are two blocks: full-bleed sections divided by hairlines, each with a small accent icon and a header, like Calcite's Block. They aren't cards, so they don't compete with the selected-place card above them.
+- **No bottom link (v0.26).** "What this map can and can't tell you" was a pinned footer from v0.13 to v0.25; it was removed to give the content the space. "About the data" in the top bar opens the same dialog. There's no visible "Insights" title (v0.11): the card and block headers say what the panel is, and screen readers still get the heading. The summary and the chart are two blocks: full-bleed sections divided by hairlines, each with a small accent icon and a header, like Calcite's Block. They aren't cards, so they don't compete with the selected-place card above them.
   - **Block 1, "Land underwater":** two figures side by side, the area at the chosen level and the share of the city's land, plus the unit switch.
   - **Block 2, the chart:** the chart and the per-foot breakdown.
-  - The "What this map can and can't tell you" link stays at the bottom, as the contextual way into the limitations (v0.10 removed it; v0.11 brought it back).
+  - The "What this map can and can't tell you" link was at the bottom from v0.11 to v0.25 (v0.10 had removed it); v0.26 removed it again.
 - **Mouse clicks don't focus bars.** The browser's focus outline is for keyboard users; a click selects without leaving it behind.
 
 ## Colour
@@ -75,7 +75,7 @@ v0.4–v0.10 drew a house on rising streams of water instead. v0.11 put the answ
 | Panels | canvas `#f1f3f6`, white cards with a faint ring and soft shadow (no border), stat tiles `#f3f6fa` | Both side panels sit on a light grey canvas so their contents read as cards (v0.20); the hard borders gave way to soft shadows in v0.25, for a calmer, more premium finish. The two figures in the area tile each get a soft filled stat tile with no border, so the borders don't nest |
 | Study area | dashed `#3d4655`; outside washed with 50% white | Reads as a boundary, not data |
 | UI accent | `#0069b0` (Esri/Calcite-style blue) | Interaction, focus, selected states; 5.0–5.8:1 on all surfaces |
-| UI surfaces | white panels, `#f1f3f6` canvas, frosted glass over the map (88% white) | Calcite-like light chrome. On glass, secondary text is `#575757` so it keeps 4.5:1 over the darkest flood blue; *reduce transparency* makes it solid |
+| UI surfaces | white panels, `#f1f3f6` canvas, frosted glass for the area chips and map controls (88% white); the legend stays solid white (v0.26) | Calcite-like light chrome. On glass, secondary text is `#575757` so it keeps 4.5:1 over the darkest flood blue; *reduce transparency* makes it solid |
 
 Map and UI colours live in `src/lib/theme.ts` and the CSS tokens in `src/styles/index.css`. Legend swatches render from the same values.
 
@@ -93,7 +93,9 @@ Map labels stay in **Roboto** (Regular, Medium and Italic SDF glyphs self-hosted
 
 Type scale (classes in `src/styles/index.css`): `t-display` 36/700 (sea level) · `t-metric` 28/500 (headline number) · `t-title` 16/500 (the wordmark and panel titles are bold) · `t-heading` 14/700 · `t-label` 13/500 · `t-body` 13/400 · `t-caption` 12/400 · `t-overline` 10.5/700 uppercase, 0.09em tracking. Tabular numerals for all quantities.
 
-**Bolder hierarchy (v0.25).** Titles and the key numbers (the sea level, the card's answer and the two figures) are bold with tighter tracking (−0.03em on large numbers), so the eye lands on them first. Body text stays regular, so bold keeps its meaning. Satoshi has no semibold, so 600 already rendered as bold.
+**Bolder hierarchy (v0.25).** Titles and the key numbers (the sea level, the card's answer and the two figures) are bold with tighter tracking (−0.03em on large numbers), so the eye lands on them first. Body text stays regular, so bold keeps its meaning. Satoshi loads as a variable font (300–900), so semibold (600) is a real, lighter weight: the card's title and "Land underwater" moved from 600 to bold in v0.26, and the chart title stays at 600.
+
+**Card facts (v0.26).** The labels (Height, Footprint, Low spot) are 16 px and the values 20 px, so the facts read at a glance next to the 24 px answer.
 
 ## Engineering
 

@@ -48,11 +48,11 @@ function Row({
 }) {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
-      <dt className="flex min-w-0 items-center gap-2.5 text-[13px] leading-5 text-fg">
+      <dt className="flex min-w-0 items-center gap-2.5 text-[16px] leading-6 text-fg">
         <Icon className="size-4 shrink-0" style={{ color: TINTS[tint] }} aria-hidden />
         {label}
       </dt>
-      <dd className="text-right text-[14px] leading-5 font-medium text-fg tabular">{value}</dd>
+      <dd className="text-right text-[20px] leading-7 font-medium text-fg tabular">{value}</dd>
       {children}
     </div>
   )
@@ -74,7 +74,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
       {/* What and where. The vermilion icon matches the selection on the map. */}
       <div className="flex items-start gap-2">
         <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d03a22]" aria-hidden />
-        <h3 id="insp-title" className="min-w-0 flex-1 text-[15px] leading-5 font-semibold text-fg">
+        <h3 id="insp-title" className="min-w-0 flex-1 text-[15px] leading-5 font-bold text-fg">
           {noun}
           {street && <> near {street.name}</>}
         </h3>

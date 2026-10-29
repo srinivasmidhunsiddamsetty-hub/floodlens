@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import { ChartColumnIncreasing } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { AREA_UNITS, formatArea, formatScenario, toUnit, type AreaUnit } from '../../lib/format'
 import type { FloodBand } from '../../lib/manifest'
@@ -255,9 +254,8 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
 
   return (
     <figure className="m-0">
-      {/* One plain line, styled like the "Land underwater" tile's header; the unit is in the toggle above. */}
-      <figcaption id={titleId} className="mb-1 flex items-center gap-2 t-heading font-semibold">
-        <ChartColumnIncreasing className="size-4 shrink-0 text-accent" aria-hidden />
+      {/* One plain line with no icon (v0.26); the unit is in the toggle above. */}
+      <figcaption id={titleId} className="mb-1 t-heading font-semibold">
         Land underwater by sea level
         <span className="sr-only">, in {AREA_UNITS[unit].long}</span>
       </figcaption>

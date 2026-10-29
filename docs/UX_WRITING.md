@@ -151,3 +151,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Sea level (i) note | Steps are feet of rise above today's high tide, not dates. | +1 ft means the sea is 1 ft above today's high tide, not a year. |
+
+## Before and after (v0.25 → v0.26)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Bottom link | What this map can and can't tell you → | (removed; "About the data" in the top bar opens the same dialog) |

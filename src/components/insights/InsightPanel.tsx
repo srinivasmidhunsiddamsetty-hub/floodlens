@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Loader2, MousePointerClick, Waves } from 'lucide-react'
+import { AlertTriangle, Loader2, MousePointerClick, Waves } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { AREA_UNITS, formatArea, formatPercent, formatScenario } from '../../lib/format'
 import { lowLyingByFeet, scenarioByFeet, type FloodBand } from '../../lib/manifest'
@@ -88,7 +88,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                 chosen level, then every level in the chart, with what each foot adds. */}
             <section aria-labelledby="summary-title" className="card mt-2.5 px-3 pt-3 pb-1.5">
               <div className="flex items-center justify-between gap-3">
-                <h3 id="summary-title" className="flex items-center gap-2 t-heading font-semibold">
+                <h3 id="summary-title" className="flex items-center gap-2 t-heading font-bold">
                   <Waves className="size-4 shrink-0 text-accent" aria-hidden />
                   Land underwater
                 </h3>
@@ -178,20 +178,6 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
         )}
 
       </div>
-
-      {/* Pinned footer: always at the bottom of the panel, however much content is above it. */}
-      {manifestState.status === 'ready' && (
-        <div className="shrink-0 border-t border-line px-5 py-3">
-          <button
-            type="button"
-            onClick={() => dispatch({ type: 'openDialog', dialog: 'about' })}
-            className="flex w-full items-center justify-between text-left t-label text-accent hover:text-accent-strong"
-          >
-            What this map can and can’t tell you
-            <ArrowRight className="size-4" aria-hidden />
-          </button>
-        </div>
-      )}
     </div>
   )
 }

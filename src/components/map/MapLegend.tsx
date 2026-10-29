@@ -25,7 +25,7 @@ interface Props {
 export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuildings, showStudyArea, highlightFt, onHighlight, defaultOpen = true }: Props) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <section aria-label="Map legend" className="pointer-events-auto glass w-52 overflow-hidden rounded-[14px] border border-white/80">
+    <section aria-label="Map legend" className="pointer-events-auto w-52 overflow-hidden rounded border border-line bg-surface/95 shadow-float backdrop-blur-sm">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -40,7 +40,7 @@ export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuil
         <div className="border-t border-line px-3 pt-2 pb-3">
           {showFlood && bands.length > 0 && (
             <>
-              <p className="t-overline mb-1">Water first reaches</p>
+              <p className="t-overline mb-1 text-[11px] font-medium tracking-[0.06em]">Water first reaches</p>
               <ul className="mb-2" onMouseLeave={() => onHighlight(null)}>
                 {bands.map((b) => {
                   // Levels above the slider aren't drawn yet, so there's nothing to spotlight.
