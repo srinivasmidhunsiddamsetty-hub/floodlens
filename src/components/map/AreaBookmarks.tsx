@@ -23,10 +23,10 @@ export function AreaBookmarks({ onGo, active }: Props) {
             type="button"
             onClick={() => onGo(a.id, a.center)}
             aria-current={on ? 'location' : undefined}
-            className={`shrink-0 rounded-full bg-surface text-[12px] leading-5 font-medium transition-colors sm:text-[13px] ${
+            className={`glass shrink-0 rounded-full text-[12px] leading-5 font-medium transition-colors sm:text-[13px] ${
               on
                 ? 'border-2 border-accent px-[11px] py-[5px] text-accent sm:px-[15px]'
-                : 'border border-line-strong px-3 py-1.5 text-fg hover:border-accent hover:text-accent sm:px-4'
+                : 'border border-white/80 px-3 py-1.5 text-fg hover:border-accent hover:text-accent sm:px-4'
             }`}
           >
             {a.label}

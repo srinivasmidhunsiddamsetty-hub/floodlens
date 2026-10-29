@@ -23,7 +23,8 @@ describe('format', () => {
 
   it('formats small areas, percentages and coordinates', () => {
     expect(formatSmallArea(1234.4)).toBe('1,234 m²')
-    expect(formatSmallArea(52_000)).toBe('0.052 km²')
+    // Large buildings stay in m², never km².
+    expect(formatSmallArea(11_420.6)).toBe('11,421 m²')
     expect(formatPercent(0.0004)).toBe('<0.1%')
     expect(formatPercent(0.598)).toBe('60%')
     expect(formatCoord(-80.1342, 25.7811)).toBe('25.78110° N, 80.13420° W')

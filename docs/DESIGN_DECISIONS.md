@@ -22,7 +22,7 @@ background → land cover / land use → [NOAA extent · comparison · low-lying
 - **Buildings:** extrusions in 3D, translucent footprints and outlines in 2D, so overlays under buildings stay visible from above.
 - **Labels** stay above every overlay and use a white halo for legibility on the blue bands.
 - **Map controls live in the map** (top-right): zoom, compass / show all of Miami Beach, then 2D/3D. The full-extent control uses a frame (focus) icon, not a house: it fits the whole city into view rather than going "home".
-- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. They're flat (white, 1 px border, no shadow or tint). The chip you pick turns accent blue with a 2 px border straight away, not when the camera arrives; panning by hand hands the highlight back to "nearest area when zoomed in" (by distance to its bookmark, since the areas have no official boundary). A 16 px map gutter is shared with the map controls and legend.
+- **Area chips** (top-left) fly to South Beach, Mid-Beach and North Beach and keep 2D/3D. They're frosted glass (88% white, blurred map behind, a soft shadow; v0.25; flat white with a 1 px border before). The chip you pick turns accent blue with a 2 px border straight away, not when the camera arrives; panning by hand hands the highlight back to "nearest area when zoomed in" (by distance to its bookmark, since the areas have no official boundary). A 16 px map gutter is shared with the map controls and legend.
 - **Bottom edge:** attribution runs along the very bottom with the scale bar above it on the right, and the legend sits above both on the left, so the three never overlap. Below 1024 px the controls lift above the insights sheet.
 - **The opening view fits the city** to the viewport in Web Mercator (tilted 40°, looking north-north-west), accounting for the mobile bottom sheet. Camera controls act on the map, so they belong on it (ArcGIS, komoot, Google Maps). The header keeps only app-level actions (about, sources).
 - **Selection highlight** is drawn 0.4 m wider and 0.6 m taller than the clicked building. Coincident faces z-fight (flicker) while zooming.
@@ -72,10 +72,10 @@ v0.4–v0.10 drew a house on rising streams of water instead. v0.11 put the answ
 | Buildings | sandstone `#f0e6d6` → `#e3d3bb` by height | A light, warm stone colour (a nod to Miami Beach's Art Deco stucco): the complementary hue to the blue ramp, so buildings read clearly on every band without the heaviness of grey |
 | Low-lying (unconnected) | `#6b35aa`, diagonal hatch + dashed outline | Pattern carries the meaning without colour |
 | Selection | vermilion `#e8452c` building / ring, outline `#9e2410` | A colour no data layer uses, so the selection is unmistakable; the card's icon repeats it to link card and map. Chosen in v0.20 from four measured options: its worst-case OKLab ΔE against every map colour (water, all six flood blues, buildings, land, parks, low spots, roads) is 21 for normal and colour-blind vision. Orange, before, was 18; magenta collapsed to 8 against the +3 ft blue for protanopia |
-| Panels | canvas `#f3f3f3`, white tiles with a `#e0e0e0` border, stat tiles `#f3f6fa` | Both side panels sit on a light grey canvas so their contents read as cards (v0.20). The two figures in the area tile each get a soft filled stat tile with no border, so the borders don't nest |
+| Panels | canvas `#f1f3f6`, white cards with a faint ring and soft shadow (no border), stat tiles `#f3f6fa` | Both side panels sit on a light grey canvas so their contents read as cards (v0.20); the hard borders gave way to soft shadows in v0.25, for a calmer, more premium finish. The two figures in the area tile each get a soft filled stat tile with no border, so the borders don't nest |
 | Study area | dashed `#3d4655`; outside washed with 50% white | Reads as a boundary, not data |
 | UI accent | `#0069b0` (Esri/Calcite-style blue) | Interaction, focus, selected states; 5.0–5.8:1 on all surfaces |
-| UI surfaces | white panels, `#f3f3f3` canvas, `#e0e0e0` borders | Calcite-like light chrome |
+| UI surfaces | white panels, `#f1f3f6` canvas, frosted glass over the map (88% white) | Calcite-like light chrome. On glass, secondary text is `#575757` so it keeps 4.5:1 over the darkest flood blue; *reduce transparency* makes it solid |
 
 Map and UI colours live in `src/lib/theme.ts` and the CSS tokens in `src/styles/index.css`. Legend swatches render from the same values.
 
@@ -91,7 +91,9 @@ Map and UI colours live in `src/lib/theme.ts` and the CSS tokens in `src/styles/
 
 Map labels stay in **Roboto** (Regular, Medium and Italic SDF glyphs self-hosted in `public/fonts/`, because OpenFreeMap only serves Noto Sans). MapLibre needs fonts converted to SDF glyph files, and Satoshi's licence doesn't allow format conversion. Roboto's open shapes also hold up better at 10–12 px over a busy map.
 
-Type scale (classes in `src/styles/index.css`): `t-display` 36/500 (sea level) · `t-metric` 28/500 (headline number) · `t-title` 16/500 (panel titles) · `t-heading` 14/500 · `t-label` 13/500 · `t-body` 13/400 · `t-caption` 12/400 · `t-overline` 11/500 uppercase. Tabular numerals for all quantities.
+Type scale (classes in `src/styles/index.css`): `t-display` 36/700 (sea level) · `t-metric` 28/500 (headline number) · `t-title` 16/500 (the wordmark and panel titles are bold) · `t-heading` 14/700 · `t-label` 13/500 · `t-body` 13/400 · `t-caption` 12/400 · `t-overline` 10.5/700 uppercase, 0.09em tracking. Tabular numerals for all quantities.
+
+**Bolder hierarchy (v0.25).** Titles and the key numbers (the sea level, the card's answer and the two figures) are bold with tighter tracking (−0.03em on large numbers), so the eye lands on them first. Body text stays regular, so bold keeps its meaning. Satoshi has no semibold, so 600 already rendered as bold.
 
 ## Engineering
 

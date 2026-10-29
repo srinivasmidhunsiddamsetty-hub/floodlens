@@ -25,7 +25,7 @@ interface Props {
 export function MapLegend({ bands, scenarioFt, showFlood, showLowLying, showBuildings, showStudyArea, highlightFt, onHighlight, defaultOpen = true }: Props) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <section aria-label="Map legend" className="pointer-events-auto w-52 overflow-hidden rounded border border-line bg-surface/95 shadow-float backdrop-blur-sm">
+    <section aria-label="Map legend" className="pointer-events-auto glass w-52 overflow-hidden rounded-[14px] border border-white/80">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

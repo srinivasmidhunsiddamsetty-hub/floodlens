@@ -46,7 +46,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
       onClear={() => dispatch({ type: 'select', selection: null })}
     />
   ) : manifestState.status === 'ready' ? (
-    <div className="flex items-center gap-3 rounded-xl border border-dashed border-line-strong bg-surface px-4 py-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-dashed border-[#d3d9e2] bg-surface px-4 py-3">
       <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#fdebe7] text-[#d03a22]" aria-hidden>
         <MousePointerClick className="size-4" />
       </span>
@@ -56,7 +56,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
     </div>
   ) : null
 
-  // A light grey canvas, so the white card and tile read as cards (v0.20).
+  // A light grey canvas, so the white card and tile read as cards (v0.20); soft shadows, not borders (v0.25).
   return (
     <div className="flex h-full flex-col bg-canvas">
       {/* No visible title: the card and the block headers already say what this is,
@@ -86,7 +86,7 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
           <>
             {/* One tile for everything the km² / acres switch controls: the figures at the
                 chosen level, then every level in the chart, with what each foot adds. */}
-            <section aria-labelledby="summary-title" className="mt-2.5 rounded-xl border border-line bg-surface px-3 pt-3 pb-1.5">
+            <section aria-labelledby="summary-title" className="card mt-2.5 px-3 pt-3 pb-1.5">
               <div className="flex items-center justify-between gap-3">
                 <h3 id="summary-title" className="flex items-center gap-2 t-heading font-semibold">
                   <Waves className="size-4 shrink-0 text-accent" aria-hidden />
@@ -104,14 +104,14 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
                   <div className="flex flex-col-reverse rounded-lg bg-[#f3f6fa] px-3 py-2.5">
                     <dt className="t-caption">at {formatScenario(s.feet)}</dt>
                     <dd className="flex items-baseline gap-1">
-                      <span className="text-[24px] leading-7 font-medium tracking-tight text-fg tabular">{formatArea(s.beyondBaselineM2, unit)}</span>
+                      <span className="text-[24px] leading-7 font-bold tracking-[-0.03em] text-fg tabular">{formatArea(s.beyondBaselineM2, unit)}</span>
                       <span className="text-[13px] text-fg-muted">{unitShort}</span>
                     </dd>
                   </div>
                   {landM2 ? (
                     <div className="flex flex-col-reverse rounded-lg bg-[#f3f6fa] px-3 py-2.5">
                       <dt className="t-caption">of the city’s land</dt>
-                      <dd className="text-[24px] leading-7 font-medium tracking-tight text-fg tabular">
+                      <dd className="text-[24px] leading-7 font-bold tracking-[-0.03em] text-fg tabular">
                         {formatPercent(s.beyondBaselineM2 / landM2, true)}
                       </dd>
                     </div>

@@ -17,7 +17,7 @@ interface Props {
 
 function Group({ children, label }: { children: ReactNode; label: string }) {
   return (
-    <div role="group" aria-label={label} className="flex flex-col overflow-hidden rounded border border-line bg-surface shadow-panel">
+    <div role="group" aria-label={label} className="glass flex flex-col overflow-hidden rounded-xl border border-white/80">
       {children}
     </div>
   )

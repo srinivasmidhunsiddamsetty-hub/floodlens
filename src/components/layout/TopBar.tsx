@@ -11,7 +11,7 @@ interface Props {
 export function TopBar({ isDesktop, controlsOpen }: Props) {
   const dispatch = useAppDispatch()
   return (
-    <header className="relative z-30 flex h-14 shrink-0 items-center gap-3 border-b border-line bg-surface px-3 sm:px-4">
+    <header className="relative z-30 flex h-14 shrink-0 items-center gap-3 bg-surface px-3 shadow-[var(--shadow-header)] sm:px-4">
       {!isDesktop && (
         <button
           type="button"
@@ -27,7 +27,7 @@ export function TopBar({ isDesktop, controlsOpen }: Props) {
 
       <div className="flex min-w-0 items-center gap-2.5">
         <BrandMark size={30} />
-        <h1 className="t-title">FloodLens</h1>
+        <h1 className="t-title font-bold tracking-[-0.015em]">FloodLens</h1>
       </div>
 
       <div className="mx-1 hidden h-5 w-px bg-line md:block" aria-hidden />

@@ -28,8 +28,20 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.22 | 28 Oct 2026 | Clearer (i) note, level track without circles | [`docs/versions/v0.22/`](docs/versions/v0.22/) |
 | v0.23 | 28 Oct 2026 | Smaller level labels in the card's track | [`docs/versions/v0.23/`](docs/versions/v0.23/) |
 | v0.24 | 28 Oct 2026 | Smaller x-axis labels in the chart | [`docs/versions/v0.24/`](docs/versions/v0.24/) |
+| v0.25 | 28 Oct 2026 | Building areas in m², soft depth and glass, bolder type | [`docs/versions/v0.25/`](docs/versions/v0.25/) |
 
 ---
+
+## v0.25: Building areas in m², a more premium finish (28 Oct 2026)
+
+- **Building areas are always in m².** A footprint of 10,000 m² or more used to switch to km² ("≈ 0.011 km²"), unlike every other building. Footprints, and the low part of a footprint, now always read in m² ("≈ 11,421 m²").
+- **Premium finish.** Four directions were previewed as before/after images (soft depth and glass, bolder type, map lighting, navy header). Two were chosen:
+  - **Soft depth and glass:** the panel cards lose their hard border for a faint ring and a soft shadow, with 16 px corners. The canvas is a cooler grey (`#f1f3f6`). The area chips, legend and map controls are frosted glass over the map. The header has a soft shadow instead of a line.
+  - **Bolder type:** the wordmark, the panel titles ("Sea level", "On the map"), the sea level (+2 ft), the answer (+3 ft) and the two figures are bold with tighter tracking. Overlines ("Water reaches at") are bold with wider spacing. Sizes and wording are unchanged.
+  - Map lighting and the navy header weren't chosen. Their previews are kept in the version folder.
+- **Contrast on glass:** the glass is 88% white, so accent text keeps 4.5:1 even over the darkest flood blue. Secondary text on glass is a step darker (`#575757`, 5.7:1 in that worst case). With *reduce transparency* on, the glass turns solid white.
+- New screenshots `11`–`14`: the four before/after previews.
+- Tests: 101 unit/component tests and 17 end-to-end tests.
 
 ## v0.24: Smaller chart axis labels (28 Oct 2026)
 

@@ -25,8 +25,8 @@ export function ControlPanel({ manifest }: Props) {
   return (
     // Each section on its own white tile over the grey canvas, matching the Insights panel (v0.20).
     <div className="scrollbar-thin flex h-full flex-col gap-3 overflow-y-auto bg-canvas p-3">
-      <section aria-labelledby="sec-level" className="rounded-xl border border-line bg-surface p-4">
-        <h2 id="sec-level" className="t-title mb-3">
+      <section aria-labelledby="sec-level" className="card p-4">
+        <h2 id="sec-level" className="t-title mb-3 text-[15px] font-bold tracking-[-0.01em]">
           Sea level
         </h2>
         <ScenarioSelector
@@ -37,8 +37,8 @@ export function ControlPanel({ manifest }: Props) {
         />
       </section>
 
-      <section aria-labelledby="sec-layers" className="rounded-xl border border-line bg-surface p-4">
-        <h2 id="sec-layers" className="t-title mb-2">
+      <section aria-labelledby="sec-layers" className="card p-4">
+        <h2 id="sec-layers" className="t-title mb-2 text-[15px] font-bold tracking-[-0.01em]">
           On the map
         </h2>
         {LAYERS.filter((l) => !l.needsLowLying || hasLowLying).map((l) => (
