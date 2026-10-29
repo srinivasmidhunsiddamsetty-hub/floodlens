@@ -5,6 +5,9 @@
 import { test } from '@playwright/test'
 import { waitForMap } from './helpers'
 
+/** The +2 ft band's colour (src/lib/theme.ts BAND_COLORS[2]). */
+const BAND_2FT = '#3d80d2'
+
 const OUT = process.env.SCREENSHOT_DIR ?? 'docs/screenshots'
 
 test.describe('screenshots', () => {
@@ -16,11 +19,11 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // The top level (+5 ft) with the +2 ft band spotlighted from the map legend
+    // The top level (+5 ft) with the +2 ft band spotlighted from the chart (its slice of the +5 ft bar)
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
-    await page.getByRole('region', { name: 'Map legend' }).getByRole('button', { name: '+2 ft' }).hover()
+    await page.locator('g.bar').last().locator(`rect.seg[fill="${BAND_2FT}"]`).hover()
     await page.waitForTimeout(600)
     await page.screenshot({ path: `${OUT}/02-bands-5ft-spotlight-2ft.png` })
     await page.mouse.move(700, 120)

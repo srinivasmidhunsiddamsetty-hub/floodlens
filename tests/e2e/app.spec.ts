@@ -31,7 +31,10 @@ test.describe('FloodLens — core flows', () => {
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('7.43')
-    await expect(page.getByRole('region', { name: 'Map legend' }).getByRole('button', { name: '+3 ft' })).toBeEnabled()
+    // The legend is a plain key: every level listed, none of them a button.
+    const legendBox = page.getByRole('region', { name: 'Map legend' })
+    await expect(legendBox.getByText('+3 ft', { exact: true })).toBeVisible()
+    await expect(legendBox.getByRole('button')).toHaveCount(1)
 
     await page.keyboard.press('Home')
     await expect(slider).toHaveAttribute('aria-valuetext', 'Current MHHW (0 ft)')

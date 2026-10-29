@@ -25,7 +25,7 @@ export default function App() {
   const manifest = manifestState.manifest
   const mapData = useMapData(manifest, state)
   const inspection = useInspection(state.selection, manifest, state.scenarioFt)
-  /** Water level spotlighted on the map while hovering the chart, breakdown or legend. */
+  /** Water level spotlighted on the map while hovering the chart or its "adds" row. */
   const [highlightFt, setHighlightFt] = useState<number | null>(null)
   const insightsWidth = usePanelWidth('floodlens.insightsWidth', INSIGHTS_WIDTH)
 
@@ -115,13 +115,10 @@ export default function App() {
               key={isDesktop ? 'd' : 'm'}
               defaultOpen={isDesktop}
               bands={mapData.bands}
-              scenarioFt={state.scenarioFt}
               showFlood={state.layers.inundation}
               showLowLying={state.layers.lowLying}
               showBuildings={state.layers.buildings}
               showStudyArea={state.layers.studyArea}
-              highlightFt={highlightFt}
-              onHighlight={setHighlightFt}
             />
           </div>
 

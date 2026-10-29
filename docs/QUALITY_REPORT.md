@@ -41,6 +41,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Building areas always in m²; soft-shadow cards, frosted map controls and bolder type, with text on glass checked at 4.5:1 or better over the darkest flood blue (v0.25).
 - The earlier solid legend back, the bottom link removed, bold card and tile titles, card facts at 16 px (labels) and 20 px (values), and no chart-title icon (v0.26).
 - Insights cards floating over a padded map at 380 px, solid area chips that toggle back to the whole city, and card labels (including "Water reaches at") at 14 px medium (v0.27).
+- A static legend: the levels are a plain key, not hover buttons (v0.28).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -56,7 +57,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **12 files, 101 tests passed** |
+| Unit and component tests | `npm test` | **12 files, 102 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (16 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
 | Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |

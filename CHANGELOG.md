@@ -31,8 +31,17 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.25 | 28 Oct 2026 | Building areas in m², soft depth and glass, bolder type | [`docs/versions/v0.25/`](docs/versions/v0.25/) |
 | v0.26 | 28 Oct 2026 | Earlier legend back, no bottom link, larger card facts | [`docs/versions/v0.26/`](docs/versions/v0.26/) |
 | v0.27 | 28 Oct 2026 | Insights cards float over the map at 380 px; solid area chips that toggle | [`docs/versions/v0.27/`](docs/versions/v0.27/) |
+| v0.28 | 28 Oct 2026 | A static legend | [`docs/versions/v0.28/`](docs/versions/v0.28/) |
 
 ---
+
+## v0.28: A static legend (28 Oct 2026)
+
+- **The legend is a plain key.** Each level used to be a hidden button: hovering or tabbing to it faded the other flood levels on the map. Levels above the slider were switched off, since they aren't drawn yet. So the rows looked selectable, did nothing on click, and half of them silently didn't respond. Now they only say what each colour means.
+- Spotlighting a level is still there, on the chart (hover a bar or a slice of one) and on its "+N ft adds" row.
+- Keyboard users no longer tab through up to six legend rows; the only legend control is its open/close header.
+- Screenshot `02` now spotlights +2 ft from the chart (its slice of the +5 ft bar) instead of the legend.
+- Tests: 102 unit/component tests (new: the legend levels aren't buttons) and 17 end-to-end tests.
 
 ## v0.27: Floating Insights cards, toggling area chips (28 Oct 2026)
 
