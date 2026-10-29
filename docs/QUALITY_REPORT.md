@@ -37,6 +37,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The sea-level (i) note cut to two lines, so the left panel no longer scrolls when it's open, even at 1440×800 (v0.21).
 - The note rewritten without "steps", and the circles removed from the card's level track (v0.22).
 - The level track's labels down to 10 px (v0.23).
+- The chart's x-axis labels down to 10 px, matching the track (v0.24).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

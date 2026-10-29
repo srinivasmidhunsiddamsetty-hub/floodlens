@@ -27,8 +27,16 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.21 | 28 Oct 2026 | Two-line sea-level (i) note | [`docs/versions/v0.21/`](docs/versions/v0.21/) |
 | v0.22 | 28 Oct 2026 | Clearer (i) note, level track without circles | [`docs/versions/v0.22/`](docs/versions/v0.22/) |
 | v0.23 | 28 Oct 2026 | Smaller level labels in the card's track | [`docs/versions/v0.23/`](docs/versions/v0.23/) |
+| v0.24 | 28 Oct 2026 | Smaller x-axis labels in the chart | [`docs/versions/v0.24/`](docs/versions/v0.24/) |
 
 ---
+
+## v0.24: Smaller chart axis labels (28 Oct 2026)
+
+- **The chart's x-axis labels** (Today, +1 ft … +5 ft) are 10 px instead of 11 px, to match the card's level track. The selected level's label stays bold.
+- The y-axis numbers and the values above the bars are unchanged at 11 px.
+- New screenshot `11-chart-axis-labels.png` (the area tile at 2×).
+- Tests: 101 unit/component tests and 17 end-to-end tests.
 
 ## v0.23: Smaller track labels (28 Oct 2026)
 

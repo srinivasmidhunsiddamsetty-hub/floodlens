@@ -140,7 +140,7 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
       .call((g) =>
         g
           .selectAll<SVGTextElement, number>('.tick text')
-          .attr('font-size', 11)
+          .attr('font-size', 10)
           .attr('font-weight', (d) => (d === selectedFt ? 600 : 400))
           .attr('fill', (d) => (d === selectedFt ? colors.chartLabel : colors.chartAxis)),
       )
