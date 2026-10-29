@@ -52,13 +52,13 @@ The voice, rules and a before/after table are in [UX_WRITING.md](UX_WRITING.md):
 
 The selected-place card leads with the answer, emphasised, in a light-blue block. The layout takes cues from a reference the designer supplied, but the wording stays FloodLens's own:
 - **Answer:** "WATER REACHES AT" on the left and **+3 ft** (24 px, black) on the right of the same row (v0.15), like the facts below it. The other answers are "Today" and "Not up to +5 ft"; the last is too wide for the row, so it wraps under the label. No number in the panel is blue: blue is kept for links and selection outlines.
-- **Box size:** the box is 277 × 92 px in the default 344 px pane (v0.16); it was 277 × 140 px in v0.14 and 277 × 104 px in v0.15. The rows from top to bottom: 8 px padding, the 32 px answer row, a 4 px gap, the 18 px water band, a 6 px gap, 16 px pin labels and 6 px padding. The 6 px above the pin labels can't shrink further: the larger blue pin would run into its label.
+- **Box size:** the box is 277 × 90 px in the default 344 px pane (v0.23; 92 px in v0.16–v0.22); it was 277 × 140 px in v0.14 and 277 × 104 px in v0.15. The rows from top to bottom: 8 px padding, the 32 px answer row, a 4 px gap, the 18 px water band, a 6 px gap, 16 px pin labels and 6 px padding. The 6 px above the pin labels can't shrink further: the larger blue pin would run into its label.
 - **Level track:** below the answer (see below).
 - **Facts:** Height, Footprint and Low spot follow in one column. Height and footprint always show, with "—" when the click isn't on a building (v0.13); before, those rows disappeared for open ground and water.
 - **Position:** a chip with the position. The distance to the street was dropped in v0.12: the title already names the street, and the distance says nothing about water.
 
 The **level track** works like this:
-- **Labels:** each sea level is labelled along a baseline, with no circles (v0.22). The first level that reaches the place has a bold label.
+- **Labels:** each sea level is labelled along a baseline in 10 px type, with no circles (v0.22–v0.23). The first level that reaches the place has a bold label.
 - **Water:** a light-blue band rises in a gentle S from the left and stops at the first level that reaches the place. A dashed line, topped by a small dot, drops from its surface to the baseline at that level. When no level reaches the place, the water runs to the end with no marker.
 - **Schematic:** the shape is not a depth, so it's hidden from screen readers; the pins are a list that says, for each level, whether water reaches the place.
 

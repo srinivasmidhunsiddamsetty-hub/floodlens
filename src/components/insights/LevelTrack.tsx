@@ -82,7 +82,7 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
         {levels.map((l, i) => {
           return (
             <li key={l.feet} className="flex flex-col">
-              <span className={`text-[12px] leading-4 tabular ${i === first ? 'font-semibold text-fg' : 'font-medium text-fg'}`}>
+              <span className={`text-[10px] leading-[14px] tabular ${i === first ? 'font-semibold text-fg' : 'font-medium text-fg'}`}>
                 {levelName(l.feet)}
                 {l.feet === scenarioFt && <span className="sr-only"> (selected level)</span>}
               </span>

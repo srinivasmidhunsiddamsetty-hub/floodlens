@@ -26,8 +26,16 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.20 | 28 Oct 2026 | Vermilion selection, stat tiles, grey canvas, tiled left panel, rounded bars | [`docs/versions/v0.20/`](docs/versions/v0.20/) |
 | v0.21 | 28 Oct 2026 | Two-line sea-level (i) note | [`docs/versions/v0.21/`](docs/versions/v0.21/) |
 | v0.22 | 28 Oct 2026 | Clearer (i) note, level track without circles | [`docs/versions/v0.22/`](docs/versions/v0.22/) |
+| v0.23 | 28 Oct 2026 | Smaller level labels in the card's track | [`docs/versions/v0.23/`](docs/versions/v0.23/) |
 
 ---
+
+## v0.23: Smaller track labels (28 Oct 2026)
+
+- **The level labels under the card's water track** (Today, +1 ft … +5 ft) are 10 px instead of 12 px, with a 14 px line. The first level that reaches the place stays bold. The box is now 277 × 90 px.
+- The chart's own axis labels are unchanged at 11 px.
+- New screenshot `11-level-track-labels.png`.
+- Tests: 101 unit/component tests and 17 end-to-end tests.
 
 ## v0.22: Plainer note, cleaner track (28 Oct 2026)
 
