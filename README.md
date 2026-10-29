@@ -2,7 +2,7 @@
 
 **See the coastline. Understand the exposure.**
 
-FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation scenarios across the City of Miami Beach, Florida. It brings scenario selection, mapped inundation extents, the built environment, scenario comparison and plain-language data caveats together on one screen, so a resilience planner can screen geographic exposure without opening desktop GIS software.
+FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation scenarios across the City of Miami Beach, Florida. It brings scenario selection, mapped inundation extents, the built environment, what each foot of rise adds and plain-language data caveats together on one screen, so a resilience planner can screen geographic exposure without opening desktop GIS software.
 
 > Independent product design and engineering portfolio concept. Not affiliated with, sponsored by, or endorsed by NOAA, Esri, OpenFreeMap, OpenMapTiles, OpenStreetMap or the City of Miami Beach.
 
@@ -24,8 +24,8 @@ Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md)
 - **Flood bands by water level.** Each area is coloured by the level at which NOAA's mapped extent first reaches it, in one blue hue that darkens as the water rises (light blue = today's high tide, dark navy = +5 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a bar in the chart, or its "adds" row, to spotlight a level; the legend is a plain key.
 - **In-map controls.** Zoom, compass, **Show all of Miami Beach** (fits the whole city back into view) and 2D/3D sit together inside the map, ArcGIS-style. Tilting the map by hand keeps 2D/3D in sync.
 - **Area chips.** South Beach, Mid-Beach and North Beach chips (top-left) fly the camera along the 12.6 km city, keeping the current 2D/3D mode. The chip you pick fills with the accent straight away, and clicking it again shows the whole city; when you pan by hand, the nearest area's chip takes over. The named areas are camera positions only; no statistics are invented for these unofficial areas.
-- **Insights.** A headline number (land underwater at the chosen level, and as a share of the city's Census land area), a stacked D3 chart of land underwater by sea level, what the selected foot adds, and the low spots cut off from the sea. A km² / acres switch shows every figure in one unit, remembered in the browser, with tooltips, keyboard focus and a screen-reader table.
-- **Building and location inspection.** Click any building (3D-accurate picking) or place, or focus the map and press Enter. A card leads with the first water level that reaches it, in large type, over a track of every level (water rises and stops, with a dashed marker, at the first level that reaches it). Then OSM height, footprint and whether it sits in a low spot, in one column, and a button to copy its coordinates. If the slider is below that level, one click shows it on the map. Esc clears it.
+- **Insights.** A headline number (land underwater at the chosen level, and as a share of the city's Census land area), a stacked D3 chart of land underwater by sea level, what the selected foot adds, and (while their layer is on) the low spots cut off from the sea. A km² / acres switch shows every figure in one unit, remembered in the browser, with tooltips, keyboard focus and a screen-reader table.
+- **Building and location inspection.** Click any building (3D-accurate picking) or place, or focus the map and press Enter. A card leads with the first water level that reaches it, in large type, over a track of every level (water rises and stops, with a dashed marker, at the first level that reaches it). Then OSM height, footprint (always in m²) and whether it sits in a low spot, and from which level, in one column. When none of the mapped levels reach it, the card says "Up to +5 ft · Doesn't reach it". Esc clears it.
 - **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate purple-hatched layer and are never merged with ocean-connected extents.
 - **City limits layer.** The dashed city boundary and the dimmed area outside it can be turned off for a clean map.
 - **Honest states.** Loading, missing-file and missing-manifest states are explicit. If data are unavailable, FloodLens shows nothing rather than an estimate.
@@ -83,7 +83,7 @@ src/
     ui/           Switch, Segmented, Dialog, Swatch, ResizeHandle
   hooks/          useManifest, useCollection, useMapData, useInspection, useMediaQuery, usePanelWidth
   lib/            manifest parsing, GeoJSON loading, geo maths, map style + layers, formatting, theme
-  state/          reducer + context (scenario, layers, view mode, comparison, selection)
+  state/          reducer + context (sea level, layers, view mode, selection, area unit, panels)
   types/          data-manifest types
 scripts/          prepare_noaa_slr.py (+ requirements.txt)
 public/data/noaa/ processed GeoJSON + manifest.json
