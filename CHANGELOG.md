@@ -24,8 +24,18 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.18 | 28 Oct 2026 | Legend shows every level's true colour | [`docs/versions/v0.18/`](docs/versions/v0.18/) |
 | v0.19 | 28 Oct 2026 | One "adds" row for the selected level | [`docs/versions/v0.19/`](docs/versions/v0.19/) |
 | v0.20 | 28 Oct 2026 | Vermilion selection, stat tiles, grey canvas, tiled left panel, rounded bars | [`docs/versions/v0.20/`](docs/versions/v0.20/) |
+| v0.21 | 28 Oct 2026 | Two-line sea-level (i) note | [`docs/versions/v0.21/`](docs/versions/v0.21/) |
 
 ---
+
+## v0.21: A shorter note (28 Oct 2026)
+
+- **The sea-level (i) note is now two lines:** "Steps are feet of rise above today's high tide, not dates."
+  - Before, it ran to about seven lines (230 characters), and opening it made the left panel scroll by 82 px at 1440×800.
+  - The box is now 50 px tall instead of 146, with tighter padding, and the panel fits at 800 and 900 px tall.
+  - The technical name, Mean Higher High Water, is still explained in "About the data".
+- New screenshot `11-sea-level-info-open.png` shows the note open.
+- Tests: 101 unit/component tests (the info test now checks the note stays short) and 17 end-to-end tests.
 
 ## v0.20: Polish (28 Oct 2026)
 

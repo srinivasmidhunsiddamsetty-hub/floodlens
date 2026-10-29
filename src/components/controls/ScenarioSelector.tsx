@@ -93,10 +93,10 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
       </div>
 
       {showInfo && (
-        <p id={`${id}-info`} className="mt-3 rounded border border-line bg-surface-2 p-3 t-caption leading-5 text-fg-muted animate-slide-up">
-          Each step adds a foot of sea level on top of today’s high tide. Scientists call that line{' '}
-          <span className="text-fg">Mean Higher High Water</span>: the average of the higher of each day’s two high tides. These are
-          amounts of rise, not dates.
+        // Two lines at most, so opening it never makes the panel scroll. The technical name
+        // (Mean Higher High Water) is explained in "About the data".
+        <p id={`${id}-info`} className="mt-2 rounded border border-line bg-surface-2 px-2.5 py-2 t-caption text-fg-muted animate-slide-up">
+          Steps are feet of rise above today’s high tide, not dates.
         </p>
       )}
 

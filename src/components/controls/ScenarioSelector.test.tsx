@@ -47,13 +47,15 @@ describe('<ScenarioSelector>', () => {
     expect(onChange).toHaveBeenCalledWith(1)
   })
 
-  it('reveals the MHHW explanation on demand', async () => {
+  it('reveals a short explanation of the levels on demand', async () => {
     render(<Harness />)
     const btn = screen.getByRole('button', { name: /what do these levels mean/i })
     expect(btn).toHaveAttribute('aria-expanded', 'false')
     await userEvent.click(btn)
     expect(btn).toHaveAttribute('aria-expanded', 'true')
-    expect(screen.getByText(/Mean Higher High Water/)).toBeInTheDocument()
+    const info = screen.getByText('Steps are feet of rise above today’s high tide, not dates.')
+    // Two lines at most in the panel, so opening it never makes the panel scroll.
+    expect(info.textContent!.length).toBeLessThanOrEqual(70)
   })
 
   it('plays the rise from today to the top level, then stops', () => {

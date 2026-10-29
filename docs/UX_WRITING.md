@@ -15,7 +15,7 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 ## Rules
 
 1. **Lead with what it means for a person.** "Land underwater at +2 ft", not "Area flooded beyond today's high tide (MHHW)".
-2. **Swap jargon for everyday words.** Keep the technical term once, where it's explained (the (i) panel and "About the data"): MHHW, inundation extent, hydrologic connectivity.
+2. **Swap jargon for everyday words.** Keep the technical term once, where it's explained ("About the data"): MHHW, inundation extent, hydrologic connectivity. The (i) note under the sea level stays to two lines (v0.21), so opening it never makes the panel scroll.
 3. **Never promise safety or predict damage.** Water reaching a building on NOAA's map isn't a flood forecast, and not reaching it doesn't mean "safe". So: "water reaches it", "not by +3 ft".
 4. **Sentence case, short labels, no trailing full stops on single phrases.** Buttons say what happens: "Watch the water rise", "Show all of Miami Beach".
 5. **One name for one thing.** Sea level (the slider), high tide (today's baseline), "+2 ft" (a level), low spots (unconnected areas), city limits (the boundary).
@@ -139,3 +139,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Legend, levels above the slider | +4 ft · not shown (faded swatch, grey text) | +4 ft (true colour, no label) |
+
+## Before and after (v0.20 → v0.21)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Sea level (i) note | Each step adds a foot of sea level on top of today's high tide. Scientists call that line Mean Higher High Water: the average of the higher of each day's two high tides. These are amounts of rise, not dates. (230 characters, about 7 lines) | Steps are feet of rise above today's high tide, not dates. (58 characters, 2 lines) |
