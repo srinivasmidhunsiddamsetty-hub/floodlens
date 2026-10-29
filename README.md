@@ -2,6 +2,8 @@
 
 **See the coastline. Understand the exposure.**
 
+**Live:** [floodlens-five.vercel.app](https://floodlens-five.vercel.app)
+
 FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation scenarios across the City of Miami Beach, Florida. It brings scenario selection, mapped inundation extents, the built environment, what each foot of rise adds and plain-language data caveats together on one screen, so a resilience planner can screen geographic exposure without opening desktop GIS software.
 
 > Independent product design and engineering portfolio concept. Not affiliated with, sponsored by, or endorsed by NOAA, Esri, OpenFreeMap, OpenMapTiles, OpenStreetMap or the City of Miami Beach.
@@ -112,7 +114,7 @@ FloodLens is a static site with no backend or API keys.
 npm run build      # outputs dist/
 ```
 
-Upload `dist/` to any static host. Asset paths are relative (`base: './'`), so it also works from a sub-path such as GitHub Pages project sites. A `netlify.toml` is included. For other hosts, serve `dist/` with gzip/brotli enabled, because the GeoJSON compresses about 5×.
+The live site is on Vercel ([floodlens-five.vercel.app](https://floodlens-five.vercel.app)), deployed from `main` on every push; `vercel.json` sets the build and caching. Upload `dist/` to any other static host. Asset paths are relative (`base: './'`), so it also works from a sub-path such as GitHub Pages project sites. A `netlify.toml` is included. For other hosts, serve `dist/` with gzip/brotli enabled, because the GeoJSON compresses about 5×.
 
 Basemap tiles come from the public OpenFreeMap instance (free, no key). The map's credit line keeps the required OpenStreetMap and OpenMapTiles credits, plus OpenFreeMap, NOAA and the Census Bureau. For high-traffic deployments, consider self-hosting the tiles; OpenFreeMap publishes weekly planet downloads.
 
