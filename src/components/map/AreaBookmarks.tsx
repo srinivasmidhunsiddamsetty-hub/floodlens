@@ -16,7 +16,7 @@ interface Props {
  */
 export function AreaBookmarks({ onGo, onShowAll, active }: Props) {
   return (
-    <nav aria-label="Go to area" className="pointer-events-auto absolute top-4 left-4 z-10 flex max-w-[calc(100%-5.5rem)] items-center gap-1.5 overflow-x-auto sm:gap-2">
+    <nav aria-label="Go to area" className="absolute top-4 left-4 z-10 flex max-w-[calc(100%-5.5rem)] items-center gap-1.5 overflow-x-auto sm:gap-2">
       {AREA_BOOKMARKS.map((a) => {
         const on = active === a.id
         return (

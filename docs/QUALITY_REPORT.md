@@ -45,6 +45,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - A shorter map credit in a fixed order that folds into an (i) after the first drag, within the OSMF attribution guidelines (v0.29).
 - "Up to +5 ft · Doesn't reach it" for places none of the mapped levels reach (v0.30).
 - The low-spot area caption removed: it showed the whole low-spot polygon's area, not the building's part (a bug since v0.2) (v0.31).
+- The Insights cards docked in a panel again, matching the left side; the floating layout's map padding removed (v0.32).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

@@ -35,8 +35,16 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.29 | 29 Oct 2026 | A shorter map credit that folds into an (i) | [`docs/versions/v0.29/`](docs/versions/v0.29/) |
 | v0.30 | 29 Oct 2026 | "Up to +5 ft · Doesn't reach it" | [`docs/versions/v0.30/`](docs/versions/v0.30/) |
 | v0.31 | 29 Oct 2026 | Wrong low-spot area caption removed | [`docs/versions/v0.31/`](docs/versions/v0.31/) |
+| v0.32 | 30 Oct 2026 | Insights docked in a panel again, matching the left | [`docs/versions/v0.32/`](docs/versions/v0.32/) |
 
 ---
+
+## v0.32: Insights back in a panel (30 Oct 2026)
+
+- **The right side matches the left again:** the two Insights cards sit on the same grey panel as the left side's cards, docked beside the map. In v0.27–v0.31 they floated over the map with no panel behind them.
+- The map ends at the panel again, so the floating layout's extra code is gone: the camera padding, the overlay wrapper that kept chips and controls clear of the cards, and the moved scale bar and credit.
+- Kept from v0.27: the 380 px default width (still resizable, 300–560 px), the solid area chips that toggle, and the 14 px medium card labels.
+- Tests: 105 unit/component tests and 18 end-to-end tests.
 
 ## v0.31: Wrong low-spot caption removed (29 Oct 2026)
 

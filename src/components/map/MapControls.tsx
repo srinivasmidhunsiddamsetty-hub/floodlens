@@ -43,7 +43,7 @@ function Btn({ label, onClick, children, pressed }: { label: string; onClick: ()
 /** Map navigation in the ArcGIS/komoot pattern: zoom, orientation, full extent, then perspective. */
 export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOut, onResetNorth, onShowAll, onSetMode }: Props) {
   return (
-    <div className="pointer-events-auto absolute top-4 right-4 z-10 flex flex-col gap-2" data-pitch={Math.round(pitch)} data-bearing={Math.round(bearing)} data-zoom={zoom.toFixed(1)}>
+    <div className="absolute top-4 right-4 z-10 flex flex-col gap-2" data-pitch={Math.round(pitch)} data-bearing={Math.round(bearing)} data-zoom={zoom.toFixed(1)}>
       <Group label="Zoom">
         <Btn label="Zoom in" onClick={onZoomIn}>
           <Plus className="size-4" aria-hidden />

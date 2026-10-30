@@ -31,7 +31,7 @@ Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md)
 - **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate purple-hatched layer and are never merged with ocean-connected extents.
 - **City limits layer.** The dashed city boundary and the dimmed area outside it can be turned off for a clean map.
 - **Honest states.** Loading, missing-file and missing-manifest states are explicit. If data are unavailable, FloodLens shows nothing rather than an estimate.
-- **Responsive and accessible.** On desktop a docked left panel and Insights cards floating over the map (380 px by default; resizable by drag or arrow keys, 300–560 px, remembered per browser). Below 1024 px the controls become a drawer and the insights a bottom sheet. Keyboard operable throughout, with visible focus, reduced-motion support and text alternatives.
+- **Responsive and accessible.** On desktop two docked panels with cards on a grey canvas, Insights on the right (380 px by default; resizable by drag or arrow keys, 300–560 px, remembered per browser). Below 1024 px the controls become a drawer and the insights a bottom sheet. Keyboard operable throughout, with visible focus, reduced-motion support and text alternatives.
 
 ## Tech stack
 

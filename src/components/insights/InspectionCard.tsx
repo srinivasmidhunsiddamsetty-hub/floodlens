@@ -67,7 +67,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
   const Icon = building ? Building2 : onWater ? Waves : MapPin
 
   return (
-    <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
+    <section aria-labelledby="insp-title" className="card p-3 animate-slide-up">
       {/* What and where. The vermilion icon matches the selection on the map. */}
       <div className="flex items-start gap-2">
         <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d03a22]" aria-hidden />

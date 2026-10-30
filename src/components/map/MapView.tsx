@@ -3,7 +3,7 @@ import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import turfCentroid from '@turf/centroid'
 import type { LineString, MultiLineString, Position } from 'geojson'
 import maplibregl, { type MapGeoJSONFeature, type Map as MLMap, type PointLike, type StyleSpecification } from 'maplibre-gl'
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { expandFootprint, firstPrismHit, rejoinTileSplit, unionPieces, type Prism } from '../../lib/buildingPick'
 import { AREA_BOOKMARKS, BOOKMARK_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
 import { formatScenario } from '../../lib/format'
@@ -31,9 +31,6 @@ import { MapStatus } from './MapStatus'
 interface Props {
   data: MapData
   studyBbox: [number, number, number, number] | null
-  /** Width of the Insights cards floating over the right of the map (desktop), in px. The camera
-      is padded by it, so the city overview, fly-tos and "the middle of the map" use the uncovered part. */
-  rightInset?: number
   /** Water level (ft) to emphasise on the map, e.g. while hovering the chart or legend. */
   highlightFt: number | null
 }
@@ -182,9 +179,7 @@ function overviewCamera(map: MLMap, bbox: [number, number, number, number] | nul
   const pitch = mode === '3d' ? INITIAL_CAMERA.pitch : 0
   const bearing = mode === '3d' ? INITIAL_CAMERA.bearing : 0
   if (!bbox) return { ...INITIAL_CAMERA, pitch, bearing }
-  // Only the part of the map the floating cards don't cover.
-  const w = map.getContainer().clientWidth - (map.getPadding().right ?? 0)
-  const h = map.getContainer().clientHeight
+  const { clientWidth: w, clientHeight: h } = map.getContainer()
   const [west, south, east, north] = bbox
   const corners = [
     [west, south],
@@ -219,7 +214,7 @@ function overviewCamera(map: MLMap, bbox: [number, number, number, number] | nul
 
 type StudyFeature = Feature<Polygon | MultiPolygon>
 
-export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props) {
+export function MapView({ data, studyBbox, highlightFt }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
   const reduced = useReducedMotion()
@@ -238,8 +233,8 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
 
   // Values read inside long-lived map event handlers.
   const studyFeature = (data.studyArea.data?.features[0] ?? null) as StudyFeature | null
-  const live = useRef({ state, studyFeature, studyBbox, reduced, rightInset })
-  live.current = { state, studyFeature, studyBbox, reduced, rightInset }
+  const live = useRef({ state, studyFeature, studyBbox, reduced })
+  live.current = { state, studyFeature, studyBbox, reduced }
 
   // ---------------------------------------------------------------- map lifecycle
   useEffect(() => {
@@ -293,7 +288,6 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
         return
       }
       mapRef.current = map
-      map.setPadding({ top: 0, bottom: 0, left: 0, right: live.current.rightInset })
       // Dev-only handle for debugging/QA from the browser console.
       if (import.meta.env.DEV) (window as unknown as { __floodlensMap?: MLMap }).__floodlensMap = map
 
@@ -470,13 +464,6 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
   }, [ready, layers, viewMode])
 
   // ---------------------------------------------------------------- camera
-  // Showing, hiding or resizing the floating cards shifts the camera's centre with them.
-  useEffect(() => {
-    const map = mapRef.current
-    if (!ready || !map || map.getPadding().right === rightInset) return
-    map.easeTo({ padding: { top: 0, bottom: 0, left: 0, right: rightInset }, duration: reduced ? 0 : 300 })
-  }, [ready, rightInset, reduced])
-
   useEffect(() => {
     const map = mapRef.current
     if (!ready || !map) return
@@ -542,56 +529,43 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
   }
 
   return (
-    <div className="relative h-full w-full bg-canvas" role="region" aria-label="Map" style={{ '--map-inset-right': `${rightInset}px` } as CSSProperties}>
+    <div className="relative h-full w-full bg-canvas" role="region" aria-label="Map">
       {/* maplibre-gl.css forces `position: relative` on the container, so size it explicitly. */}
       <div ref={containerRef} className="h-full w-full" />
 
-      {/* Chips, controls, the keyboard crosshair and status messages sit in the part of the map
-          the floating Insights cards don't cover. */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10" style={{ right: rightInset }}>
-        {ready && (
-          <AreaBookmarks
-            onGo={goTo}
-            onShowAll={showAll}
-            active={pickedArea === SHOW_ALL ? null : (pickedArea ?? nearestBookmark(camera.center, camera.zoom, AREA_BOOKMARKS))}
-          />
-        )}
-        {ready && (
-          <MapControls
-            viewMode={viewMode}
-            bearing={camera.bearing}
-            pitch={camera.pitch}
-            zoom={camera.zoom}
-            onZoomIn={() => ease((m) => m.zoomIn(anim))}
-            onZoomOut={() => ease((m) => m.zoomOut(anim))}
-            onResetNorth={() => ease((m) => m.easeTo({ bearing: 0, ...anim }))}
-            onShowAll={showAll}
-            onSetMode={(mode) => dispatch({ type: 'setViewMode', mode })}
-          />
-        )}
-
-        {keyboardFocus && (
-          <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center" aria-hidden="true">
-            <div className="relative size-10">
-              <span className="absolute top-1/2 left-0 h-px w-full bg-fg/70" />
-              <span className="absolute top-0 left-1/2 h-full w-px bg-fg/70" />
-              <span className="absolute inset-3 rounded-full border-2 border-accent bg-white/60" />
-            </div>
-            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-fg/85 px-3 py-1 text-xs text-white">
-              Press Enter to check the middle of the map · Esc to close
-            </span>
-          </div>
-        )}
-
-        <MapStatus
-          ready={ready}
-          fatal={fatal}
-          warning={basemapWarning}
-          loading={data.loading}
-          errors={data.errors}
-          scenarioLabel={formatScenario(state.scenarioFt)}
+      {ready && (
+        <AreaBookmarks
+          onGo={goTo}
+          onShowAll={showAll}
+          active={pickedArea === SHOW_ALL ? null : (pickedArea ?? nearestBookmark(camera.center, camera.zoom, AREA_BOOKMARKS))}
         />
-      </div>
+      )}
+      {ready && (
+        <MapControls
+          viewMode={viewMode}
+          bearing={camera.bearing}
+          pitch={camera.pitch}
+          zoom={camera.zoom}
+          onZoomIn={() => ease((m) => m.zoomIn(anim))}
+          onZoomOut={() => ease((m) => m.zoomOut(anim))}
+          onResetNorth={() => ease((m) => m.easeTo({ bearing: 0, ...anim }))}
+          onShowAll={showAll}
+          onSetMode={(mode) => dispatch({ type: 'setViewMode', mode })}
+        />
+      )}
+
+      {keyboardFocus && (
+        <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center" aria-hidden="true">
+          <div className="relative size-10">
+            <span className="absolute top-1/2 left-0 h-px w-full bg-fg/70" />
+            <span className="absolute top-0 left-1/2 h-full w-px bg-fg/70" />
+            <span className="absolute inset-3 rounded-full border-2 border-accent bg-white/60" />
+          </div>
+          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-fg/85 px-3 py-1 text-xs text-white">
+            Press Enter to check the middle of the map · Esc to close
+          </span>
+        </div>
+      )}
 
       {hover && (
         <div
@@ -602,6 +576,14 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
           {hover.text}
         </div>
       )}
+      <MapStatus
+        ready={ready}
+        fatal={fatal}
+        warning={basemapWarning}
+        loading={data.loading}
+        errors={data.errors}
+        scenarioLabel={formatScenario(state.scenarioFt)}
+      />
     </div>
   )
 }
