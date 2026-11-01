@@ -37,7 +37,7 @@ export interface AppState {
   cameraResetToken: number
   /** Incremented to inspect the location at the map centre (keyboard alternative to clicking). */
   inspectCenterToken: number
-  /** Mobile/tablet drawers; desktop panels can be collapsed too. */
+  /** Side panels; each collapses with its edge tab. */
   panels: { controls: boolean; insights: boolean }
   /** Unit for areas in the Insights panel; remembered in this browser. */
   areaUnit: AreaUnit

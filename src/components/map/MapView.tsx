@@ -199,16 +199,13 @@ function overviewCamera(map: MLMap, bbox: [number, number, number, number] | nul
   const spanX = Math.max(...rotated.map((r) => r[0])) - Math.min(...rotated.map((r) => r[0]))
   const spanY = Math.max(...rotated.map((r) => r[1])) - Math.min(...rotated.map((r) => r[1]))
   const pad = Math.max(16, Math.min(w, h) * 0.05)
-  // Below 1024px the insights sheet (64px peek) and legend overlap the bottom of the map.
-  const sheet = window.innerWidth < 1024 ? 96 : 0
   const availW = Math.max(100, w - 2 * pad - 48) // room for the map controls
-  const availH = Math.max(100, h - 2 * pad - 52 - sheet) // room for the area bookmarks
+  const availH = Math.max(100, h - 2 * pad - 52) // room for the area bookmarks
   // A tilted view foreshortens the north–south extent (≈ cos 40° ≈ 0.77), so it can zoom in a little.
   const zoom = Math.log2(Math.min(availW / (spanX * 512), availH / (spanY * 512))) + (pitch > 0 ? 0.3 : 0)
   // Nudge the centre toward the near (south) end, which a tilted camera magnifies.
   const tilt = pitch > 0 ? 0.08 * (Math.max(...corners.map((c) => c.y)) - Math.min(...corners.map((c) => c.y))) : 0
-  const lift = sheet / 2 / (512 * 2 ** zoom)
-  const center = new maplibregl.MercatorCoordinate(cx, cy + tilt + lift).toLngLat()
+  const center = new maplibregl.MercatorCoordinate(cx, cy + tilt).toLngLat()
   return { center: [center.lng, center.lat], zoom: Math.min(Math.max(zoom, MIN_ZOOM), 16), pitch, bearing }
 }
 

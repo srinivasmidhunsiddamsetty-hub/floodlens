@@ -11,7 +11,6 @@ interface Props {
   showLowLying: boolean
   showBuildings: boolean
   showStudyArea: boolean
-  defaultOpen?: boolean
 }
 
 /**
@@ -20,8 +19,8 @@ interface Props {
  * shows. A plain key (v0.28): the rows only explain the colours. Spotlighting a
  * level lives on the chart and its "adds" row.
  */
-export function MapLegend({ bands, showFlood, showLowLying, showBuildings, showStudyArea, defaultOpen = true }: Props) {
-  const [open, setOpen] = useState(defaultOpen)
+export function MapLegend({ bands, showFlood, showLowLying, showBuildings, showStudyArea }: Props) {
+  const [open, setOpen] = useState(true)
   return (
     <section aria-label="Map legend" className="pointer-events-auto w-52 overflow-hidden rounded border border-line bg-surface/95 shadow-float backdrop-blur-sm">
       <button

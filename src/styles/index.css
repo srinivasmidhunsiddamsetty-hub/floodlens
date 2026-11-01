@@ -69,6 +69,10 @@
   #root {
     height: 100%;
   }
+  /* Desktop and laptop only (v0.33): a narrower window scrolls sideways instead of squeezing the map. */
+  #root {
+    min-width: 1024px;
+  }
   body {
     margin: 0;
     background: var(--color-canvas);
@@ -76,7 +80,8 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   :focus-visible {
     outline: 2px solid var(--color-accent);
@@ -278,14 +283,6 @@
   border-color: var(--color-fg-subtle);
   font-size: 10px;
 }
-/* Below 1024px the insights sheet (64px peek) covers the bottom of the map. */
-@media (max-width: 1023px) {
-  .maplibregl-ctrl-bottom-right,
-  .maplibregl-ctrl-bottom-left {
-    bottom: 64px;
-  }
-}
-
 /* ---------------------------------------------------------------------------
    Discrete scenario slider (native <input type="range"> for built-in a11y)
 --------------------------------------------------------------------------- */

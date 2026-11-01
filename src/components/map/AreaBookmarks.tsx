@@ -16,7 +16,7 @@ interface Props {
  */
 export function AreaBookmarks({ onGo, onShowAll, active }: Props) {
   return (
-    <nav aria-label="Go to area" className="absolute top-4 left-4 z-10 flex max-w-[calc(100%-5.5rem)] items-center gap-1.5 overflow-x-auto sm:gap-2">
+    <nav aria-label="Go to area" className="absolute top-4 left-4 z-10 flex max-w-[calc(100%-5.5rem)] items-center gap-2 overflow-x-auto">
       {AREA_BOOKMARKS.map((a) => {
         const on = active === a.id
         return (
@@ -26,10 +26,10 @@ export function AreaBookmarks({ onGo, onShowAll, active }: Props) {
             onClick={() => (on ? onShowAll() : onGo(a.id, a.center))}
             aria-current={on ? 'location' : undefined}
             title={on ? 'Show all of Miami Beach' : undefined}
-            className={`glass shrink-0 rounded-full text-[12px] leading-5 font-medium transition-colors sm:text-[13px] ${
+            className={`glass shrink-0 rounded-full text-[13px] leading-5 font-medium transition-colors ${
               on
-                ? 'border border-accent bg-accent px-3 py-1.5 text-white hover:bg-accent-strong sm:px-4'
-                : 'border border-white/80 px-3 py-1.5 text-fg hover:border-accent hover:text-accent sm:px-4'
+                ? 'border border-accent bg-accent px-4 py-1.5 text-white hover:bg-accent-strong'
+                : 'border border-white/80 px-4 py-1.5 text-fg hover:border-accent hover:text-accent'
             }`}
           >
             {a.label}

@@ -22,12 +22,7 @@ export default defineConfig({
     launchOptions: { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] },
   },
   projects: [
-    {
-      name: 'desktop',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome', viewport: { width: 1440, height: 900 } },
-      testIgnore: /responsive\.spec\.ts/,
-    },
-    { name: 'mobile', use: { ...devices['Pixel 7'], channel: 'chrome' }, testMatch: /responsive\.spec\.ts/ },
+    { name: 'desktop', use: { ...devices['Desktop Chrome'], channel: 'chrome', viewport: { width: 1440, height: 900 } } },
   ],
   webServer: {
     command: `npx vite build && npx vite preview --port ${PORT} --strictPort`,

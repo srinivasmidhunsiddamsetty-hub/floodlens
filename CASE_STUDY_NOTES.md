@@ -62,7 +62,7 @@ Top bar ─ Brand · Location · [Data sources] [About the data] [Reset view]
     └─ About these numbers → About the data dialog
 ```
 
-Mobile: the left panel becomes a drawer. The right panel becomes a bottom sheet whose collapsed peek shows the headline number.
+Made for desktop and laptop screens, 1024 px wide and up (v0.33).
 
 ## 6. Key interaction decisions
 

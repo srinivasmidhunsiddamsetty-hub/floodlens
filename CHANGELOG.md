@@ -36,8 +36,21 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.30 | 29 Oct 2026 | "Up to +5 ft · Doesn't reach it" | [`docs/versions/v0.30/`](docs/versions/v0.30/) |
 | v0.31 | 29 Oct 2026 | Wrong low-spot area caption removed | [`docs/versions/v0.31/`](docs/versions/v0.31/) |
 | v0.32 | 30 Oct 2026 | Insights docked in a panel again, matching the left | [`docs/versions/v0.32/`](docs/versions/v0.32/) |
+| v0.33 | 1 Nov 2026 | Desktop and laptop only | [`docs/versions/v0.33/`](docs/versions/v0.33/) |
 
 ---
+
+## v0.33: Desktop and laptop only (1 Nov 2026)
+
+- **FloodLens is now made for desktop and laptop screens only.** The phone and tablet layout is gone:
+  - the drawer for the left panel and the button in the top bar that opened it;
+  - the Insights bottom sheet and its summary strip;
+  - the smaller chip and top-bar sizes for narrow screens, and the legend starting closed;
+  - the extra room the opening view and the map credit left for the bottom sheet.
+- **One layout at every size.** The page is made for screens 1024 px wide and up. A narrower window scrolls sideways instead of squeezing the map.
+- Nothing changes on a laptop or desktop screen: the panels, map, chips and cards look as they did in v0.32.
+- The docs no longer describe a phone layout. Older versions keep their phone screenshots as a record of what they were.
+- Tests: 105 unit/component tests and 17 end-to-end tests (the phone-layout test is removed). Screenshots `05`–`07` (phone views) are no longer made.
 
 ## v0.32: Insights back in a panel (30 Oct 2026)
 

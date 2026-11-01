@@ -11,11 +11,11 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.32 (commit `b7c850c`, tag `v0.32`). It is pushed and live.
+- **Current version:** v0.33 (tag `v0.33`): desktop and laptop only.
 - **Test status at handoff:**
   - 105 unit and component tests in 12 files pass.
-  - 18 end-to-end tests pass.
-  - There are also 2 screenshot specs. They run only with `SCREENSHOTS=1`.
+  - 17 end-to-end tests pass, all at 1440×900.
+  - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
 ---
 
@@ -99,13 +99,13 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 
 The chart title has no icon.
 
-**Layout (v0.32):**
+**Layout (v0.33): desktop and laptop only.**
 
 - Desktop has two docked panels on the grey canvas.
   - Left: 280 px.
   - Right (Insights): 380 px by default, resizable from 300 to 560 px, and remembered per browser.
 - Edge tabs collapse each panel.
-- Below 1024 px, the left panel becomes a drawer and Insights becomes a bottom sheet.
+- One layout, made for screens 1024 px wide and up. A narrower window scrolls sideways (`#root` has `min-width: 1024px`), and the viewport meta is `width=1280`. Don't add phone or tablet layouts; the owner removed them on purpose.
 - The Insights panel must fit at 1440×900 without scrolling.
 - The "What this map can and can't tell you" footer link was removed (v0.26). "About the data" stays in the top bar.
 
@@ -129,7 +129,7 @@ The chart title has no icon.
 
 ```
 src/
-  App.tsx                     layout: top bar, docked left panel, map, docked right panel (mobile: drawer + bottom sheet)
+  App.tsx                     layout: top bar, docked left panel, map, docked right panel
   state/reducer.ts            single typed reducer: scenarioFt, layers, viewMode, selection, dialog, panels, areaUnit
   components/map/MapView.tsx  owns every MapLibre call: style, layers, picking, camera, credit, chips, controls
   components/map/             MapControls, AreaBookmarks (chips), MapLegend (static), MapStatus
@@ -137,11 +137,11 @@ src/
   components/charts/          ScenarioAreaChart (D3 stacked bars, tooltips, screen-reader table)
   components/controls/        ControlPanel, ScenarioSelector (slider + "Watch the water rise")
   components/dialogs/         AboutDataDialog, DataSourcesDialog
-  hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), usePanelWidth, useMediaQuery
+  hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), usePanelWidth, useMediaQuery (reduced motion)
   lib/                        pure, unit-tested: format, geo, manifest, mapStyle, mapLayers, buildingPick, theme, constants
 public/data/noaa/             processed GeoJSON + manifest.json (committed; about 26 MB)
 scripts/prepare_noaa_slr.py   offline data pipeline (Python, Shapely, pyproj, pyogrio)
-tests/e2e/                    Playwright: app.spec, responsive.spec, screenshots.spec
+tests/e2e/                    Playwright: app.spec, screenshots.spec
 ```
 
 **Mechanics that are easy to break:**
@@ -172,7 +172,7 @@ npm run dev              # Vite dev server (the owner uses http://localhost:5173
 npm run typecheck
 npm test                 # Vitest: 105 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
-npm run screenshots      # regenerates docs/screenshots/01–10 (SCREENSHOT_DIR overrides the folder)
+npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
 ```
 
@@ -235,6 +235,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.30 | Not-reached answer: "Up to +5 ft · Doesn't reach it" |
 | v0.31 | Wrong low-spot area caption removed; inspection no longer depends on the slider |
 | v0.32 | Insights docked in a grey panel again, matching the left (the owner wanted both sides consistent) |
+| v0.33 | Desktop and laptop only: the phone and tablet layout and its tests removed |
 
 ---
 
@@ -253,4 +254,4 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 
 ## 12. Open items
 
-- None. v0.32 is complete, pushed and live. Wait for the owner's next request.
+- None. Wait for the owner's next request.

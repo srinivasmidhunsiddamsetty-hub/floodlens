@@ -14,6 +14,3 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const useReducedMotion = () => useMediaQuery('(prefers-reduced-motion: reduce)')
-
-/** Three-column desktop layout from 1024 px; below that, panels become drawers. */
-export const useIsDesktop = () => useMediaQuery('(min-width: 1024px)')

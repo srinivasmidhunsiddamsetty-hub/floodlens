@@ -46,12 +46,13 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - "Up to +5 ft · Doesn't reach it" for places none of the mapped levels reach (v0.30).
 - The low-spot area caption removed: it showed the whole low-spot polygon's area, not the building's part (a bug since v0.2) (v0.31).
 - The Insights cards docked in a panel again, matching the left side; the floating layout's map padding removed (v0.32).
+- Desktop and laptop only: one layout, for screens 1024 px wide and up (v0.33).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
 
 **Phase 3: polish and quality**
-- Responsive layout: docked panels at 1024 px and wider; drawer plus bottom sheet below that.
+- Desktop and laptop layout: docked panels, for screens 1024 px wide and up.
 - Accessibility: native and ARIA controls, focus rings, live regions, `<dialog>`, skip link, reduced motion, text alternatives.
 - Loading, missing-manifest, missing-file and basemap-failure states (fallback style keeps NOAA overlays visible).
 - Unit, component and end-to-end tests; screenshot generation; Netlify config; documentation.
@@ -62,19 +63,19 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
 | Unit and component tests | `npm test` | **12 files, 105 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (16 desktop at 1440×900, 1 mobile on Pixel 7 emulation); 2 screenshot specs skipped by default |
-| Screenshot capture | `npm run screenshots` | 2 passed; images in `docs/screenshots/` |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **17 passed** (at 1440×900); 1 screenshot spec skipped by default |
+| Screenshot capture | `npm run screenshots` | 1 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage for 0–5 ft; all 5 neighbouring-band validations passed |
 | Contrast (computed) | WCAG formula on design tokens | All text tokens ≥ 4.7:1 on every surface (accent blue 5.0–5.8:1); unselected switch border 3.5:1; map place labels 9.5:1, road labels 5.9:1 |
 
-What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Watch the water rise stepping to +5 ft and stopping; chart bars selecting levels, with one row showing what the selected foot adds and no focus box left by a mouse click; the km² / acres switch changing every figure and being remembered after a reload; low spots listed with their layer off; in-map 2D/3D (pitch read from the control stack) and "Show all of Miami Beach" restoring the 3D city view, with no duplicate reset buttons; area bookmarks flying the camera and keeping 2D/3D; area chips' "you are here" state; resizing the Insights pane by drag and keyboard within its limits, with the width remembered; the city-limits toggle and legend; keyboard inspection (Enter on the map) with a pin for each of the 6 levels; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning); mobile drawer and bottom sheet with no horizontal overflow.
+What the E2E suite covers: initial load with no console errors or failed requests; NOAA headline figure; attribution present; keyboard slider (Arrow, Home, End) loading the next band without a page reload; Watch the water rise stepping to +5 ft and stopping; chart bars selecting levels, with one row showing what the selected foot adds and no focus box left by a mouse click; the km² / acres switch changing every figure and being remembered after a reload; low spots listed with their layer off; in-map 2D/3D (pitch read from the control stack) and "Show all of Miami Beach" restoring the 3D city view, with no duplicate reset buttons; area bookmarks flying the camera and keeping 2D/3D; area chips' "you are here" state; resizing the Insights pane by drag and keyboard within its limits, with the width remembered; the city-limits toggle and legend; keyboard inspection (Enter on the map) with a pin for each of the 6 levels; clearing with Esc and with the × button; low-lying layer and collapsible legend; dialogs (content, Esc, close button); a missing manifest (no numbers shown); a missing band file (explicit warning).
 
 Geographic calculations are verified by `src/lib/dataIntegrity.test.ts`. Turf areas match the manifest's ellipsoidal areas within 0.5% for all 10 extent and difference files. Difference area ≈ change in totals within 1%. Areas grow monotonically. All coordinates fall inside the study area. A point inside the +1 → +2 ft added extent is outside the 1 ft extent and inside the 2 ft extent.
 
 ## Not verified
 
-- Browsers other than Chrome (Safari and Firefox not run), and real phones or tablets (emulation only).
+- Browsers other than Chrome (Safari and Firefox not run).
 - Screen-reader walkthroughs (VoiceOver / NVDA) have not been performed. Semantics were built to spec, not user-tested.
 - Performance on low-end hardware or GPUs. Tests used software WebGL (SwiftShader).
 - No usability testing has been conducted. See the plan in `CASE_STUDY_NOTES.md`.
