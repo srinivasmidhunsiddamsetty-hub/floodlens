@@ -35,9 +35,9 @@ test.describe('FloodLens — core flows', () => {
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     await expect(figure(page)).toContainText('7.43')
-    // The legend is a plain vertical scale, shown with Individual colours (v0.35): every level listed,
+    // The legend is a plain vertical scale, shown with By level colours (v0.35): every level listed,
     // the chosen one marked, nothing a button.
-    await page.getByRole('radio', { name: 'Individual' }).click()
+    await page.getByRole('radio', { name: 'By level' }).click()
     await slider.focus()
     const legendBox = page.getByRole('region', { name: 'Map legend' })
     await expect(legendBox.getByRole('listitem')).toHaveCount(6)
@@ -79,14 +79,14 @@ test.describe('FloodLens — core flows', () => {
     expect(Math.abs(t.y + t.height / 2 - (g.y + g.height / 2))).toBeLessThan(4)
   })
 
-  test('Total shows all the area covered, Individual only what the level adds (v0.36, v0.38)', async ({ page }) => {
+  test('Total shows all the area covered, By level only what the level adds (v0.36, v0.38)', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const fig = figure(page)
     const slider = page.getByRole('slider')
     // +2 ft: 0.99 km² in all, of which +2 ft adds 0.95 km² (the rest came at +1 ft).
     await expect(fig).toHaveText('Total area covered0.99km²acresShare of city land5%')
-    await page.getByRole('radio', { name: 'Individual' }).click()
+    await page.getByRole('radio', { name: 'By level' }).click()
     await expect(fig).toHaveText('New area covered0.95km²acresShare of city land5%')
     await slider.focus()
     await page.keyboard.press('ArrowRight')
@@ -98,7 +98,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(fig).toHaveText('Total area covered0km²acresShare of city land0%')
     // Today's level is "0 ft" on the slider (v0.40; "Today" before).
     await expect(seaLevel(page).getByRole('button', { name: '0 ft', exact: true, includeHidden: true })).toHaveClass(/font-bold/)
-    await page.getByRole('radio', { name: 'Individual' }).click()
+    await page.getByRole('radio', { name: 'By level' }).click()
     await slider.focus()
     await page.keyboard.press('ArrowRight')
     await expect(fig).toHaveText('New area covered0.038km²acresShare of city land0.2%')
@@ -116,7 +116,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(unit.getByRole('radio', { name: 'Square kilometres' })).toHaveAttribute('aria-checked', 'true')
     await unit.getByRole('radio', { name: 'Acres' }).click()
     await expect(figure(page)).toHaveText('Total area covered244km²acresShare of city land5%')
-    await page.getByRole('radio', { name: 'Individual' }).click()
+    await page.getByRole('radio', { name: 'By level' }).click()
     await expect(figure(page)).toHaveText('New area covered235km²acresShare of city land5%')
     // The low-spot line follows the unit.
     await page.getByRole('switch', { name: /Low spots/ }).click()
@@ -217,7 +217,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('button', { name: 'Zoom in' })).toBeVisible()
   })
 
-  test('colour modes: Total by default, Individual gives each foot its own colour, and the choice is remembered', async ({ page }) => {
+  test('colour modes: Total by default, By level gives each foot its own colour, and the choice is remembered', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const modes = page.getByRole('radiogroup', { name: 'Map colours' })
@@ -231,13 +231,13 @@ test.describe('FloodLens — core flows', () => {
     // One colour needs no key (v0.35).
     await expect(page.getByRole('region', { name: 'Map legend' })).toHaveCount(0)
 
-    await modes.getByRole('radio', { name: 'Individual' }).click()
-    // The owner's yellow → orange swatches (v0.40): +1 ft and +2 ft.
-    await expect.poll(trackColours).toEqual(['rgb(240, 221, 74)', 'rgb(240, 179, 63)'])
+    await modes.getByRole('radio', { name: 'By level' }).click()
+    // Plasma (v0.41): +1 ft orange and +2 ft coral.
+    await expect.poll(trackColours).toEqual(['rgb(252, 166, 54)', 'rgb(225, 100, 98)'])
     await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
     await page.reload()
     await waitForMap(page)
-    await expect(page.getByRole('radio', { name: 'Individual' })).toHaveAttribute('aria-checked', 'true')
+    await expect(page.getByRole('radio', { name: 'By level' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('the map credit starts open, folds into an (i) on the first drag, and the (i) opens it again', async ({ page }) => {
@@ -298,7 +298,7 @@ test.describe('FloodLens — core flows', () => {
   test('layer toggles respond, and the legend follows the flooding layer', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    await page.getByRole('radio', { name: 'Individual' }).click()
+    await page.getByRole('radio', { name: 'By level' }).click()
     const low = page.getByRole('switch', { name: 'Low spots' })
     const req = page.waitForRequest(/low_2ft\.geojson/)
     await low.click()

@@ -1,8 +1,9 @@
 @import 'tailwindcss';
 @import 'maplibre-gl/dist/maplibre-gl.css';
 
-/* Windows 700 px tall or less (v0.39): the left panel tightens so it still fits without scrolling. */
-@custom-variant short (@media (max-height: 700px));
+/* Windows 750 px tall or less (v0.39; 700 px until v0.40): the left panel tightens so it still
+   fits without scrolling. */
+@custom-variant short (@media (max-height: 750px));
 
 /* ---------------------------------------------------------------------------
    Design tokens — light, ArcGIS/Calcite-inspired. One source of truth for UI

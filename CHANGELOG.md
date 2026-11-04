@@ -44,8 +44,26 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.38 | 4 Nov 2026 | Warm Individual colours, Total / Individual, both units, controls at the screen's edge | [`docs/versions/v0.38/`](docs/versions/v0.38/) |
 | v0.39 | 4 Nov 2026 | Figures in tinted boxes, a km² / acres switch, square level chips | [`docs/versions/v0.39/`](docs/versions/v0.39/) |
 | v0.40 | 4 Nov 2026 | The owner's yellow → orange swatches, "0 ft", rounded level chips, frame icon | [`docs/versions/v0.40/`](docs/versions/v0.40/) |
+| v0.41 | 4 Nov 2026 | Plasma colours, "By level", pill chips, answer-style figure boxes | [`docs/versions/v0.41/`](docs/versions/v0.41/) |
 
 ---
+
+## v0.41: Plasma, "By level" and better figure boxes (4 Nov 2026)
+
+From the owner's notes on v0.40. The palette, the name and the box style were picked from options; the palettes were rendered on the real map first.
+
+- **By level colours are now Plasma**, a standard science palette: yellow → orange → coral → magenta → purple → indigo (`#f0f921` `#fca636` `#e16462` `#b12a90` `#6a00a8` `#0d0887`).
+  - The owner wanted a different colour for each level, easy to tell apart on the map without looking improvised. Shades of one orange didn't do it.
+  - Neighbouring levels are now far apart: closest pair ΔE 15.1 for normal vision, against 3.9 before.
+  - +4 ft's purple is close to the low-spot hatch colour; the hatch pattern keeps low spots apart. The charcoal selected building still stands out.
+- **"By level" replaces "Individual"** (the owner's pick from "By level", "Added", "Per foot", "Breakdown").
+- **The level chips are pills.**
+- **The figure boxes match the place card's "Water reaches at" box:** a faint blue gradient with a hairline, replacing the flat grey-blue fill the owner found ordinary.
+  - There's more room inside each box: 8 px from label to number, 10 px from number to switch.
+  - The two boxes are the same height and 8 px apart. The slider grew from 168 to 224 px to make room.
+- **Height, Footprint and Low spot values are semibold.**
+- **Short windows:** the left panel now tightens below 750 px (was 700), so it still fits without scrolling down to about 650 px, with or without the low-spot line.
+- Tests: 107 unit/component tests and 19 end-to-end tests. Screenshot `02-by-level-5ft` replaces `02-individual-5ft`.
 
 ## v0.40: The owner's swatches, "0 ft" and a frame icon (4 Nov 2026)
 

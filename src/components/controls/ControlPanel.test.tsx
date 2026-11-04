@@ -23,7 +23,7 @@ describe('<ControlPanel>', () => {
     expect(screen.getByRole('radio', { name: 'Total' })).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByText('Total area covered')).toBeInTheDocument()
     expect(screen.getByText('0.50')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('radio', { name: 'Individual' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'By level' }))
     expect(screen.getByText('New area covered')).toBeInTheDocument()
     expect(screen.getByText('0.48')).toBeInTheDocument()
   })

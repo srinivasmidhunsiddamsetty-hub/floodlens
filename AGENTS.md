@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.40 (tag `v0.40`): the owner's yellow → orange swatches, "0 ft" for today, rounded level chips, a frame icon for Entire Miami Beach.
+- **Current version:** v0.41 (tag `v0.41`): Plasma for By level, "Total / By level", pill chips, answer-box-style figure boxes, semibold card values.
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 19 end-to-end tests pass, at 1440×900 (some also check 650 px tall windows).
@@ -82,9 +82,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **No blue numbers.** Blue is only for links and selection. Numbers use `text-fg`.
 - **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
-- **Legend (v0.34, v0.35):** a slim vertical colour scale, bottom left, shown **only with Individual colours**: only the sea-level colours, today at the bottom, the chosen level in bold. No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. It is a **static key**: nothing in it may be clickable (v0.28). (The chart that spotlighted levels was removed in v0.36.)
-- **Colour modes (v0.34):** a "Total / Individual" toggle beside the "Sea level" title (v0.38, the owner's names), with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Individual uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
-- **Individual ramp (v0.40):** the owner's own yellow → orange swatches (`#f3f351 #f0dd4a #f0b33f #ec9a38 #e77631 #e7612a`, 0 ft to +5 ft; six of the eight in their reference). Measured at 85% over the land: worst neighbouring pair OKLab ΔE 3.9 (colour-blind 2.8), which the owner accepted; the white edges between levels help. v0.38–v0.39 used a stronger yellow → red-brown ramp. Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
+- **Legend (v0.34, v0.35):** a slim vertical colour scale, bottom left, shown **only with By level colours**: only the sea-level colours, today at the bottom, the chosen level in bold. No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. It is a **static key**: nothing in it may be clickable (v0.28). (The chart that spotlighted levels was removed in v0.36.)
+- **Colour modes (v0.34):** a "Total / By level" toggle beside the "Sea level" title (v0.41; "Individual" in v0.38–v0.40), with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. By level uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
+- **By level ramp (v0.41):** matplotlib's Plasma (`#f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887`, 0 ft to +5 ft), the owner's pick from rendered options: a different colour per level, easy to tell apart. Worst neighbouring pair OKLab ΔE 15.1 (deuteranopia 9.0, protanopia 6.2). +4 ft is close to the low-spot purple; the hatch keeps them apart. v0.40 used the owner's yellow → orange swatches (ΔE 3.9). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
 **Card typography (as agreed):**
 
@@ -92,11 +92,11 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | --- | --- |
 | Card title | 15 px, bold |
 | Labels (Height, Footprint, Low spot, "Water reaches at") | 14 px medium, sentence case, black (not grey) |
-| Fact values | 20 px medium |
+| Fact values | 20 px semibold (v0.41; medium before) |
 | The answer ("+2 ft") | 24 px bold |
 | Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
-| Sea level figures: the area and the share (equal weight) | 24 px bold, centred in a tinted box (v0.39); 20 px on short windows |
-| Level chips on the slider | 12 px, centred, 6 px corners (v0.40); light fill at rest, the chosen one accent-tinted and bold |
+| Sea level figures: the area and the share (equal weight) | 24 px bold, centred in an answer-box-style box (gradient + hairline, v0.41), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
+| Level chips on the slider | 12 px, centred pills (v0.41); light fill at rest, the chosen one accent-tinted and bold |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
 **Layout (v0.35): desktop and laptop only.**
@@ -105,8 +105,8 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36–v0.39): no big "+2 ft". The slider's levels are clickable chips with centred names and 6 px corners; today's is "0 ft". Beside it, two figures of equal weight, each centred in a soft tinted box (`#f2f5f9`), 6 px apart: "Total area covered" (Total) or "New area covered" (Individual), with a km² / acres switch under the number (one unit at a time, styled like Total / Individual, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
-- Short windows (700 px tall or less) use the `short` Tailwind variant (`@custom-variant` in `index.css`) to tighten the left panel: card padding, layer rows, figure boxes. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
+- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 224 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a box styled like the place card's answer box (faint blue gradient, hairline), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Short windows (750 px tall or less) use the `short` Tailwind variant (`@custom-variant` in `index.css`) to tighten the left panel: card padding, layer rows, figure boxes. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (frame-corners icon, v0.40; the owner found the house misleading), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned, and the owner agreed it's needed. Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
 - The left panel must fit without scrolling in windows down to about 650 px tall (v0.35). The slider shrinks from 168 to 116 px on short windows to make room (`TRACK_H` in `ScenarioSelector`).
@@ -139,7 +139,7 @@ src/
   components/map/MapView.tsx  owns every MapLibre call: style, layers, picking, camera, credit, chips, controls
   components/map/             MapControls, AreaBookmarks (chips), MapLegend (static vertical colour scale), MapStatus
   components/insights/        InsightPanel (selection card or prompt), InspectionCard (selected place), LevelTrack (D3)
-  components/controls/        ControlPanel (Total / Individual toggle in the Sea level title), ScenarioSelector (upright slider), SubmergedArea (the figures beside it)
+  components/controls/        ControlPanel (Total / By level toggle in the Sea level title), ScenarioSelector (upright slider), SubmergedArea (the figures beside it)
   components/dialogs/         AboutDataDialog, DataSourcesDialog
   hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), useMediaQuery (reduced motion)
   lib/                        pure, unit-tested: format, geo, manifest, mapStyle, mapLayers, buildingPick, theme, constants
@@ -159,7 +159,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
   - `moveend` clears it.
   - While it is set, no chip is lit as the camera zooms out.
 - **Floating Insights:** `MapView` pads the camera by `rightInset`, and `overviewCamera` subtracts it from the width. Chips, controls and status sit in an overlay that stops at the cards; `.maplibregl-ctrl-bottom-right` uses `--map-inset-right`. The map controls are outside that overlay, at the screen's right edge (v0.38).
-- **Sea level figures:** Total shows `beyondBaselineM2` at the level; Individual shows the difference from the level below (`submergedM2` in `lib/manifest.ts`), never the diff polygons' `areaM2`, so the parts sum to the total. Both shares divide by `censusLandM2`.
+- **Sea level figures:** Total shows `beyondBaselineM2` at the level; By level shows the difference from the level below (`submergedM2` in `lib/manifest.ts`), never the diff polygons' `areaM2`, so the parts sum to the total. Both shares divide by `censusLandM2`.
 - **Inspection:** `useInspection` does not depend on the slider. It checks every level, so the slider must not re-run it.
 - **Flood bands:** the `diff_Nft_Mft.geojson` files are differences between neighbouring levels, computed and validated offline (see `manifest.processing.validation`). Low-lying areas (`low_*.geojson`) are a separate layer and are never merged with the ocean-connected extents.
 
@@ -178,7 +178,7 @@ npm run dev              # Vite dev server (the owner uses http://localhost:5173
 npm run typecheck
 npm test                 # Vitest: 107 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
-npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Individual colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
+npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 By level colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
 ```
 
@@ -249,6 +249,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.38 | Warm Individual ramp (yellow → red-brown) and charcoal selection; "Total / Individual", "Total area covered" / "New area covered"; both units shown, share at equal weight, 0 at today; clickable level chips; controls at the screen's right edge under the card; Insights 360 px; hollow low-spot icon |
 | v0.39 | Area and share in soft tinted boxes, centred, 6 px apart; km² / acres switch under the number (one unit at a time again); square centred level chips; the panel tightens on short windows |
 | v0.40 | The owner's yellow → orange swatches for Individual; "0 ft" instead of "Today"; level chips with 6 px corners; frame corners instead of the house; compass kept |
+| v0.41 | Plasma for the By level colours; "Total / By level"; pill chips; figure boxes styled like the answer box, equal height, roomier, with a taller slider; semibold card values |
 
 ---
 

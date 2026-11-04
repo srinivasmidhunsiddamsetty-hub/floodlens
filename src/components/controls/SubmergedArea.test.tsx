@@ -41,21 +41,21 @@ describe('<SubmergedArea>', () => {
     expect(boxes(container)).toEqual(['Total area covered2.30km²acres', 'Share of city land23%'])
   })
 
-  it('Individual: only what the level adds to the one below, with the same denominator', () => {
+  it('By level: only what the level adds to the one below, with the same denominator', () => {
     const { container } = render(<Harness ft={3} mode="detailed" />)
     expect(boxes(container)).toEqual(['New area covered1.80km²acres', 'Share of city land18%'])
   })
 
-  it('puts each figure in its own centred box, the share as large as the area (v0.39)', () => {
+  it('puts each figure in its own centred box, styled like the answer box, the share as large as the area (v0.39, v0.41)', () => {
     render(<Harness ft={2} mode="simple" />)
     for (const n of ['0.50', '5%']) {
       const value = screen.getByText(n)
       expect(value).toHaveClass('text-[24px]', 'font-bold')
-      expect(value.parentElement).toHaveClass('text-center', 'bg-[#f2f5f9]')
+      expect(value.parentElement).toHaveClass('text-center', 'border-[#d5e6fa]', 'from-[#f6faff]', 'basis-0')
     }
   })
 
-  it('shows one unit at a time, switched like Total / Individual (v0.39)', async () => {
+  it('shows one unit at a time, switched like Total / By level (v0.39)', async () => {
     render(<Harness ft={2} mode="simple" />)
     const km2 = screen.getByRole('radio', { name: 'Square kilometres' })
     expect(km2).toHaveAttribute('aria-checked', 'true')

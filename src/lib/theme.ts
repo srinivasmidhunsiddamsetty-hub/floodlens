@@ -63,13 +63,15 @@ export type ColorMode = 'simple' | 'detailed'
 export const SIMPLE_COLOR = '#3d84e6'
 
 /**
- * Detailed mode ("Individual"): the level where water first reaches each area, light → dark as
- * the sea rises (more water, darker). v0.40: the owner's own yellow → orange swatches (six of the
- * eight in their reference, picked to stay furthest apart). Drawn at 85% over the land, the
- * closest neighbouring pair is OKLab ΔE 3.9 for normal vision and 2.8 for colour-blind vision,
- * closer than v0.38's ramp, and the yellow end is near the land and buildings for tritanopia;
- * the white edge between levels (`BAND_EDGE`) helps tell them apart. Every band is ΔE 13+ from
- * the water.
+ * Detailed mode ("By level"): the level where water first reaches each area, light → dark as the
+ * sea rises (more water, darker). v0.41: matplotlib's Plasma, six steps, yellow → orange → coral
+ * → magenta → purple → indigo. The owner wanted a different colour for each level that's easy to
+ * tell apart on the map without looking improvised; Plasma is a standard, perceptually even
+ * science palette. Drawn at 85% over the land, the closest neighbouring pair is OKLab ΔE 15.1 for
+ * normal vision (6.2 for protanopia, 9.0 for deuteranopia), and every band is far from the water,
+ * parks and buildings (ΔE 15+). +4 ft's purple is close to the low-spot hatch colour; the hatch
+ * pattern keeps low spots apart.
+ * v0.40: #f3f351 #f0dd4a #f0b33f #ec9a38 #e77631 #e7612a (the owner's yellow → orange, ΔE 3.9).
  * v0.38–v0.39: #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #8c2d04 (yellow → red-brown, ΔE 7.3 / 6.8).
  * v0.37: #ddf0fb #a9d9f5 #6fb9e8 #3593d2 #1168b2 #083d77 (the owner's blues).
  * v0.35–v0.36: #dceff5 #a6d8ed #6db6db #338ec4 #1766a1 #083b75.
@@ -77,12 +79,12 @@ export const SIMPLE_COLOR = '#3d84e6'
  * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#f3f351',
-  1: '#f0dd4a',
-  2: '#f0b33f',
-  3: '#ec9a38',
-  4: '#e77631',
-  5: '#e7612a',
+  0: '#f0f921',
+  1: '#fca636',
+  2: '#e16462',
+  3: '#b12a90',
+  4: '#6a00a8',
+  5: '#0d0887',
 }
 
 /**

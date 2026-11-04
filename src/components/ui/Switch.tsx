@@ -11,7 +11,7 @@ interface Props {
 
 /**
  * Accessible toggle: a native button with role="switch"; the whole row is clickable. Rows tighten
- * slightly on windows 700 px tall or less (v0.38), so the left panel still fits without scrolling.
+ * slightly on short windows (the `short` variant, v0.38), so the left panel still fits without scrolling.
  */
 export function Switch({ checked, onChange, label, description, swatch, disabled }: Props) {
   const id = useId()

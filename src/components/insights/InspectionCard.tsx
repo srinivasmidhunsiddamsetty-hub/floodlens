@@ -43,7 +43,8 @@ function Row({
         </span>
         {label}
       </dt>
-      <dd className="text-right text-[20px] leading-7 font-medium text-fg tabular">{value}</dd>
+      {/* Semibold (v0.41; medium before), at the owner's request. */}
+      <dd className="text-right text-[20px] leading-7 font-semibold text-fg tabular">{value}</dd>
     </div>
   )
 }

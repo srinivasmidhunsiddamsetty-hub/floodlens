@@ -16,12 +16,12 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // Individual colours at the top level (+5 ft): what +5 ft adds, beside the slider
-    await page.getByRole('radio', { name: 'Individual' }).click()
+    // By level colours at the top level (+5 ft): what +5 ft adds, beside the slider
+    await page.getByRole('radio', { name: 'By level' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
-    await page.screenshot({ path: `${OUT}/02-individual-5ft.png` })
+    await page.screenshot({ path: `${OUT}/02-by-level-5ft.png` })
 
     // 2D + inspection of the map centre
     await page.getByRole('button', { name: '2D view' }).click()

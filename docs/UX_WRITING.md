@@ -177,6 +177,12 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
 
+## Before and after (v0.40 → v0.41)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Mode toggle | Total / Individual | Total / By level |
+
 ## Before and after (v0.39 → v0.40)
 
 | Where | Before | After |

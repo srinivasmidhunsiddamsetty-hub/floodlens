@@ -21,7 +21,7 @@ interface Props {
  * panel adds (the low-spot area, v0.36). It never goes below the height of the two figure boxes
  * beside it on a short window.
  */
-const TRACK_H = 'clamp(132px, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 168px)'
+const TRACK_H = 'clamp(132px, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 224px)'
 const THUMB = 20
 
 /**
@@ -82,9 +82,9 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
             />
           </div>
           {/* Each level is a chip you can click (v0.38; plain text before): a light fill at rest, darker on
-              hover, the chosen one filled with the accent tint and bold; the name centred (v0.39), 6 px
-              corners like the toggles and boxes (v0.40; square in v0.39). Today's level is "0 ft"
-              (v0.40). The slider is the keyboard route. 48 px leaves the most room for `children`. */}
+              hover, the chosen one filled with the accent tint and bold; the name centred (v0.39), as
+              pills (v0.41; 6 px corners in v0.40, square in v0.39). Today's level is "0 ft" (v0.40).
+              The slider is the keyboard route. 48 px leaves the most room for `children`. */}
           <div className="relative ml-1 w-12" aria-hidden="true">
             {available.map((ft, i) => (
               <button
@@ -93,7 +93,7 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
                 tabIndex={-1}
                 onClick={() => onChange(ft)}
                 style={{ bottom: pos(i), height: chipH }}
-                className={`absolute left-0 flex w-full translate-y-1/2 cursor-pointer items-center justify-center rounded-md px-1 text-center text-xs whitespace-nowrap tabular transition-colors ${
+                className={`absolute left-0 flex w-full translate-y-1/2 cursor-pointer items-center justify-center rounded-full px-1 text-center text-xs whitespace-nowrap tabular transition-colors ${
                   ft === value ? 'bg-accent-soft font-bold text-fg ring-1 ring-accent/35 ring-inset' : 'bg-canvas text-fg-muted hover:bg-[#e4e8ee] hover:text-fg'
                 }`}
               >
