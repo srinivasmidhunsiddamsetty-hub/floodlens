@@ -56,6 +56,16 @@ describe('<SubmergedArea>', () => {
     }
   })
 
+  it('puts the share in the middle of its box, the label resting on it (v0.52)', () => {
+    render(<Harness ft={2} mode="simple" />)
+    const share = screen.getByText('5%')
+    // Rows of space, number, space: the number is centred and the label sits above it.
+    expect(share.parentElement).toHaveClass('grid', 'grid-rows-[1fr_auto_1fr]', 'min-h-0')
+    expect(screen.getByText('Share of city land')).toHaveClass('self-end')
+    // The area box keeps its stack: label, number, unit switch.
+    expect(screen.getByText('0.50').parentElement).toHaveClass('flex', 'flex-col', 'justify-center')
+  })
+
   it('shows one unit at a time, switched like Total / By level (v0.39)', async () => {
     render(<Harness ft={2} mode="simple" />)
     const km2 = screen.getByRole('radio', { name: 'Square kilometres' })

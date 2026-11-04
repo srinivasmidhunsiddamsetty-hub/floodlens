@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.51 (tag `v0.51`): lighter switches, chosen chip and pills; the place card's water flows in once, with no dot.
+- **Current version:** v0.52 (tag `v0.52`): the share figure centred in its box; the place card's water flows in over 1.8 s.
 - **Test status at handoff:**
-  - 109 unit and component tests in 13 files pass.
+  - 110 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -180,7 +180,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 109 tests
+npm test                 # Vitest: 110 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -264,6 +264,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.49 | Premium navy surface (glow, grain, hairline, layered shadows) for the sea-level figures and the place card's answer and facts; white text and light switch and track inside |
 | v0.50 | Navy brand colour `#1e3a5f` (accent, logo, links, focus); `.fill-accent` for solid accent fills; the same premium finish on cards, controls, canvas, chips and tiles; the map left flat |
 | v0.51 | Switches without the dark outline (grey knob when off); frosted navy chosen chip without the navy glow; pills matched; the place card's water flows in once and has no dot (it looked draggable); canvas grain fixed |
+| v0.52 | The share's number centred in its box (label resting on it); the water flow-in slowed to 1.8 s |
 
 ---
 

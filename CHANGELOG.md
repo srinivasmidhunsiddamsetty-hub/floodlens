@@ -55,8 +55,17 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.49 | 4 Nov 2026 | Premium navy boxes | [`docs/versions/v0.49/`](docs/versions/v0.49/) |
 | v0.50 | 4 Nov 2026 | Navy brand colour and premium surfaces | [`docs/versions/v0.50/`](docs/versions/v0.50/) |
 | v0.51 | 4 Nov 2026 | Lighter switches, chip and pills; water that flows in | [`docs/versions/v0.51/`](docs/versions/v0.51/) |
+| v0.52 | 4 Nov 2026 | Centred share figure, slower water | [`docs/versions/v0.52/`](docs/versions/v0.52/) |
 
 ---
+
+## v0.52: Centred share figure, slower water (4 Nov 2026)
+
+From the owner's notes on v0.51.
+
+- **The percentage sits in the middle of its box.** Before, the label above pushed it 12 px below the centre. The box is now three rows (space, number, space) with the label resting on the number. On the shortest windows the label keeps its room and the number moves down a little. The panel still fits without scrolling at every height checked (650–900 px, with and without low spots). The area box is unchanged.
+- **The water in "Water reaches at" flows in over 1.8 s** (it was 0.7 s), with an even ease. It starts 0.2 s after the card appears, once the card has slid in. The owner found 0.7 s too quick to notice.
+- Tests: 110 unit/component tests (1 new: the centred share) and 20 end-to-end tests.
 
 ## v0.51: Lighter switches, chip and pills; water that flows in (4 Nov 2026)
 

@@ -25,10 +25,31 @@ interface Props {
  * panel still fits without scrolling; above that they stay at full size.
  */
 function Figure({ label, value, children }: { label: string; value: string; children?: ReactNode }) {
+  // With nothing under the number (the share), the number sits in the middle of the box and the
+  // label rests on it (v0.52): rows of space, number, space. When the box is short, the label's
+  // row keeps its height and the number moves down, so the label is never squeezed. `min-h-0`:
+  // a grid asks for room for both spare rows, which would make the panel scroll on short windows.
+  const centred = !children
   return (
-    <div className="flex flex-1 basis-0 flex-col items-center justify-center surface-navy rounded-lg px-2 py-3 text-center tiny:py-0.5">
-      <p className="text-[12px] leading-4 font-medium whitespace-nowrap text-white tiny:text-[11px] tiny:leading-[14px]">{label}</p>
-      <p className="mt-2 text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-white tabular tiny:mt-1 tiny:text-[24px] tiny:leading-7">{value}</p>
+    <div
+      className={`flex-1 basis-0 surface-navy rounded-lg px-2 py-3 text-center tiny:py-0.5 ${
+        centred ? 'grid min-h-0 grid-rows-[1fr_auto_1fr] justify-items-center' : 'flex flex-col items-center justify-center'
+      }`}
+    >
+      <p
+        className={`text-[12px] leading-4 font-medium whitespace-nowrap text-white tiny:text-[11px] tiny:leading-[14px] ${
+          centred ? 'mb-2 self-end tiny:mb-1' : ''
+        }`}
+      >
+        {label}
+      </p>
+      <p
+        className={`text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-white tabular tiny:text-[24px] tiny:leading-7 ${
+          centred ? '' : 'mt-2 tiny:mt-1'
+        }`}
+      >
+        {value}
+      </p>
       {children}
     </div>
   )
