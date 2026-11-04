@@ -39,8 +39,26 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.33 | 1 Nov 2026 | Desktop and laptop only | [`docs/versions/v0.33/`](docs/versions/v0.33/) |
 | v0.34 | 3 Nov 2026 | Review feedback: colour modes, upright slider, map controls at the bottom, floating Insights | [`docs/versions/v0.34/`](docs/versions/v0.34/) |
 | v0.35 | 3 Nov 2026 | Owner's pass on v0.34: Single / Layered beside Sea level, new layered colours, one control column with a dial, no-scroll left panel | [`docs/versions/v0.35/`](docs/versions/v0.35/) |
+| v0.36 | 4 Nov 2026 | Land underwater moves beside the slider; Insights only for the selection | [`docs/versions/v0.36/`](docs/versions/v0.36/) |
 
 ---
+
+## v0.36: Land underwater beside the slider (4 Nov 2026)
+
+The owner sent a spec ("UI Refinements: Sea Level Rise Panel, Map Controls, and Right-Side Insights"). The layout of the figures (beside the slider, where "+2 ft" was) and keeping the low-spot area (under its switch) were picked from options.
+
+- **The big "+2 ft" is gone from the Sea level card.** The slider's bold level name already says it. Its place holds the land underwater at that level, with the km² / acres switch under it.
+- **The figures follow the Single / Layered toggle:**
+  - **Single: "Total submerged area"**, everything underwater up to the level, beyond today's high tide, and its share of the city's land. At +3 ft: 7.43 km², 37%.
+  - **Layered: "Additional submerged area"**, only what the level adds to the one below it. At +3 ft: 6.44 km², 32%.
+  - The added figure is the difference between the two neighbouring totals, from the same NOAA numbers, so the added figures always sum to the total and nothing is counted twice. Both shares use the same denominator: the city's Census land area (19.9 km²).
+  - At today's high tide both say "None yet".
+- **Insights is only about what you pick on the map.** The "Land underwater" card is gone: its two figures moved left, and its chart and "+2 ft adds" row went with it. Hovering the chart used to spotlight a level on the map; that went too. With nothing picked, Insights shows the existing "Click any building" prompt.
+- **The low-spot area moved under the Low spots switch**, while that layer is on: "232 acres at +2 ft".
+- **The left panel still fits without scrolling** in windows down to about 650 px tall, even with the low-spot line. On short windows the slider gives up up to 16 px more height for that line (down to 100 px).
+- **2D over 3D again**, stacked in the control column as in v0.34.
+- **Zoom no longer covers the scale bar.** The zoom-out button overlapped the top of the scale bar by 7 px. The column now starts 88 px up, 12 px clear of it.
+- Tests: 109 unit/component tests in 14 files (new: the figures in both modes and units, the cumulative/added sums, the low-spot line, Insights without city-wide figures; removed: the chart and "adds" tests) and 19 end-to-end tests (new: Single total vs Layered added at +1, +2 and +3 ft; the panel fits with the low-spot line on; 2D over 3D and zoom clear of the scale bar). Screenshots `02-layered-5ft` and `10-sea-level-acres` replace `02-bands-5ft-spotlight-2ft` and `10-insights-acres`.
 
 ## v0.35: Owner's pass on v0.34 (3 Nov 2026)
 

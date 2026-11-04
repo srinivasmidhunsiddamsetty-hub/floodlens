@@ -10,9 +10,9 @@ FloodLens is an exploratory 3D map for comparing NOAA sea-level-rise inundation 
 
 ![FloodLens overview — the City of Miami Beach at +2 ft](docs/screenshots/01-overview-2ft-3d.png)
 
-| South Beach in 3D with a building selected | +5 ft, spotlighting what +2 ft adds |
+| South Beach in 3D with a building selected | +5 ft in Layered colours |
 | --- | --- |
-| ![Building card](docs/screenshots/08-south-beach-building-card.png) | ![Flood bands](docs/screenshots/02-bands-5ft-spotlight-2ft.png) |
+| ![Building card](docs/screenshots/08-south-beach-building-card.png) | ![Flood bands](docs/screenshots/02-layered-5ft.png) |
 
 Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md).
 
@@ -22,11 +22,11 @@ Version history with screenshots of each iteration: [CHANGELOG.md](CHANGELOG.md)
 
 - **Real NOAA data.** Ocean-connected inundation polygons from the NOAA Office for Coastal Management Sea Level Rise Viewer data (FL_SE GeoPackage) for 0 ft (current MHHW) and every foot up to +5 ft, clipped to the City of Miami Beach boundary (US Census Bureau TIGER/Line; 39.4 km² including Biscayne Bay waters inside city limits). Nothing is simulated.
 - **3D map (MapLibre GL JS).** A light, ArcGIS-style geographic basemap (OpenFreeMap Positron, restyled) with Roboto labels; the interface is set in Satoshi. Buildings are extruded from OpenStreetMap heights, and the overlay draws beneath basemap water so mapped inundation reads as "water reaching land".
-- **Sea-level control.** An upright, keyboard-operable slider (native range input), today at the bottom and +5 ft at the top, whose track is painted with the map's colours. Levels swap in place, so the camera and app state are preserved.
+- **Sea-level control.** An upright, keyboard-operable slider (native range input), today at the bottom and +5 ft at the top, whose track is painted with the map's colours. Beside it, the land underwater at that level and its share of the city's Census land area, in km² or acres (remembered in the browser): the total so far with Single colours, or only what that level adds with Layered colours. Levels swap in place, so the camera and app state are preserved.
 - **Two colour modes**, beside the Sea level title. **Single** (the default) draws all the water at the chosen level in one blue. **Layered** colours each area by the level at which NOAA's mapped extent first reaches it, from pale blue (today's high tide) to deep navy (+5 ft), so one map shows how flooding spreads. The bands come from validated polygon differences computed offline. Hover a bar in the chart, or its "adds" row, to spotlight a level. With Layered colours a slim vertical colour scale of the sea levels keys the map; it's a plain key.
 - **In-map controls.** One slim column at the bottom right: 2D/3D, **Entire Miami Beach** (fits the whole city back into view), the compass and zoom. In 3D the compass becomes a dial with arrows to turn and tilt the view, for trackpads and mice that can't. Every button names itself in a tooltip. Tilting the map by hand keeps 2D/3D in sync.
 - **Area chips.** South Beach, Mid-Beach and North Beach chips (top-left) fly the camera along the 12.6 km city, keeping the current 2D/3D mode. The chip you pick fills with the accent straight away, and clicking it again shows the whole city; when you pan by hand, the nearest area's chip takes over. The named areas are camera positions only; no statistics are invented for these unofficial areas.
-- **Insights.** A headline number (land underwater at the chosen level, and as a share of the city's Census land area), a stacked D3 chart of land underwater by sea level, what the selected foot adds, and (while their layer is on) the low spots cut off from the sea. A km² / acres switch shows every figure in one unit, remembered in the browser, with tooltips, keyboard focus and a screen-reader table.
+- **Insights.** Only what you pick on the map: the selected building or spot (below), or a short prompt when nothing is picked. While the Low spots layer is on, their area at the chosen level shows under its switch.
 - **Building and location inspection.** Click any building (3D-accurate picking) or place, or focus the map and press Enter. A card leads with the first water level that reaches it, in large type, over a track of every level (water rises and stops, with a dashed marker, at the first level that reaches it). Then, for a building, OSM height, footprint (always in m²) and whether it sits in a low spot, and from which level, in one column; a spot or open water lists only the low spot. When none of the mapped levels reach it, the card says "Up to +5 ft · Doesn't reach it". Esc clears it.
 - **Optional low-lying areas.** Hydrologically unconnected low areas are processed as a separate purple-hatched layer and are never merged with ocean-connected extents.
 - **City limits layer.** The dashed city boundary and the dimmed area outside it can be turned off for a clean map.
@@ -77,9 +77,8 @@ The script downloads `FL_SE_slr_data_dist.zip` (977 MB; resumable, cached) and e
 src/
   components/
     map/          MapView (MapLibre lifecycle, layers, interactions), MapControls, AreaBookmarks, MapLegend, MapStatus
-    controls/     ControlPanel, ScenarioSelector
+    controls/     ControlPanel, ScenarioSelector, SubmergedArea
     insights/     InsightPanel, InspectionCard, LevelTrack
-    charts/       ScenarioAreaChart (D3)
     dialogs/      AboutDataDialog, DataSourcesDialog
     layout/       TopBar, BrandMark
     ui/           Switch, Segmented, Dialog, Swatch, ResizeHandle

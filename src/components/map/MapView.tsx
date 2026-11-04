@@ -10,7 +10,6 @@ import { formatScenario } from '../../lib/format'
 import { distanceToLineM, isInsideArea, nearestBookmark, outsideMask, type LngLat } from '../../lib/geo'
 import {
   addFloodLensLayers,
-  bandOpacity,
   INTERACTIVE_LAYERS,
   LYR,
   setBandColors,
@@ -36,8 +35,6 @@ interface Props {
       The camera is padded by it, so the city overview, fly-tos and "the middle of the map" use the
       uncovered part. */
   rightInset?: number
-  /** Water level (ft) to emphasise on the map, e.g. while hovering the chart or legend. */
-  highlightFt: number | null
 }
 
 interface HoverInfo {
@@ -218,7 +215,7 @@ function overviewCamera(map: MLMap, bbox: [number, number, number, number] | nul
 
 type StudyFeature = Feature<Polygon | MultiPolygon>
 
-export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props) {
+export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
   const reduced = useReducedMotion()
@@ -416,13 +413,6 @@ export function MapView({ data, studyBbox, highlightFt, rightInset = 0 }: Props)
     if (!ready || !map) return
     setSourceData(map, SRC.flood, flood)
   }, [ready, flood])
-
-  useEffect(() => {
-    const map = mapRef.current
-    if (!ready || !map) return
-    map.setPaintProperty(LYR.floodFill, 'fill-opacity', bandOpacity(highlightFt))
-    map.setPaintProperty(LYR.floodLine, 'line-opacity', highlightFt === null ? 0.9 : ['case', ['==', ['get', 'band'], highlightFt], 1, 0.15])
-  }, [ready, highlightFt])
 
   const colorMode = state.colorMode
   useEffect(() => {

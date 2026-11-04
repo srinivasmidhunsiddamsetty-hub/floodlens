@@ -1,5 +1,8 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { insights, mapPitch, mapZoom, trackErrors, waitForMap } from './helpers'
+
+/** The left panel: sea level, its figures and the layer switches. */
+const seaLevel = (page: Page) => page.getByRole('complementary', { name: 'Sea level and layers' })
 
 test.describe('FloodLens — core flows', () => {
   test('loads the City of Miami Beach with real NOAA data and no runtime errors', async ({ page }) => {
@@ -9,10 +12,11 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByText('City of Miami Beach, Florida')).toBeVisible()
     await waitForMap(page)
 
-    const headline = insights(page).getByRole('region', { name: 'Land underwater' })
-    await expect(headline).toContainText('at +2 ft')
-    await expect(headline).toContainText('0.99')
-    await expect(headline).toContainText('of the city’s land')
+    // The land underwater sits beside the slider (v0.36), not in Insights.
+    await expect(seaLevel(page)).toContainText('Total submerged area')
+    await expect(seaLevel(page)).toContainText('0.99km²')
+    await expect(seaLevel(page)).toContainText('5% of the city’s land')
+    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toHaveCount(0)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/OpenStreetMap/)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/NOAA/)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/US Census/)
@@ -30,7 +34,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('ArrowRight')
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
-    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('7.43')
+    await expect(seaLevel(page)).toContainText('7.43km²')
     // The legend is a plain vertical scale, shown with Layered colours (v0.35): every level listed,
     // the chosen one marked, nothing a button.
     await page.getByRole('radio', { name: 'Layered' }).click()
@@ -43,23 +47,30 @@ test.describe('FloodLens — core flows', () => {
 
     await page.keyboard.press('Home')
     await expect(slider).toHaveAttribute('aria-valuetext', 'Current MHHW (0 ft)')
-    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('None yet')
+    await expect(seaLevel(page)).toContainText('None yet')
     expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1)
   })
 
   test('the left panel fits without scrolling, with no play or info button (v0.35)', async ({ page }) => {
-    // 650 px is about the browser window of a 1366 × 768 laptop.
+    // 650 px is about the browser window of a 1366 × 768 laptop. The low-spot line (v0.36) adds a row.
     for (const height of [900, 650]) {
       await page.setViewportSize({ width: 1440, height })
       await page.goto('/')
       await waitForMap(page)
       const panel = page.locator('#control-panel > div')
-      const { scroll, client } = await panel.evaluate((el) => ({ scroll: el.scrollHeight, client: el.clientHeight }))
-      expect(scroll).toBeLessThanOrEqual(client)
+      const fits = async () => panel.evaluate((el) => el.scrollHeight <= el.clientHeight)
+      expect(await fits()).toBe(true)
       await expect(page.getByRole('switch', { name: 'City limits' })).toBeInViewport()
+      await page.getByRole('switch', { name: 'Low spots' }).click()
+      await expect(seaLevel(page)).toContainText('0.94 km² at +2 ft')
+      expect(await fits()).toBe(true)
+      await expect(page.getByRole('switch', { name: 'City limits' })).toBeInViewport()
+      await page.getByRole('switch', { name: 'Low spots' }).click()
     }
-    const left = page.getByRole('complementary', { name: 'Sea level and layers' })
+    const left = seaLevel(page)
     await expect(left.getByRole('button', { name: /step up|watch|play|what do these levels mean/i })).toHaveCount(0)
+    // No big "+2 ft" (v0.36): the bold level name on the slider says it.
+    await expect(left.locator('output')).toHaveCount(0)
     // The colour toggle sits in the Sea level title row.
     const title = page.getByRole('heading', { name: 'Sea level' })
     const toggle = page.getByRole('radiogroup', { name: 'Map colours' })
@@ -67,42 +78,42 @@ test.describe('FloodLens — core flows', () => {
     expect(Math.abs(t.y + t.height / 2 - (g.y + g.height / 2))).toBeLessThan(4)
   })
 
-  test('chart bars select levels; one row shows what the selected foot adds', async ({ page }) => {
+  test('Single shows the total underwater, Layered only what the level adds (v0.36)', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    const bar = page.getByRole('button', { name: /^\+1 ft: .*Show on the map\./ })
-    await bar.click()
-    await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+1 ft above MHHW')
-    await expect(bar).toHaveAttribute('aria-pressed', 'true')
-    // Selection is a ring around the bar; a mouse click doesn't leave a focus box round the column.
-    await expect(bar).not.toBeFocused()
-    await expect(insights(page).getByRole('button', { name: /\+1 ft adds/ })).toContainText('0.038 km²')
-    await expect(insights(page).getByText(/ft adds/)).toHaveCount(1)
-    await page.getByRole('button', { name: /^\+3 ft: .*Show on the map\./ }).click()
-    await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
-    const row = insights(page).getByRole('button', { name: /\+3 ft adds/ })
-    await expect(row).toContainText('6.44 km²')
-    await expect(row).not.toContainText('acres')
-    await expect(insights(page).getByText(/ft adds/)).toHaveCount(1)
+    const left = seaLevel(page)
+    const slider = page.getByRole('slider')
+    // +2 ft: 0.99 km² in all, of which +2 ft adds 0.95 km² (the rest came at +1 ft).
+    await expect(left).toContainText('Total submerged area0.99km²5% of the city’s land')
+    await page.getByRole('radio', { name: 'Layered' }).click()
+    await expect(left).toContainText('Additional submerged area0.95km²5% of the city’s land')
+    await slider.focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(left).toContainText('Additional submerged area6.44km²32% of the city’s land')
+    await page.getByRole('radio', { name: 'Single' }).click()
+    await expect(left).toContainText('Total submerged area7.43km²37% of the city’s land')
+    await page.getByRole('radio', { name: 'Layered' }).click()
+    await slider.focus()
+    await page.keyboard.press('Home')
+    await page.keyboard.press('ArrowRight')
+    await expect(left).toContainText('Additional submerged area0.038km²0.2% of the city’s land')
   })
 
-  test('area unit switches everything to acres and is remembered', async ({ page }) => {
+  test('area unit switches the figures to acres and is remembered', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    const panel = insights(page)
-    await panel.getByRole('radio', { name: 'Acres' }).click()
-    const area = panel.getByText('at +2 ft').locator('xpath=following-sibling::dd')
-    await expect(area).toHaveText('244acres')
-    await expect(panel.getByRole('button', { name: /\+2 ft adds/ })).toContainText('235 acres')
-    await expect(panel.getByRole('button', { name: /^\+3 ft: 1,837 acres of land underwater/ })).toBeVisible()
-    // Low spots are listed only while their map layer is on.
-    await expect(panel.getByText('Low spots at +2 ft')).toHaveCount(0)
+    const left = seaLevel(page)
+    await left.getByRole('radio', { name: 'Acres' }).click()
+    await expect(left).toContainText('244acres')
+    await page.getByRole('radio', { name: 'Layered' }).click()
+    await expect(left).toContainText('235acres')
+    // The low-spot area sits under its switch, only while that layer is on (v0.36).
+    await expect(left.getByText('232 acres at +2 ft')).toHaveCount(0)
     await page.getByRole('switch', { name: /Low spots/ }).click()
-    await expect(panel.getByText('Low spots at +2 ft')).toBeVisible()
-    await expect(panel.getByText('Low spots at +2 ft').locator('xpath=following-sibling::span')).toHaveText('232 acres')
+    await expect(page.getByRole('switch', { name: /Low spots/ })).toHaveAccessibleDescription(/232 acres at \+2 ft/)
     await page.reload()
     await waitForMap(page)
-    await expect(insights(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
+    await expect(seaLevel(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('with a place selected, every insight fits without scrolling at 1440×900', async ({ page }) => {
@@ -116,7 +127,9 @@ test.describe('FloodLens — core flows', () => {
     await page.locator('.maplibregl-canvas').focus()
     await page.keyboard.press('Enter')
     await expect(insights(page).getByRole('list', { name: 'Water at this spot, by sea level' })).toBeVisible()
-    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toBeVisible()
+    // Insights holds only the selection (v0.36).
+    await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toHaveCount(0)
+    await expect(insights(page)).not.toContainText('of the city’s land')
     const fit = await insights(page)
       .locator('.overflow-y-auto')
       .evaluate((el) => ({ content: el.scrollHeight, visible: el.clientHeight }))
@@ -149,6 +162,13 @@ test.describe('FloodLens — core flows', () => {
       expect(b.y).toBeGreaterThan(map.y + map.height / 2)
       expect(Math.abs(b.x + b.width / 2 - (zoomIn.x + zoomIn.width / 2))).toBeLessThanOrEqual(25)
     }
+    // 2D sits over 3D (v0.36), and zoom stays clear of the scale bar.
+    const [d2, d3] = [(await page.getByRole('button', { name: '2D view' }).boundingBox())!, (await page.getByRole('button', { name: '3D view' }).boundingBox())!]
+    expect(d2.x).toBe(d3.x)
+    expect(d3.y).toBeGreaterThan(d2.y)
+    const zoomOut = (await page.getByRole('button', { name: 'Zoom out' }).boundingBox())!
+    const scale = (await page.locator('.maplibregl-ctrl-scale').boundingBox())!
+    expect(zoomOut.y + zoomOut.height).toBeLessThanOrEqual(scale.y - 8)
     const bearing = async () => Number(await page.locator('[data-bearing]').getAttribute('data-bearing'))
     expect(await bearing()).toBe(-15)
     await page.getByRole('button', { name: 'Rotate left' }).click()
@@ -171,15 +191,17 @@ test.describe('FloodLens — core flows', () => {
     await waitForMap(page)
     const modes = page.getByRole('radiogroup', { name: 'Map colours' })
     await expect(modes.getByRole('radio', { name: 'Single' })).toHaveAttribute('aria-checked', 'true')
-    const topBarColours = () =>
-      page.locator('g.bar').last().locator('rect.seg').evaluateAll((els) => [...new Set(els.map((e) => e.getAttribute('fill')))])
-    expect(await topBarColours()).toEqual(['#3d84e6'])
+    // The slider track wears the map's colours: at +2 ft, one blue for both feet, or one each.
+    const trackColours = () =>
+      page.locator('#control-panel [style*="linear-gradient"]').evaluate((el) => [
+        ...new Set((el as HTMLElement).style.background.match(/rgb\([^)]+\)/g)!.filter((c) => c !== 'rgb(217, 217, 217)')),
+      ])
+    expect(await trackColours()).toEqual(['rgb(61, 132, 230)'])
     // One colour needs no key (v0.35).
     await expect(page.getByRole('region', { name: 'Map legend' })).toHaveCount(0)
 
     await modes.getByRole('radio', { name: 'Layered' }).click()
-    // The +5 ft bar stacks the five feet above today's high tide, each in its own colour.
-    await expect.poll(async () => (await topBarColours()).length).toBe(5)
+    await expect.poll(trackColours).toEqual(['rgb(166, 216, 237)', 'rgb(109, 182, 219)'])
     await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
     await page.reload()
     await waitForMap(page)
@@ -293,7 +315,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(handle).toHaveAttribute('aria-valuemin', '300')
     await expect(handle).toHaveAttribute('aria-valuemax', '560')
 
-    // Drag the divider 120 px to the left: the panel grows by 120 px and the chart follows.
+    // Drag the divider 120 px to the left: the panel grows by 120 px.
     const box = (await handle.boundingBox())!
     await page.mouse.move(box.x + box.width / 2, box.y + 300)
     await page.mouse.down()
@@ -347,6 +369,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(alert).toContainText('The flood data didn’t load')
     await expect(alert).toContainText('npm run data:prepare')
     await expect(insights(page)).not.toContainText('km²')
+    await expect(seaLevel(page)).not.toContainText('submerged')
   })
 
   test('a missing band file shows an explicit map warning', async ({ page }) => {

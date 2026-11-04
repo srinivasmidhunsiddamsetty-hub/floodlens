@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, type ReactNode } from 'react'
 import { formatScenario, formatScenarioLong } from '../../lib/format'
 import { bandColor, type ColorMode } from '../../lib/theme'
 
@@ -9,15 +9,17 @@ interface Props {
   /** The map's colour mode, so the track wears the same colours as the map. */
   colorMode?: ColorMode
   disabled?: boolean
+  /** Shown to the right of the slider, as tall as it: the land underwater at this level (v0.36). */
+  children?: ReactNode
 }
 
 /**
  * Height of the vertical slider, and the thumb size (the track runs between the thumb's centres).
- * The slider gives up height on short windows (v0.35), down to 116 px, so the left panel fits
+ * The slider gives up height on short windows (v0.35), down to 100 px, so the left panel fits
  * without scrolling in windows down to about 650 px tall; 532 px is the rest of the panel and
- * the top bar.
+ * the top bar, and `--fl-panel-extra` is any line the panel adds (the low-spot area, v0.36).
  */
-const TRACK_H = 'clamp(116px, calc(100vh - 532px), 168px)'
+const TRACK_H = 'clamp(100px, calc(100vh - 532px - var(--fl-panel-extra, 0px)), 168px)'
 const THUMB = 20
 
 /**
@@ -25,10 +27,10 @@ const THUMB = 20
  * raising it reads as the sea rising. A native range input provides keyboard, touch and
  * screen-reader support; the track is painted with the map's colours so the slider doubles as
  * a key. Positions are discrete NOAA scenarios — nothing is interpolated between them.
- * The play button and the (i) note were removed in v0.35; the caption under the number says
- * what it measures, and "About the data" explains the levels.
+ * The play button and the (i) note were removed in v0.35. The big "+2 ft" went in v0.36: the
+ * bold level name already says it, and its place holds the land underwater (`children`).
  */
-export function ScenarioSelector({ available, value, onChange, colorMode = 'detailed', disabled }: Props) {
+export function ScenarioSelector({ available, value, onChange, colorMode = 'detailed', disabled, children }: Props) {
   const id = useId()
   const index = Math.max(0, available.indexOf(value))
   const max = Math.max(1, available.length - 1)
@@ -50,7 +52,7 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
 
   return (
     <div>
-      <div className="flex gap-4">
+      <div className="flex gap-2.5">
         <div className="relative flex shrink-0" style={{ height: TRACK_H }}>
           <label htmlFor={id} className="sr-only">
             Sea-level rise above today’s high tide
@@ -76,7 +78,8 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
             />
           </div>
           {/* Level names beside the stops; clicking one picks it (the slider is the keyboard route). */}
-          <div className="relative ml-1.5 w-12" aria-hidden="true">
+          {/* 42 px fits the widest name, a bold "Today", and leaves the most room for `children`. */}
+          <div className="relative ml-1 w-[42px]" aria-hidden="true">
             {available.map((ft, i) => (
               <button
                 key={ft}
@@ -94,12 +97,7 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
           </div>
         </div>
 
-        <div className="min-w-0 flex-1">
-          <output htmlFor={id} className="block t-display" aria-live="polite">
-            {formatScenario(value)}
-          </output>
-          <p className="mt-1 t-caption">above today’s high tide</p>
-        </div>
+        <div className="min-w-0 flex-1">{children}</div>
       </div>
     </div>
   )

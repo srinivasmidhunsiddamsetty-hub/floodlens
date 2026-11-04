@@ -1,34 +1,23 @@
-import { AlertTriangle, Loader2, MousePointerClick, Waves } from 'lucide-react'
+import { AlertTriangle, Loader2, MousePointerClick } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { AREA_UNITS, formatArea, formatPercent, formatScenario } from '../../lib/format'
-import { lowLyingByFeet, scenarioByFeet, type FloodBand } from '../../lib/manifest'
-import { bandColor } from '../../lib/theme'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { ManifestState } from '../../hooks/useManifest'
 import { useAppDispatch, useAppState } from '../../state/AppState'
-import { ScenarioAreaChart } from '../charts/ScenarioAreaChart'
-import { AreaUnitToggle } from '../ui/AreaUnitToggle'
-import { Swatch } from '../ui/Swatch'
 import { InspectionCard } from './InspectionCard'
 
 interface Props {
   manifestState: ManifestState
   inspection: InspectionState
-  bands: FloodBand[]
-  highlightFt: number | null
-  onHighlight: (ft: number | null) => void
 }
 
-export function InsightPanel({ manifestState, inspection, bands, highlightFt, onHighlight }: Props) {
+/**
+ * Insights is only about what you pick on the map (v0.36): the selected building or spot, or a
+ * short prompt when nothing is picked. The city-wide "Land underwater" card (figures, chart and
+ * what each foot adds) moved to the Sea level card on the left as its two figures.
+ */
+export function InsightPanel({ manifestState, inspection }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
-  const manifest = manifestState.manifest
-  const s = manifest ? scenarioByFeet(manifest, state.scenarioFt) : undefined
-  // Low spots are listed only while their map layer is on, so the panel matches the map.
-  const low = manifest && state.layers.lowLying ? lowLyingByFeet(manifest, state.scenarioFt) : undefined
-  const unit = state.areaUnit
-  const unitShort = AREA_UNITS[unit].short
-  const landM2 = manifest?.studyArea.boundary?.censusLandM2
 
   // A new selection is the user's latest question: bring its answer into view.
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -82,103 +71,6 @@ export function InsightPanel({ manifestState, inspection, bands, highlightFt, on
             <p className="mt-2 t-caption">We’d rather show nothing than guess, so FloodLens never fills the gap with estimates or sample data.</p>
           </div>
         )}
-
-        {manifestState.status === 'ready' && s && (
-          <>
-            {/* One tile for everything the km² / acres switch controls: the figures at the
-                chosen level, then every level in the chart, with what each foot adds. */}
-            <section aria-labelledby="summary-title" className="card pointer-events-auto mt-2.5 px-3 pt-3 pb-1.5">
-              <div className="flex items-center justify-between gap-3">
-                <h3 id="summary-title" className="flex items-center gap-2 t-heading font-bold">
-                  <Waves className="size-4 shrink-0 text-accent" aria-hidden />
-                  Land underwater
-                </h3>
-                <AreaUnitToggle value={unit} onChange={(u) => dispatch({ type: 'setAreaUnit', unit: u })} />
-              </div>
-              {s.feet === 0 ? (
-                <p className="mt-2 t-body">None yet. Today’s high tide is where we start: raise the sea level to see what changes.</p>
-              ) : (
-                // "Land" carries "newly": it means ground that is dry at today's high tide.
-                // Each figure sits on its own soft stat tile: a light fill, no border, so the tiles read
-                // as one pair inside the outer tile without nesting borders.
-                <dl className={`mt-2.5 grid gap-2 ${landM2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                  <div className="flex flex-col-reverse rounded-lg bg-[#f3f6fa] px-3 py-2.5">
-                    <dt className="t-caption">at {formatScenario(s.feet)}</dt>
-                    <dd className="flex items-baseline gap-1">
-                      <span className="text-[24px] leading-7 font-bold tracking-[-0.03em] text-fg tabular">{formatArea(s.beyondBaselineM2, unit)}</span>
-                      <span className="text-[13px] text-fg-muted">{unitShort}</span>
-                    </dd>
-                  </div>
-                  {landM2 ? (
-                    <div className="flex flex-col-reverse rounded-lg bg-[#f3f6fa] px-3 py-2.5">
-                      <dt className="t-caption">of the city’s land</dt>
-                      <dd className="text-[24px] leading-7 font-bold tracking-[-0.03em] text-fg tabular">
-                        {formatPercent(s.beyondBaselineM2 / landM2, true)}
-                      </dd>
-                    </div>
-                  ) : null}
-                </dl>
-              )}
-
-              <div className="mt-3 border-t border-line pt-3">
-                <ScenarioAreaChart
-                  bands={bands}
-                  unit={unit}
-                  selectedFt={state.scenarioFt}
-                  colorMode={state.colorMode}
-                  highlightFt={highlightFt}
-                  onHighlight={onHighlight}
-                  onSelect={(feet) => dispatch({ type: 'setScenario', feet })}
-                />
-
-                {/* What the selected level adds on top of the one below it. One row only: the chart
-                    shows every level, and the map legend explains the colours. Hover to spotlight it. */}
-                <section aria-labelledby="breakdown-title">
-                  <h3 id="breakdown-title" className="sr-only">
-                    Area this level adds
-                  </h3>
-                  {bands
-                    .filter((b) => !b.isReference && b.feet === state.scenarioFt)
-                    .map((b) => (
-                      <div key={b.feet} className="-mx-2" onMouseLeave={() => onHighlight(null)}>
-                        <button
-                          type="button"
-                          onMouseEnter={() => onHighlight(b.feet)}
-                          onFocus={() => onHighlight(b.feet)}
-                          onBlur={() => onHighlight(null)}
-                          className={`flex w-full items-center gap-3 rounded px-2 py-[3px] text-left transition-colors hover:bg-surface-2 ${
-                            highlightFt === b.feet ? 'bg-surface-2' : ''
-                          }`}
-                        >
-                          <span aria-hidden className="h-3 w-3 shrink-0 rounded-sm" style={{ background: bandColor(b.feet, state.colorMode) }} />
-                          <span className="flex-1 t-label text-fg">{formatScenario(b.feet)} adds</span>
-                          <span className="text-[13px] text-fg tabular">
-                            {formatArea(b.addedM2, unit)} {unitShort}
-                          </span>
-                        </button>
-                      </div>
-                    ))}
-                  {low && (
-                    <div className="mt-1.5 border-t border-line pt-2">
-                      <p className="flex items-center gap-3">
-                        <span className="shrink-0" aria-hidden>
-                          <Swatch kind="lowLying" size={12} />
-                        </span>
-                        <span className="flex-1 t-label text-fg">Low spots {low.feet === 0 ? 'today' : `at ${formatScenario(low.feet)}`}</span>
-                        <span className="text-[13px] text-fg tabular">
-                          {formatArea(low.areaM2, unit)} {unitShort}
-                        </span>
-                      </p>
-                      {/* Full width under the label, so it stays on one line */}
-                      <p className="pl-6 t-caption">Cut off from the sea, so not counted above</p>
-                    </div>
-                  )}
-                </section>
-              </div>
-            </section>
-          </>
-        )}
-
       </div>
     </div>
   )

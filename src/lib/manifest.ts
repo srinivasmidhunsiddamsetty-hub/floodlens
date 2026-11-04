@@ -120,4 +120,18 @@ export function bandsFor(m: DataManifest): FloodBand[] {
   return bands
 }
 
+/**
+ * Land underwater at a level beyond today's high tide (m²), for the Sea level card (v0.36).
+ * 'total' is everything up to that level. 'added' is only what that level adds to the one below
+ * it, taken as the difference of the two totals, so the added figures always sum to the total
+ * and nothing is counted twice. Today's figure is 0 either way. Undefined if the level isn't in
+ * the data.
+ */
+export function submergedM2(m: DataManifest, ft: number, kind: 'total' | 'added'): number | undefined {
+  const i = m.scenarios.findIndex((s) => s.feet === ft)
+  if (i < 0) return undefined
+  const total = m.scenarios[i].beyondBaselineM2
+  return kind === 'added' && i > 0 ? total - m.scenarios[i - 1].beyondBaselineM2 : total
+}
+
 export const fileUrl = (file: string) => `${DATA_BASE_URL}${file}`

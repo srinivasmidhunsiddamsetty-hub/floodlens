@@ -80,12 +80,6 @@ export function setBandColors(map: MLMap, mode: ColorMode) {
   map.setPaintProperty(LYR.floodLine, 'line-color', bandColorExpr(mode))
 }
 
-/** Opacity for the flood bands, optionally emphasising one band and dimming the others. */
-export function bandOpacity(highlight: number | null): DataDrivenPropertyValueSpecification<number> {
-  if (highlight === null) return opacity.band
-  return ['case', ['==', ['get', 'band'], highlight], 0.95, opacity.bandDimmed]
-}
-
 /**
  * Adds every FloodLens source and layer to a loaded style.
  * Flood bands sit beneath basemap water (so they read as "water reaching land"),

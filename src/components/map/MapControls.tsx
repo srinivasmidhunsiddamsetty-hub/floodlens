@@ -42,7 +42,6 @@ function Btn({
   children,
   pressed,
   tipGap = 8,
-  stacked = true,
   className,
 }: {
   label: string
@@ -51,9 +50,8 @@ function Btn({
   pressed?: boolean
   /** Pixels from the button's left edge to the tooltip, to clear buttons further left. */
   tipGap?: number
-  /** In a column group: a divider above every button but the first, and the group's corners. */
-  stacked?: boolean
-  /** Replaces the size and shape (the compass dial's round buttons). */
+  /** Replaces the size and shape (the compass dial's round buttons). By default the button sits
+   *  in a column group: a divider above every button but the first, and the group's corners. */
   className?: string
 }) {
   return (
@@ -63,7 +61,7 @@ function Btn({
       aria-pressed={pressed}
       onClick={onClick}
       className={`group/btn relative grid place-items-center border-line text-fg-muted transition-colors hover:bg-surface-3 hover:text-fg focus-visible:outline-offset-[-2px] ${
-        className ?? `size-8 ${stacked ? 'not-first:border-t first:rounded-t-xl last:rounded-b-xl' : 'rounded-lg'}`
+        className ?? 'size-8 not-first:border-t first:rounded-t-xl last:rounded-b-xl'
       } ${pressed ? 'bg-accent-soft text-accent hover:bg-accent-soft hover:text-accent' : ''}`}
     >
       {children}
@@ -93,7 +91,9 @@ const DIAL_BTN = 'size-6 rounded-full'
 
 /**
  * Map navigation (v0.35): one slim column in the bottom-right corner, so the rest of the map
- * stays clear. From the top: 2D or 3D, back to the whole city, the compass, zoom. In 3D the
+ * stays clear. From the top: 2D over 3D (stacked again in v0.36), back to the whole city, the
+ * compass, zoom. The column starts 88 px up, 12 px clear of the scale bar (v0.36: at 68 px the
+ * zoom-out button covered the bar's top). In 3D the
  * compass becomes a dial with arrows around it to turn and tilt the view (not every trackpad or
  * mouse can); clicking the needle in the middle turns the map back to north. v0.34 had the view
  * buttons top right and a separate Rotate/Tilt card.
@@ -101,19 +101,19 @@ const DIAL_BTN = 'size-6 rounded-full'
 export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOut, onResetNorth, onShowAll, onSetMode, onRotate, onTilt }: Props) {
   return (
     <div
-      className="pointer-events-auto absolute right-4 bottom-[68px] z-10 flex w-[72px] flex-col items-center gap-2"
+      className="pointer-events-auto absolute right-4 bottom-[88px] z-10 flex w-[72px] flex-col items-center gap-2"
       data-pitch={Math.round(pitch)}
       data-bearing={Math.round(bearing)}
       data-zoom={zoom.toFixed(1)}
     >
-      <div role="group" aria-label="Perspective" className="glass flex rounded-xl border border-white/80">
-        <Btn label="2D view" stacked={false} className="size-8 rounded-l-xl" pressed={viewMode === '2d'} onClick={() => onSetMode('2d')}>
+      <Group label="Perspective">
+        <Btn label="2D view" pressed={viewMode === '2d'} onClick={() => onSetMode('2d')}>
           <span className="text-[11px] font-medium">2D</span>
         </Btn>
-        <Btn label="3D view" stacked={false} tipGap={40} className="size-8 rounded-r-xl border-l" pressed={viewMode === '3d'} onClick={() => onSetMode('3d')}>
+        <Btn label="3D view" pressed={viewMode === '3d'} onClick={() => onSetMode('3d')}>
           <span className="text-[11px] font-medium">3D</span>
         </Btn>
-      </div>
+      </Group>
       <Group label="Default view">
         <Btn label="Entire Miami Beach" onClick={onShowAll}>
           <House className="size-4" aria-hidden />

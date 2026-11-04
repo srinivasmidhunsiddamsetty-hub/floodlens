@@ -25,7 +25,8 @@ describe('<ScenarioSelector>', () => {
     expect(slider).toHaveAttribute('aria-valuetext', '+2 ft above MHHW')
     // Upright (v0.34): raising it reads as the sea rising.
     expect(slider).toHaveAttribute('aria-orientation', 'vertical')
-    expect(screen.getByText('+2 ft', { selector: 'output' })).toBeInTheDocument()
+    // No big "+2 ft" beside it (v0.36): the bold level name says it.
+    expect(document.querySelector('output')).toBeNull()
   })
 
   it('only lands on discrete NOAA scenarios', () => {
@@ -47,9 +48,13 @@ describe('<ScenarioSelector>', () => {
     expect(onChange).toHaveBeenCalledWith(1)
   })
 
-  it('has no play or info button: the caption says what the number means (v0.35)', () => {
-    render(<Harness />)
-    expect(screen.getByText('above today’s high tide')).toBeInTheDocument()
+  it('has no play or info button (v0.35), and holds what it is given beside the slider (v0.36)', () => {
+    render(
+      <ScenarioSelector available={[0, 1, 2, 3]} value={2} onChange={() => {}}>
+        <p>Total submerged area</p>
+      </ScenarioSelector>,
+    )
+    expect(screen.getByText('Total submerged area')).toBeInTheDocument()
     // Only the level names (hidden from assistive tech; the slider is the keyboard route) are buttons.
     expect(screen.queryAllByRole('button')).toHaveLength(0)
     expect(screen.getAllByRole('button', { hidden: true }).map((b) => b.textContent)).toEqual(['Today', '+1 ft', '+2 ft', '+3 ft'])

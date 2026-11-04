@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { makeManifest, realManifestJson } from '../test/fixtures'
-import { bandsFor, comparisonFor, fetchManifest, ManifestError, parseManifest, scenarioByFeet } from './manifest'
+import { bandsFor, comparisonFor, fetchManifest, ManifestError, parseManifest, scenarioByFeet, submergedM2 } from './manifest'
 
 describe('parseManifest — source metadata handling', () => {
   it('accepts the manifest produced by the data pipeline', () => {
@@ -99,5 +99,31 @@ describe('bandsFor — disjoint flood bands', () => {
   it('omits bands whose difference layer is missing', () => {
     const m = makeManifest() // fixture only has a 1→3 comparison
     expect(bandsFor(m).map((b) => b.feet)).toEqual([0])
+  })
+})
+
+describe('submergedM2 — the Sea level card figures (v0.36)', () => {
+  const m = parseManifest(realManifestJson())
+  const levels = m.scenarios.map((s) => s.feet)
+
+  it('Single: everything underwater up to the level, beyond today’s high tide', () => {
+    expect(submergedM2(m, 0, 'total')).toBe(0)
+    for (const s of m.scenarios) expect(submergedM2(m, s.feet, 'total')).toBe(s.beyondBaselineM2)
+  })
+
+  it('Layered: only what each level adds, as the difference of neighbouring totals', () => {
+    expect(submergedM2(m, 0, 'added')).toBe(0)
+    expect(submergedM2(m, 3, 'added')).toBeCloseTo(scenarioByFeet(m, 3)!.beyondBaselineM2 - scenarioByFeet(m, 2)!.beyondBaselineM2, 6)
+    // No double counting: the added figures sum to the total at every level.
+    let sum = 0
+    for (const ft of levels) {
+      sum += submergedM2(m, ft, 'added')!
+      expect(sum).toBeCloseTo(submergedM2(m, ft, 'total')!, 3)
+    }
+  })
+
+  it('shows nothing for a level that isn’t in the data', () => {
+    expect(submergedM2(m, 9, 'total')).toBeUndefined()
+    expect(submergedM2(m, 9, 'added')).toBeUndefined()
   })
 })

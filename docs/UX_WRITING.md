@@ -22,7 +22,7 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 6. **Errors say what happened and what to do, without blame.** "We couldn't reach the flood data. Check your connection and reload."
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
 8. **A label and its value read as one sentence.** "Water reaches it · At +3 ft". "Up to +3 ft · Water doesn't reach it". Never pair a label with a value that contradicts it.
-9. **Chart titles are one plain line that names the measure: "Land underwater by sea level".** v0.8–v0.12 followed the [ONS](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) / [GOV.UK](https://brand.design-system.service.gov.uk/data/charts) pattern of a finding as the title plus a measure-and-place subtitle. In a small tile under a "Land underwater" summary, that was more text than the reader needed, so v0.13 cut it to one line.
+9. **Chart titles are one plain line that names the measure: "Land underwater by sea level"** (the chart was removed in v0.36). v0.8–v0.12 followed the [ONS](https://service-manual.ons.gov.uk/data-visualisation/guidance/chart-text) / [GOV.UK](https://brand.design-system.service.gov.uk/data/charts) pattern of a finding as the title plus a measure-and-place subtitle. In a small tile under a "Land underwater" summary, that was more text than the reader needed, so v0.13 cut it to one line.
 10. **A reference is a reference.** When a mockup is supplied, take its layout and emphasis, not its wording. The answer keeps FloodLens's voice ("Water reaches at · +3 ft"), not the mockup's ("First reached / at +3 ft / Within the mapped extent…").
 
 ## Before and after (v0.6 → v0.7)
@@ -176,6 +176,18 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
+
+## Before and after (v0.35 → v0.36)
+
+From the owner's spec. "Submerged" is the owner's word for the left-panel figures.
+
+| Where | Before | After |
+| --- | --- | --- |
+| Sea level card | +2 ft / above today's high tide | Total submerged area · 0.99 km² · 5% of the city's land (Single) or Additional submerged area · 0.95 km² · 5% of the city's land (Layered) |
+| Today's high tide | None yet. Today's high tide is where we start: raise the sea level to see what changes. (Insights) | None yet (beside the slider) |
+| Insights, city figures | Land underwater · 0.99 km² at +2 ft · 5% of the city's land | (moved to the Sea level card) |
+| Insights, chart | Land underwater by sea level · +2 ft adds 0.95 km² | (removed) |
+| Low spots | Low spots at +2 ft · 232 acres · Cut off from the sea, so not counted above (Insights) | 232 acres at +2 ft (under the Low spots switch, after "Below the water line, but cut off from the sea") |
 
 ## Before and after (v0.34 → v0.35)
 

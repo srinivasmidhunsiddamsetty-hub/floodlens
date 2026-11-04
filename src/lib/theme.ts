@@ -84,7 +84,6 @@ export const bandColor = (feet: number, mode: ColorMode = 'detailed') =>
 
 export const opacity = {
   band: 0.85,
-  bandDimmed: 0.18,
   lowLying: 0.75,
   outsideMask: 0.5,
 } as const

@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ControlPanel } from './components/controls/ControlPanel'
 import { AboutDataDialog } from './components/dialogs/AboutDataDialog'
 import { DataSourcesDialog } from './components/dialogs/DataSourcesDialog'
@@ -22,8 +22,6 @@ export default function App() {
   const manifest = manifestState.manifest
   const mapData = useMapData(manifest, state)
   const inspection = useInspection(state.selection, manifest)
-  /** Water level spotlighted on the map while hovering the chart or its "adds" row. */
-  const [highlightFt, setHighlightFt] = useState<number | null>(null)
   const insightsWidth = usePanelWidth('floodlens.insightsWidth', INSIGHTS_WIDTH)
 
   // Esc clears the selection anywhere (dialogs handle their own Esc first).
@@ -57,7 +55,6 @@ export default function App() {
           <MapView
             data={mapData}
             studyBbox={manifest?.studyArea.bbox ?? null}
-            highlightFt={highlightFt}
             rightInset={insightsOpen ? insightsWidth.width : 0}
           />
 
@@ -107,13 +104,7 @@ export default function App() {
                 controls="insight-panel"
                 label="Resize insights panel"
               />
-              <InsightPanel
-                manifestState={manifestState}
-                inspection={inspection}
-                bands={mapData.bands}
-                highlightFt={highlightFt}
-                onHighlight={setHighlightFt}
-              />
+              <InsightPanel manifestState={manifestState} inspection={inspection} />
             </aside>
           )}
         </main>
