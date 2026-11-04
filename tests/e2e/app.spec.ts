@@ -341,10 +341,11 @@ test.describe('FloodLens — core flows', () => {
     await page.goto('/')
     await waitForMap(page)
     const sizes = () => figure(page).locator('p.tabular').evaluateAll((els) => els.map((e) => getComputedStyle(e).fontSize))
-    // v0.43 shrank them to 20 px on ordinary laptop windows (751–770 px tall): keep them at 28 px.
+    // v0.43 shrank them to 20 px on ordinary laptop windows (751–770 px tall): keep them at full
+    // size, 30 px since v0.45.
     for (const height of [900, 800, 760, 730]) {
       await page.setViewportSize({ width: 1440, height })
-      await expect.poll(sizes).toEqual(['28px', '28px'])
+      await expect.poll(sizes).toEqual(['30px', '30px'])
     }
     // Only on short windows do they compact, and only to 24 px; the panel still fits.
     await page.setViewportSize({ width: 1440, height: 650 })

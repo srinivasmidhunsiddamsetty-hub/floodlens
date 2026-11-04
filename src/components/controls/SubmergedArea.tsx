@@ -14,7 +14,7 @@ interface Props {
 }
 
 /**
- * One figure in a box, centred: label, then the number (28 px bold since v0.43; 24 px before), then
+ * One figure in a box, centred: label, then the number (30 px bold since v0.45; 28 px in v0.43–v0.44, 24 px before), then
  * anything under it. The box shares the "Soft light" surface (`.surface-soft`, v0.42) with the
  * place card's answer and facts, so the two panels read as one design (v0.41 had a pale blue
  * gradient; v0.39–v0.40 a flat grey-blue fill). These two boxes have a slightly heavier hairline,
@@ -28,7 +28,7 @@ function Figure({ label, value, children }: { label: string; value: string; chil
   return (
     <div className="flex flex-1 basis-0 flex-col items-center justify-center surface-soft rounded-lg border-[1.5px] px-2 py-3 text-center tiny:py-0.5">
       <p className="text-[12px] leading-4 font-medium whitespace-nowrap text-fg tiny:text-[11px] tiny:leading-[14px]">{label}</p>
-      <p className="mt-2 text-[28px] leading-8 font-bold tracking-[-0.03em] text-fg tabular tiny:mt-1 tiny:text-[24px] tiny:leading-7">{value}</p>
+      <p className="mt-2 text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-fg tabular tiny:mt-1 tiny:text-[24px] tiny:leading-7">{value}</p>
       {children}
     </div>
   )

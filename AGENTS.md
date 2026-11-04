@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.44 (tag `v0.44`): the sea-level figures stay 28 px on laptop windows (fixes v0.43's 20 px on 751–770 px windows).
+- **Current version:** v0.45 (tag `v0.45`): the two sea-level figures at 30 px (24 px only on windows ≤ 725 px tall).
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
@@ -97,7 +97,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | Fact values | 20 px semibold (v0.41; medium before) |
 | The answer ("+2 ft") | 24 px bold |
 | Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
-| Sea level figures: the area and the share (equal weight) | 28 px bold (v0.43; 24 px only on windows ≤ 725 px tall), centred in a Soft light box (`.surface-soft`, v0.42) with a 1.5 px hairline (v0.43), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
+| Sea level figures: the area and the share (equal weight) | 30 px bold (v0.45; 28 px in v0.43–v0.44; 24 px only on windows ≤ 725 px tall), centred in a Soft light box (`.surface-soft`, v0.42) with a 1.5 px hairline (v0.43), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
 | Level chips on the slider | 12 px, centred pills (v0.41); light fill at rest, the chosen one accent-tinted and bold |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
@@ -107,7 +107,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 250 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a Soft light box (`.surface-soft`: white to cool grey, hairline, inner highlight; v0.42), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 254 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a Soft light box (`.surface-soft`: white to cool grey, hairline, inner highlight; v0.42), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows use two Tailwind variants (`@custom-variant` in `index.css`): `short` (800 px tall or less) tightens the card padding and layer rows; `tiny` (725 px or less) also compacts the figure boxes, never below 24 px numbers. **Check the figure size on a ~760 px window after any change here**: v0.43 shrank them to 20 px on ordinary laptops. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (folded-map icon, v0.42; frame corners in v0.40–v0.41; the owner found the house misleading), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned, and the owner agreed it's needed. Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
@@ -255,6 +255,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.42 | "Soft light" surface for the figure boxes and the place card's answer and facts (facts now grouped in one box); vermilion selection again; folded-map icon; left panel 300 px |
 | v0.43 | The two sea-level figures at 28 px (from 24) in boxes with a 1.5 px hairline; slider up to 250 px so the boxes stay equal |
 | v0.44 | Fix: the figures stay 28 px on laptop windows (v0.43 compacted them to 20 px at ≤ 770 px); compaction only at ≤ 725 px and only to 24 px; panel tightening from 800 px keeps the boxes equal |
+| v0.45 | The two sea-level figures at 30 px (the owner's call); slider up to 254 px so the boxes stay equal |
 
 ---
 

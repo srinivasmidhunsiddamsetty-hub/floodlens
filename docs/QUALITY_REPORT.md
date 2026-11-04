@@ -58,6 +58,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - A "Soft light" surface for the figure, answer and facts boxes; the place facts grouped in one box; a vermilion selection again; a folded-map icon; a 300 px left panel (v0.42).
 - The two sea-level figures at 28 px in boxes with a 1.5 px hairline, the scale extended to keep them equal (v0.43).
 - Fix: the figures stay 28 px on laptop windows; they compact only at 725 px tall or less, and only to 24 px; a test checks the size at 900–650 px (v0.44).
+- The two sea-level figures at 30 px, measured at every window height from 900 to 650 px (v0.45).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

@@ -48,8 +48,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.42 | 4 Nov 2026 | Soft light boxes, grouped place facts, vermilion selection, folded-map icon, wider left panel | [`docs/versions/v0.42/`](docs/versions/v0.42/) |
 | v0.43 | 4 Nov 2026 | Bigger sea-level figures, heavier box hairline | [`docs/versions/v0.43/`](docs/versions/v0.43/) |
 | v0.44 | 4 Nov 2026 | Fix: the figures stay 28 px on laptop windows | [`docs/versions/v0.44/`](docs/versions/v0.44/) |
+| v0.45 | 4 Nov 2026 | The sea-level figures at 30 px | [`docs/versions/v0.45/`](docs/versions/v0.45/) |
 
 ---
+
+## v0.45: Figures at 30 px (4 Nov 2026)
+
+- **The two sea-level figures are 30 px bold** (28 px before), at the owner's request.
+- **The scale grew to 254 px** (250 before) so the two boxes stay the same height.
+- **Measured at every window height from 900 to 650 px:**
+  - The figures are 30 px on every window 726 px tall or more, and 24 px only below that.
+  - The panel fits without scrolling everywhere.
+  - The boxes are equal from 750 px up (765 px with the low-spot line).
+- Tests: 107 unit/component tests and 20 end-to-end tests (the size test now expects 30 px).
 
 ## v0.44: The figures stay 28 px (4 Nov 2026)
 
