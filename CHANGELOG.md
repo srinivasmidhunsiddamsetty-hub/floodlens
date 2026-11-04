@@ -53,8 +53,25 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.47 | 4 Nov 2026 | "Overall / Per foot", pill toggles, one map toolbar | [`docs/versions/v0.47/`](docs/versions/v0.47/) |
 | v0.48 | 4 Nov 2026 | Shorter outside-the-city message | [`docs/versions/v0.48/`](docs/versions/v0.48/) |
 | v0.49 | 4 Nov 2026 | Premium navy boxes | [`docs/versions/v0.49/`](docs/versions/v0.49/) |
+| v0.50 | 4 Nov 2026 | Navy brand colour and premium surfaces | [`docs/versions/v0.50/`](docs/versions/v0.50/) |
 
 ---
+
+## v0.50: Navy brand colour and premium surfaces (4 Nov 2026)
+
+The owner liked v0.49's navy boxes and asked for the FloodLens blue, the whites and greys, and every other colour in the interface to share that premium finish. Three primaries were rendered on the real app (the old blue `#0069b0`, a navy-family blue `#24589a` and the navy `#1e3a5f`), and the owner picked **the navy**.
+
+- **The brand colour is now navy `#1e3a5f`** (it was `#0069b0`). It is the accent everywhere: selected toggles, switches, the chosen area chip, links, focus rings and the logo. The darker step is `#152a46` and the light tint `#e7edf5`. Navy on white is 11.5:1.
+- **Solid accent fills get the same finish as the boxes** (`.fill-accent`): a soft top-to-bottom shade (`#2d5287` → navy), a faint glow, a top highlight, a navy hairline and a small soft shadow. Used by the chosen Overall / Per foot and km² / acres pills, switches that are on, and the selected area chip.
+- **The logo** has the same shade and a faint white hairline.
+- **Whites and greys:**
+  - Cards have a white top highlight and a deeper, softer shadow; frosted map controls too.
+  - The grey panel behind the left cards has a very faint grain (3%).
+  - Pill tracks and switches that are off sit slightly inset.
+  - The level chips and the icon tiles have a hairline and a top highlight.
+- **Other colours:** the selection green, the icon tiles' tints and the flood colours keep their hues. The "Water reaches at" dot is a light sky blue (`#9fd0f5`), so it shows on the navy box.
+- **The map stays flat.** Its colours are data, so they get no glow, grain or shading: that would suggest depths NOAA doesn't map, blur the edges between levels, and the owner already declined map lighting in v0.25.
+- Tests: 107 unit/component tests and 20 end-to-end tests.
 
 ## v0.49: Premium navy boxes (4 Nov 2026)
 

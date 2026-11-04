@@ -35,10 +35,11 @@
   --color-fg-muted: #474747;
   --color-fg-subtle: #6a6a6a;
 
-  /* Brand + data */
-  --color-accent: #0069b0;
-  --color-accent-strong: #00548f;
-  --color-accent-soft: #e5f1fa;
+  /* Brand + data. The brand colour is navy (v0.50, the owner's pick), the same as the premium
+     boxes, so selected toggles, chips, switches and the logo read as one family. #0069b0 before. */
+  --color-accent: #1e3a5f;
+  --color-accent-strong: #152a46;
+  --color-accent-soft: #e7edf5;
   --color-flood: #1f66d1;
   --color-flood-strong: #1550a8;
   --color-compare: #f08c1e;
@@ -51,8 +52,13 @@
   --shadow-float: 0 1px 3px rgb(0 0 0 / 0.1), 0 8px 24px rgb(0 0 0 / 0.12);
   /* v0.25: a faint ring and a soft, low shadow instead of a hard border (cards), and a
      stronger lift for the frosted controls that float over the map (glass). */
-  --shadow-card: 0 0 0 1px rgb(16 24 40 / 0.05), 0 1px 2px rgb(16 24 40 / 0.04), 0 8px 20px -6px rgb(16 24 40 / 0.1);
-  --shadow-glass: 0 1px 2px rgb(16 24 40 / 0.06), 0 10px 24px -8px rgb(16 24 40 / 0.3);
+  /* v0.50, premium everywhere: a top highlight, a fine hairline and layered soft shadows. */
+  --shadow-card:
+    inset 0 1px 0 #ffffff, 0 0 0 1px rgb(16 24 40 / 0.06), 0 1px 2px rgb(16 24 40 / 0.05),
+    0 4px 10px -4px rgb(16 24 40 / 0.08), 0 16px 32px -14px rgb(16 24 40 / 0.16);
+  --shadow-glass:
+    inset 0 1px 0 rgb(255 255 255 / 0.9), 0 0 0 1px rgb(16 24 40 / 0.07), 0 2px 4px -1px rgb(16 24 40 / 0.08),
+    0 12px 24px -10px rgb(16 24 40 / 0.28);
   --shadow-header: 0 1px 0 rgb(16 24 40 / 0.06), 0 4px 12px -4px rgb(16 24 40 / 0.06);
 
   --animate-fade-in: fade-in 180ms ease-out both;
@@ -145,6 +151,36 @@
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
+  }
+  /* Premium fills and surfaces (v0.50), so every colour gets the same treatment as the navy boxes:
+     light from the top, a crisp edge, a soft lift. Flat on the map itself: there colour is data. */
+  /* Selected toggles, the chosen area chip, switches that are on: navy with a faint glow. */
+  .fill-accent {
+    background-color: var(--color-accent);
+    background-image:
+      radial-gradient(120% 120% at 20% 0%, rgb(120 170 230 / 0.22), transparent 60%),
+      linear-gradient(180deg, #2d5287, var(--color-accent));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.18),
+      0 0 0 1px var(--color-accent-strong),
+      0 1px 2px rgb(30 58 95 / 0.35),
+      0 6px 14px -6px rgb(30 58 95 / 0.45);
+  }
+  /* The grey canvas behind the left panel's cards: a whisper of grain. */
+  .canvas-grain {
+    background-image: url("'''+canvas_grain+'''");
+  }
+  /* Grey chips (the slider's levels): a top highlight and a hairline. */
+  .chip-soft {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 0 0 1px rgb(16 24 40 / 0.06);
+  }
+  /* Toggle tracks and switches that are off: a soft inset, like a groove. */
+  .track-inset {
+    box-shadow: inset 0 1px 2px rgb(16 24 40 / 0.1);
+  }
+  /* Pale icon tiles on the place card: a top highlight and a hairline. */
+  .tile-soft {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 0 0 1px rgb(16 24 40 / 0.06);
   }
   .section-title {
     font-size: 13px;

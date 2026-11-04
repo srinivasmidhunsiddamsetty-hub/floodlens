@@ -50,7 +50,7 @@ export function Segmented<T extends string | number>({ options, value, onChange,
       role="radiogroup"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={`flex rounded-full border p-0.5 ${onDark ? 'border-white/30 bg-white/10' : 'border-line-strong bg-surface'} ${className}`}
+      className={`flex rounded-full border p-0.5 ${onDark ? 'border-white/30 bg-white/10' : 'track-inset border-line-strong bg-surface'} ${className}`}
     >
       {options.map((o, idx) => {
         const checked = o.value === value
@@ -73,7 +73,7 @@ export function Segmented<T extends string | number>({ options, value, onChange,
                   ? 'bg-white text-[#1e3a5f]'
                   : 'text-white/85 hover:bg-white/15 hover:text-white'
                 : checked
-                  ? 'bg-accent text-white'
+                  ? 'fill-accent text-white'
                   : 'text-fg-muted hover:bg-surface-3 hover:text-fg'
             }`}
           >

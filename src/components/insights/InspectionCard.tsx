@@ -38,7 +38,7 @@ function Row({
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
       <dt className="flex min-w-0 items-center gap-2.5 text-[14px] leading-5 font-medium text-white">
-        <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: TINTS[tint].bg, color: TINTS[tint].fg }} aria-hidden>
+        <span className="tile-soft grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: TINTS[tint].bg, color: TINTS[tint].fg }} aria-hidden>
           <Icon className="size-4" />
         </span>
         {label}
@@ -67,7 +67,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
           the map (v0.46; a deeper green for the icon, since #3ee67e on a pale tile is too faint),
           then the name and, under it, the coordinates with a small tile of their own. */}
       <div className="flex items-start gap-2.5">
-        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#e9fbf0] text-[#15803d]" aria-hidden>
+        <span className="tile-soft grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#e9fbf0] text-[#15803d]" aria-hidden>
           <Icon className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
@@ -77,7 +77,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
           </h3>
           {/* No "N m from street": the title already names the street, and the distance answers nothing about water. */}
           <p className="mt-1 flex items-center gap-1.5 text-[12px] leading-4 whitespace-nowrap text-fg-muted tabular">
-            <span className="grid size-5 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle" aria-hidden>
+            <span className="tile-soft grid size-5 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle" aria-hidden>
               <Crosshair className="size-3" />
             </span>
             {formatCoord(lngLat[0], lngLat[1])}

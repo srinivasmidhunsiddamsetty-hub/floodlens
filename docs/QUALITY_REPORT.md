@@ -63,6 +63,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - "Overall / Per foot", pill toggles, and the map controls as one toolbar that stays one column at every height (v0.47).
 - The outside-the-city message shortened to one sentence (v0.48).
 - Premium navy boxes (glow, grain, hairline, layered shadows) for the sea-level figures and the place card's answer and facts (v0.49).
+- Navy brand colour `#1e3a5f` and the same premium finish on accent fills, cards, controls, chips and tiles; the map stays flat (v0.50).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

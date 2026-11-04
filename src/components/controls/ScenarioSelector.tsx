@@ -94,7 +94,7 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
                 onClick={() => onChange(ft)}
                 style={{ bottom: pos(i), height: chipH }}
                 className={`absolute left-0 flex w-full translate-y-1/2 cursor-pointer items-center justify-center rounded-full px-1 text-center text-xs whitespace-nowrap tabular transition-colors ${
-                  ft === value ? 'bg-accent-soft font-bold text-fg ring-1 ring-accent/35 ring-inset' : 'bg-canvas text-fg-muted hover:bg-[#e4e8ee] hover:text-fg'
+                  ft === value ? 'bg-accent-soft font-bold text-fg ring-1 ring-accent/35 ring-inset' : 'chip-soft bg-canvas text-fg-muted hover:bg-[#e4e8ee] hover:text-fg'
                 }`}
               >
                 {formatScenario(ft)}

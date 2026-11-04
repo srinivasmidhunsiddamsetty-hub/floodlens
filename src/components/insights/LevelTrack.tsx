@@ -74,7 +74,7 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
               style={{ left: `${x(first)}%`, top: FILL - rise(first), height: rise(first) }}
             />
             <span
-              className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent"
+              className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#9fd0f5]"
               style={{ left: `${x(first)}%`, top: FILL - rise(first) }}
             />
           </>

@@ -36,7 +36,7 @@ export const colors = {
 
   // data
   lowLying: '#6b35aa',
-  accent: '#0069b0',
+  accent: '#1e3a5f', // navy since v0.50 (#0069b0 before), as --color-accent
   // Bright green (v0.46, the owner's colour), with a deep green outline. Against the Plasma By
   // level ramp, water, buildings, parks, low spots and land its worst-case OKLab ΔE is 18 for
   // normal vision but 5 for deuteranopia and 8 for protanopia, so some red-green colour-blind
