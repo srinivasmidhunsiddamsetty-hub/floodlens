@@ -1,5 +1,5 @@
 import { AlertTriangle, Loader2, MousePointerClick } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { ManifestState } from '../../hooks/useManifest'
 import { useAppDispatch, useAppState } from '../../state/AppState'
@@ -10,9 +10,19 @@ interface Props {
   inspection: InspectionState
 }
 
+const HINT_KEY = 'floodlens.clickHintDone'
+
+const readHintDone = (): boolean => {
+  try {
+    return localStorage.getItem(HINT_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
 /**
- * Insights is only about what you pick on the map (v0.36): the selected building or spot, or a
- * short prompt when nothing is picked. The city-wide "Land underwater" card (figures, chart and
+ * Insights is only about what you pick on the map (v0.36): the selected building or spot, or, until
+ * the first pick in this browser (v0.53), a short prompt when nothing is picked. The city-wide "Land underwater" card (figures, chart and
  * what each foot adds) moved to the Sea level card on the left as its two figures.
  */
 export function InsightPanel({ manifestState, inspection }: Props) {
@@ -26,6 +36,19 @@ export function InsightPanel({ manifestState, inspection }: Props) {
     if (selection) scrollRef.current?.scrollTo({ top: 0 })
   }, [selection])
 
+  // The "Click any building" prompt is for first-time visitors (v0.53): once a place has been picked
+  // it has done its job, so it never shows again in this browser and the right side stays empty.
+  const [hintDone, setHintDone] = useState(readHintDone)
+  if (selection && !hintDone) setHintDone(true)
+  useEffect(() => {
+    if (!hintDone) return
+    try {
+      localStorage.setItem(HINT_KEY, '1')
+    } catch {
+      /* storage unavailable (private mode): the prompt just shows again on the next visit */
+    }
+  }, [hintDone])
+
   // The selection card and its empty state share the top slot, so the answer always appears in the same place.
   const card = selection ? (
     <InspectionCard
@@ -34,7 +57,7 @@ export function InsightPanel({ manifestState, inspection }: Props) {
       scenarioFt={state.scenarioFt}
       onClear={() => dispatch({ type: 'select', selection: null })}
     />
-  ) : manifestState.status === 'ready' ? (
+  ) : manifestState.status === 'ready' && !hintDone ? (
     <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-dashed border-[#d3d9e2] bg-surface px-4 py-3">
       <span className="tile-soft grid size-8 shrink-0 place-items-center rounded-lg bg-[#e9fbf0] text-[#15803d]" aria-hidden>
         <MousePointerClick className="size-4" />

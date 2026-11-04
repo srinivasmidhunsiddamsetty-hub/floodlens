@@ -62,6 +62,8 @@ describe('<SubmergedArea>', () => {
     // Rows of space, number, space: the number is centred and the label sits above it.
     expect(share.parentElement).toHaveClass('grid', 'grid-rows-[1fr_auto_1fr]', 'min-h-0')
     expect(screen.getByText('Share of city land')).toHaveClass('self-end')
+    // Nudged 4 px below the middle, the label staying put (v0.53, the owner's call).
+    expect(share).toHaveClass('relative', 'top-1')
     // The area box keeps its stack: label, number, unit switch.
     expect(screen.getByText('0.50').parentElement).toHaveClass('flex', 'flex-col', 'justify-center')
   })

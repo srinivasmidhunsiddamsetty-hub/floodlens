@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.52 (tag `v0.52`): the share figure centred in its box; the place card's water flows in over 1.8 s.
+- **Current version:** v0.53 (tag `v0.53`): the "Click any building" prompt only until the first click; the share 4 px below the middle.
 - **Test status at handoff:**
-  - 110 unit and component tests in 13 files pass.
+  - 111 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -108,7 +108,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The left panel is docked on the grey canvas, 300 px wide (v0.42; 280 before).
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
-- Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
+- Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. The prompt shows only until the first pick in that browser (v0.53, `floodlens.clickHintDone`); after that the right side is empty when nothing is picked. No city-wide figures there: the owner wants the right side to be only about the selection.
 - Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 254 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a premium navy box (`.surface-navy`, white text; v0.49), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows use two Tailwind variants (`@custom-variant` in `index.css`): `short` (800 px tall or less) tightens the card padding and layer rows; `tiny` (725 px or less) also compacts the figure boxes, never below 24 px numbers. **Check the figure size on a ~760 px window after any change here**: v0.43 shrank them to 20 px on ordinary laptops. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.47): **one toolbar** (`role="toolbar"`, "Map controls") at the **screen's right edge, under the Insights card**, 16 px from the right and bottom, with thin rules between groups: 2D over 3D | "Entire Miami Beach" (folded-map icon) | in 3D turn and tilt | compass | zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned. At ≤ 800 px window height the four arrows fold into a "Turn and tilt" button that opens them beside it (Escape is caught first, so it doesn't also close the place card); at ≤ 725 px the buttons are 28 px. Never two columns: the owner found that scattered. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
@@ -180,7 +180,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 110 tests
+npm test                 # Vitest: 111 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -265,6 +265,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.50 | Navy brand colour `#1e3a5f` (accent, logo, links, focus); `.fill-accent` for solid accent fills; the same premium finish on cards, controls, canvas, chips and tiles; the map left flat |
 | v0.51 | Switches without the dark outline (grey knob when off); frosted navy chosen chip without the navy glow; pills matched; the place card's water flows in once and has no dot (it looked draggable); canvas grain fixed |
 | v0.52 | The share's number centred in its box (label resting on it); the water flow-in slowed to 1.8 s |
+| v0.53 | "Click any building" prompt only until the first click; the share 4 px below the middle; label kept off the box edge on the shortest windows |
 
 ---
 

@@ -29,6 +29,7 @@ function Figure({ label, value, children }: { label: string; value: string; chil
   // label rests on it (v0.52): rows of space, number, space. When the box is short, the label's
   // row keeps its height and the number moves down, so the label is never squeezed. `min-h-0`:
   // a grid asks for room for both spare rows, which would make the panel scroll on short windows.
+  // The number then sits 4 px below the middle (v0.53, the owner's call), the label staying put.
   const centred = !children
   return (
     <div
@@ -38,14 +39,15 @@ function Figure({ label, value, children }: { label: string; value: string; chil
     >
       <p
         className={`text-[12px] leading-4 font-medium whitespace-nowrap text-white tiny:text-[11px] tiny:leading-[14px] ${
-          centred ? 'mb-2 self-end tiny:mb-1' : ''
+          // tiny:pt-1.5: on the shortest windows the label keeps 8 px from the box's top edge (v0.53).
+          centred ? 'mb-2 self-end tiny:mb-1 tiny:pt-1.5' : ''
         }`}
       >
         {label}
       </p>
       <p
         className={`text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-white tabular tiny:text-[24px] tiny:leading-7 ${
-          centred ? '' : 'mt-2 tiny:mt-1'
+          centred ? 'relative top-1' : 'mt-2 tiny:mt-1'
         }`}
       >
         {value}

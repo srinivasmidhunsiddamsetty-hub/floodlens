@@ -1,11 +1,20 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { AppStateProvider } from '../../state/AppState'
-import { initialState } from '../../state/reducer'
+import { initialState, type Selection } from '../../state/reducer'
 import { makeManifest } from '../../test/fixtures'
 import { InsightPanel } from './InsightPanel'
 
 const manifest = makeManifest()
+
+const building: Selection = {
+  lngLat: [-80.13466, 25.77675],
+  building: null,
+  street: { name: 'Euclid Avenue', distanceM: 12 },
+  insideStudyArea: true,
+  onWater: false,
+}
 
 const ready = (over = {}) =>
   render(
@@ -15,9 +24,26 @@ const ready = (over = {}) =>
   )
 
 describe('<InsightPanel>', () => {
+  // jsdom has no element scrolling; a new selection scrolls the card into view.
+  beforeAll(() => {
+    if (!Element.prototype.scrollTo) Element.prototype.scrollTo = () => {}
+  })
+  afterEach(() => localStorage.clear())
+
   it('invites a selection in the slot where the selection card appears', () => {
     ready()
     expect(screen.getByText('Click any building')).toBeInTheDocument()
+  })
+
+  it('drops the prompt for good after the first pick, so nothing shows when the card closes (v0.53)', async () => {
+    const { unmount } = ready({ selection: building })
+    await userEvent.click(screen.getByRole('button', { name: 'Close (Esc)' }))
+    expect(screen.queryByText('Click any building')).toBeNull()
+    expect(localStorage.getItem('floodlens.clickHintDone')).toBe('1')
+    // A later visit in the same browser starts with the right side empty too.
+    unmount()
+    ready()
+    expect(screen.queryByText('Click any building')).toBeNull()
   })
 
   it('holds only what you pick on the map: no city-wide figures or chart (v0.36)', () => {

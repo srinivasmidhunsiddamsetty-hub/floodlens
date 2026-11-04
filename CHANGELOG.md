@@ -56,8 +56,18 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.50 | 4 Nov 2026 | Navy brand colour and premium surfaces | [`docs/versions/v0.50/`](docs/versions/v0.50/) |
 | v0.51 | 4 Nov 2026 | Lighter switches, chip and pills; water that flows in | [`docs/versions/v0.51/`](docs/versions/v0.51/) |
 | v0.52 | 4 Nov 2026 | Centred share figure, slower water | [`docs/versions/v0.52/`](docs/versions/v0.52/) |
+| v0.53 | 4 Nov 2026 | Prompt only until the first click; share 4 px lower | [`docs/versions/v0.53/`](docs/versions/v0.53/) |
 
 ---
+
+## v0.53: Prompt only until the first click; share 4 px lower (4 Nov 2026)
+
+From the owner's notes on v0.52.
+
+- **"Click any building to see when water would reach it" shows only until the first click.** The owner asked whether the prompt was needed. The advice was to keep it for first-time visitors, since nothing else says buildings can be clicked, but drop it once it has done its job. The owner agreed. After the first pick it never shows again in that browser (`floodlens.clickHintDone`), so the right side is empty when no place is picked. The card still appears in the same spot.
+- **The share's number sits 4 px below the middle of its box**, with the label where it was. The owner chose 4 px after seeing 8 px and 12 px rendered.
+- **Fix:** on the shortest windows (around 650 px tall, with low spots on), v0.52 left the "Share of city land" label 3 px from the box's top edge. It now keeps 9 px, and the two boxes stay the same height.
+- Tests: 111 unit/component tests (1 new: the prompt goes after the first pick) and 20 end-to-end tests.
 
 ## v0.52: Centred share figure, slower water (4 Nov 2026)
 
