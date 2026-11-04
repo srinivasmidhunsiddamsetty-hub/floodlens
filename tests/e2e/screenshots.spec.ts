@@ -16,12 +16,12 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // By level colours at the top level (+5 ft): what +5 ft adds, beside the slider
-    await page.getByRole('radio', { name: 'By level' }).click()
+    // Per foot colours at the top level (+5 ft): what +5 ft adds, beside the slider
+    await page.getByRole('radio', { name: 'Per foot' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
-    await page.screenshot({ path: `${OUT}/02-by-level-5ft.png` })
+    await page.screenshot({ path: `${OUT}/02-per-foot-5ft.png` })
 
     // 2D + inspection of the map centre
     await page.getByRole('button', { name: '2D view' }).click()
@@ -36,9 +36,9 @@ test.describe('screenshots', () => {
     await page.screenshot({ path: `${OUT}/04-about-data.png` })
     await page.keyboard.press('Escape')
 
-    // South Beach in 3D at +2 ft in Total colours, with a building selected (Euclid Avenue at this viewport)
+    // South Beach in 3D at +2 ft in Overall colours, with a building selected (Euclid Avenue at this viewport)
     await page.keyboard.press('Escape')
-    await page.getByRole('radio', { name: 'Total' }).click()
+    await page.getByRole('radio', { name: 'Overall' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('ArrowLeft', { delay: 50 })
     await page.keyboard.press('ArrowLeft', { delay: 50 })

@@ -50,8 +50,21 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.44 | 4 Nov 2026 | Fix: the figures stay 28 px on laptop windows | [`docs/versions/v0.44/`](docs/versions/v0.44/) |
 | v0.45 | 4 Nov 2026 | The sea-level figures at 30 px | [`docs/versions/v0.45/`](docs/versions/v0.45/) |
 | v0.46 | 4 Nov 2026 | Green selection | [`docs/versions/v0.46/`](docs/versions/v0.46/) |
+| v0.47 | 4 Nov 2026 | "Overall / Per foot", pill toggles, one map toolbar | [`docs/versions/v0.47/`](docs/versions/v0.47/) |
 
 ---
+
+## v0.47: "Overall / Per foot", pill toggles and one toolbar (4 Nov 2026)
+
+From the owner's notes on v0.46. The names, the pill toggles and the toolbar were picked from options.
+
+- **"Overall / Per foot"** replace "Total / By level". The owner wanted names that explain themselves. "Per" takes the singular, so it's "per foot", not "per feet".
+- **Both toggles are pills**, Overall / Per foot and km² / acres, matching the pill level chips. Every "pick one" control in the panel now looks alike.
+- **The map controls are one toolbar:** a single frosted bar at the screen's right edge, with thin rules between its groups: 2D/3D, Entire Miami Beach, turn and tilt (in 3D), compass, zoom. Before, there were six separate groups, which split into two columns on short windows; the owner found that scattered.
+  - On windows 800 px tall or less, the four turn and tilt arrows fold into one "Turn and tilt" button that opens them beside it, so the bar stays one column and clear of the place card.
+  - On windows 725 px or less, the buttons are 28 px.
+  - Escape closes the fold-out without also closing the place card.
+- Tests: 107 unit/component tests and 20 end-to-end tests. The controls test now checks one toolbar, clear of the card at 900, 760 and 650 px, and the fold-out. Screenshot `02-per-foot-5ft` replaces `02-by-level-5ft`.
 
 ## v0.46: Green selection (4 Nov 2026)
 

@@ -35,9 +35,9 @@ test.describe('FloodLens — core flows', () => {
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     await expect(figure(page)).toContainText('7.43')
-    // The legend is a plain vertical scale, shown with By level colours (v0.35): every level listed,
+    // The legend is a plain vertical scale, shown with Per foot colours (v0.35): every level listed,
     // the chosen one marked, nothing a button.
-    await page.getByRole('radio', { name: 'By level' }).click()
+    await page.getByRole('radio', { name: 'Per foot' }).click()
     await slider.focus()
     const legendBox = page.getByRole('region', { name: 'Map legend' })
     await expect(legendBox.getByRole('listitem')).toHaveCount(6)
@@ -79,26 +79,26 @@ test.describe('FloodLens — core flows', () => {
     expect(Math.abs(t.y + t.height / 2 - (g.y + g.height / 2))).toBeLessThan(4)
   })
 
-  test('Total shows all the area covered, By level only what the level adds (v0.36, v0.38)', async ({ page }) => {
+  test('Overall shows all the area covered, Per foot only what the level adds (v0.36, v0.38)', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const fig = figure(page)
     const slider = page.getByRole('slider')
     // +2 ft: 0.99 km² in all, of which +2 ft adds 0.95 km² (the rest came at +1 ft).
     await expect(fig).toHaveText('Total area covered0.99km²acresShare of city land5%')
-    await page.getByRole('radio', { name: 'By level' }).click()
+    await page.getByRole('radio', { name: 'Per foot' }).click()
     await expect(fig).toHaveText('New area covered0.95km²acresShare of city land5%')
     await slider.focus()
     await page.keyboard.press('ArrowRight')
     await expect(fig).toHaveText('New area covered6.44km²acresShare of city land32%')
-    await page.getByRole('radio', { name: 'Total' }).click()
+    await page.getByRole('radio', { name: 'Overall' }).click()
     await expect(fig).toHaveText('Total area covered7.43km²acresShare of city land37%')
     await slider.focus()
     await page.keyboard.press('Home')
     await expect(fig).toHaveText('Total area covered0km²acresShare of city land0%')
     // Today's level is "0 ft" on the slider (v0.40; "Today" before).
     await expect(seaLevel(page).getByRole('button', { name: '0 ft', exact: true, includeHidden: true })).toHaveClass(/font-bold/)
-    await page.getByRole('radio', { name: 'By level' }).click()
+    await page.getByRole('radio', { name: 'Per foot' }).click()
     await slider.focus()
     await page.keyboard.press('ArrowRight')
     await expect(fig).toHaveText('New area covered0.038km²acresShare of city land0.2%')
@@ -116,7 +116,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(unit.getByRole('radio', { name: 'Square kilometres' })).toHaveAttribute('aria-checked', 'true')
     await unit.getByRole('radio', { name: 'Acres' }).click()
     await expect(figure(page)).toHaveText('Total area covered244km²acresShare of city land5%')
-    await page.getByRole('radio', { name: 'By level' }).click()
+    await page.getByRole('radio', { name: 'Per foot' }).click()
     await expect(figure(page)).toHaveText('New area covered235km²acresShare of city land5%')
     // The low-spot line follows the unit.
     await page.getByRole('switch', { name: /Low spots/ }).click()
@@ -144,17 +144,27 @@ test.describe('FloodLens — core flows', () => {
       .locator('.overflow-y-auto')
       .evaluate((el) => ({ content: el.scrollHeight, visible: el.clientHeight }))
     expect(fit.content).toBeLessThanOrEqual(fit.visible)
-    // The map controls sit below the card, in one column, or two on a short window (v0.38).
+    // The map controls are one toolbar below the card, always one column (v0.47). On short
+    // windows the turn and tilt arrows fold into one button that opens them beside it.
     const card = insights(page).locator('section').first()
-    const zoom = page.getByRole('group', { name: 'Zoom' })
-    const perspective = page.getByRole('group', { name: 'Perspective' })
-    for (const height of [900, 650]) {
+    const toolbar = page.getByRole('toolbar', { name: 'Map controls' })
+    for (const height of [900, 760, 650]) {
       await page.setViewportSize({ width: 1440, height })
-      // One column, or two once the window is short (the layout follows a media query).
-      await expect.poll(async () => (await perspective.boundingBox())!.x < (await zoom.boundingBox())!.x).toBe(height === 650)
-      const [c, p] = [(await card.boundingBox())!, (await perspective.boundingBox())!]
-      expect(p.y).toBeGreaterThan(c.y + c.height + 8)
+      await expect(page.getByRole('button', { name: 'Turn and tilt' })).toHaveCount(height === 900 ? 0 : 1)
+      const [c, t] = [(await card.boundingBox())!, (await toolbar.boundingBox())!]
+      expect(t.y).toBeGreaterThan(c.y + c.height + 8)
+      expect(t.width).toBeLessThan(40)
     }
+    // The fold-out opens the four arrows; Escape closes it without closing the place card.
+    await page.setViewportSize({ width: 1440, height: 760 })
+    await expect(page.getByRole('button', { name: 'Rotate left' })).toHaveCount(0)
+    await page.getByRole('button', { name: 'Turn and tilt' }).click()
+    await expect(page.getByRole('button', { name: 'Turn and tilt' })).toHaveAttribute('aria-expanded', 'true')
+    await page.getByRole('button', { name: 'Rotate left' }).click()
+    await expect(page.getByRole('button', { name: 'Tilt up' })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('button', { name: 'Rotate left' })).toHaveCount(0)
+    await expect(card).toBeVisible()
   })
 
   test('in-map controls: 2D/3D keeps the level, "Entire Miami Beach" restores the 3D city view', async ({ page }) => {
@@ -192,9 +202,9 @@ test.describe('FloodLens — core flows', () => {
     expect(d3.y).toBeGreaterThan(d2.y)
     const zoomOut = (await page.getByRole('button', { name: 'Zoom out' }).boundingBox())!
     // At the screen's right edge, under the Insights card (v0.38).
-    const zoomGroup = (await page.getByRole('group', { name: 'Zoom' }).boundingBox())!
-    expect(Math.round(map.x + map.width - (zoomGroup.x + zoomGroup.width))).toBe(16)
-    expect(Math.round(map.y + map.height - (zoomGroup.y + zoomGroup.height))).toBe(16)
+    const toolbarBox = (await page.getByRole('toolbar', { name: 'Map controls' }).boundingBox())!
+    expect(Math.round(map.x + map.width - (toolbarBox.x + toolbarBox.width))).toBe(16)
+    expect(Math.round(map.y + map.height - (toolbarBox.y + toolbarBox.height))).toBe(16)
     for (const ctrl of ['.maplibregl-ctrl-scale', '.maplibregl-ctrl-attrib']) {
       const b = (await page.locator(ctrl).boundingBox())!
       expect(b.x + b.width).toBeLessThanOrEqual(zoomOut.x - 8)
@@ -217,11 +227,11 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('button', { name: 'Zoom in' })).toBeVisible()
   })
 
-  test('colour modes: Total by default, By level gives each foot its own colour, and the choice is remembered', async ({ page }) => {
+  test('colour modes: Overall by default, Per foot gives each foot its own colour, and the choice is remembered', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const modes = page.getByRole('radiogroup', { name: 'Map colours' })
-    await expect(modes.getByRole('radio', { name: 'Total' })).toHaveAttribute('aria-checked', 'true')
+    await expect(modes.getByRole('radio', { name: 'Overall' })).toHaveAttribute('aria-checked', 'true')
     // The slider track wears the map's colours: at +2 ft, one blue for both feet, or one each.
     const trackColours = () =>
       page.locator('#control-panel [style*="linear-gradient"]').evaluate((el) => [
@@ -231,13 +241,13 @@ test.describe('FloodLens — core flows', () => {
     // One colour needs no key (v0.35).
     await expect(page.getByRole('region', { name: 'Map legend' })).toHaveCount(0)
 
-    await modes.getByRole('radio', { name: 'By level' }).click()
+    await modes.getByRole('radio', { name: 'Per foot' }).click()
     // Plasma (v0.41): +1 ft orange and +2 ft coral.
     await expect.poll(trackColours).toEqual(['rgb(252, 166, 54)', 'rgb(225, 100, 98)'])
     await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
     await page.reload()
     await waitForMap(page)
-    await expect(page.getByRole('radio', { name: 'By level' })).toHaveAttribute('aria-checked', 'true')
+    await expect(page.getByRole('radio', { name: 'Per foot' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('the map credit starts open, folds into an (i) on the first drag, and the (i) opens it again', async ({ page }) => {
@@ -298,7 +308,7 @@ test.describe('FloodLens — core flows', () => {
   test('layer toggles respond, and the legend follows the flooding layer', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    await page.getByRole('radio', { name: 'By level' }).click()
+    await page.getByRole('radio', { name: 'Per foot' }).click()
     const low = page.getByRole('switch', { name: 'Low spots' })
     const req = page.waitForRequest(/low_2ft\.geojson/)
     await low.click()

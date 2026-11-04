@@ -20,10 +20,10 @@ const panel = (over = {}) =>
 describe('<ControlPanel>', () => {
   it('shows the land underwater beside the slider, and the colour toggle picks total or added (v0.36)', async () => {
     panel()
-    expect(screen.getByRole('radio', { name: 'Total' })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: 'Overall' })).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByText('Total area covered')).toBeInTheDocument()
     expect(screen.getByText('0.50')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('radio', { name: 'By level' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Per foot' }))
     expect(screen.getByText('New area covered')).toBeInTheDocument()
     expect(screen.getByText('0.48')).toBeInTheDocument()
   })

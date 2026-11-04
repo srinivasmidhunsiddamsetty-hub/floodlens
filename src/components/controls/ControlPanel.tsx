@@ -43,7 +43,8 @@ export function ControlPanel({ manifest }: Props) {
       <section aria-labelledby="sec-level" className="card p-4 short:p-3">
         {/* The colour toggle sits beside the title (v0.35): one colour for all the water, or a
             colour for each foot (v0.34). Named Single and Layered in v0.35, Overview and Layered in v0.37,
-            Total and Individual in v0.38 (the owner's names), Total and By level in v0.41. */}
+            Total and Individual in v0.38 (the owner's names), Total and By level in v0.41, Overall and
+            Per foot in v0.47 (the owner's pick: names that explain themselves). */}
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 id="sec-level" className="t-title text-[15px] font-bold tracking-[-0.01em]">
             Sea level
@@ -55,8 +56,8 @@ export function ControlPanel({ manifest }: Props) {
             value={colorMode}
             onChange={(mode) => dispatch({ type: 'setColorMode', mode })}
             options={[
-              { value: 'simple', label: 'Total' },
-              { value: 'detailed', label: 'By level' },
+              { value: 'simple', label: 'Overall' },
+              { value: 'detailed', label: 'Per foot' },
             ]}
           />
         </div>
