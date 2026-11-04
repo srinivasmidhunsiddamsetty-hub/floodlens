@@ -38,8 +38,26 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.32 | 30 Oct 2026 | Insights docked in a panel again, matching the left | [`docs/versions/v0.32/`](docs/versions/v0.32/) |
 | v0.33 | 1 Nov 2026 | Desktop and laptop only | [`docs/versions/v0.33/`](docs/versions/v0.33/) |
 | v0.34 | 3 Nov 2026 | Review feedback: colour modes, upright slider, map controls at the bottom, floating Insights | [`docs/versions/v0.34/`](docs/versions/v0.34/) |
+| v0.35 | 3 Nov 2026 | Owner's pass on v0.34: Single / Layered beside Sea level, new layered colours, one control column with a dial, no-scroll left panel | [`docs/versions/v0.35/`](docs/versions/v0.35/) |
 
 ---
+
+## v0.35: Owner's pass on v0.34 (3 Nov 2026)
+
+The owner reviewed v0.34 and asked for these changes. The names, the control layout and removing the (i) were picked from side-by-side options.
+
+- **The play button is gone** ("Step up to +5 ft").
+- **The (i) next to the sea level is gone.** The caption "above today's high tide" already says what the number means, and "About the data" explains the levels.
+- **The colour toggle sits beside the "Sea level" title**, and is named **Single / Layered** (was "Colours: Simple / Detailed"). The "Colours" label and the two captions under it ("One colour for all the water at this level", "A colour for each foot the sea rises") are gone.
+- **The left panel fits without scrolling.** With the play button, the captions and the toggle row gone it needs 700 px of window height; the slider also gives up height on shorter windows (168 px down to 116 px), so it fits in windows down to about 650 px tall, the browser window of a 1366 × 768 laptop.
+- **The legend shows only with Layered colours.** With one colour there's nothing to decode. It no longer has a "Low spot" row.
+- **The legend takes the pointer.** Before, the map's hand cursor and hover labels showed through it.
+- **New Layered colours, chosen by the owner:** +1 ft `#a6d8ed`, +2 ft `#6db6db`, +3 ft `#338ec4`, +4 ft `#1766a1`, +5 ft `#083b75`. Today is a lighter tint of the same blue, `#dceff5`.
+  - Measured at 85% over the land, the closest neighbouring pair is OKLab ΔE 10.0 for normal vision and 9.1 for colour-blind vision (v0.34's ramp: 10.1 and 9.3).
+  - +1 ft is almost the basemap's water colour (ΔE 1), and today is close to the land (ΔE about 3). Both bands are small: today covers no land in the city, and +1 ft adds 0.038 km².
+- **Map controls in one slim column at the bottom right:** 2D/3D, "Entire Miami Beach", the compass, zoom. The top right of the map is clear.
+- **A dial for turning and tilting.** In 3D the compass becomes a round dial: arrows above and below the needle tilt the view, arrows either side turn it, and clicking the needle faces north. It replaces the labelled "Rotate" and "Tilt" panel. The tooltips open just left of the column, never over another button.
+- Tests: 107 unit/component tests (the play and (i) tests are replaced by one that checks neither is there; the legend tests cover Layered only and the pointer) and 19 end-to-end tests (the play test is replaced by one that checks the left panel fits at 900 and 650 px tall, with the toggle in the title row).
 
 ## v0.34: Review feedback (3 Nov 2026)
 

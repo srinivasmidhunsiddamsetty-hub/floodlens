@@ -15,9 +15,9 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 ## Rules
 
 1. **Lead with what it means for a person.** "Land underwater at +2 ft", not "Area flooded beyond today's high tide (MHHW)".
-2. **Swap jargon for everyday words.** Keep the technical term once, where it's explained ("About the data"): MHHW, inundation extent, hydrologic connectivity. The (i) note under the sea level stays to two lines (v0.21), so opening it never makes the panel scroll. It explains by example, in the slider's own terms: "+1 ft means the sea is 1 ft above today's high tide, not a year." Don't call the levels "steps": that's the control talking, not the reader.
+2. **Swap jargon for everyday words.** Keep the technical term once, where it's explained ("About the data"): MHHW, inundation extent, hydrologic connectivity. The caption under the sea level, "above today's high tide", says what the number measures; the (i) note that added "not a year" went in v0.35. Don't call the levels "steps": that's the control talking, not the reader.
 3. **Never promise safety or predict damage.** Water reaching a building on NOAA's map isn't a flood forecast, and not reaching it doesn't mean "safe". So: "water reaches it", "not by +3 ft".
-4. **Sentence case, short labels, no trailing full stops on single phrases.** Buttons say what happens: "Step up to +5 ft", "Entire Miami Beach".
+4. **Sentence case, short labels, no trailing full stops on single phrases.** Buttons say what happens: "Entire Miami Beach", "Rotate left".
 5. **One name for one thing.** Sea level (the slider), high tide (today's baseline), "+2 ft" (a level), low spots (unconnected areas), city limits (the boundary).
 6. **Errors say what happened and what to do, without blame.** "We couldn't reach the flood data. Check your connection and reload."
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
@@ -176,6 +176,19 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
+
+## Before and after (v0.34 → v0.35)
+
+From the owner's review of v0.34.
+
+| Where | Before | After |
+| --- | --- | --- |
+| Play button | Step up to +5 ft | (removed) |
+| Sea level (i) note | +1 ft means the sea is 1 ft above today's high tide, not a year. | (removed; the caption "above today's high tide" stays) |
+| Colour mode | Colours: Simple / Detailed, with "One colour for all the water at this level" or "A colour for each foot the sea rises" | Single / Layered, beside the "Sea level" title, with no label or caption |
+| Legend title | Water first reaches (Detailed) or Sea level (Simple) | Water first reaches (only with Layered colours) |
+| Legend, low spots | Low spot (while that layer is on) | (removed) |
+| Rotate and tilt (3D only) | A panel: Rotate: Rotate left / Rotate right · Tilt: Tilt up / Tilt down | A dial around the compass; the same names, in tooltips |
 
 ## Before and after (v0.33 → v0.34)
 

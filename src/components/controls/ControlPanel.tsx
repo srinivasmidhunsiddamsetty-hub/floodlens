@@ -27,9 +27,24 @@ export function ControlPanel({ manifest }: Props) {
     // Each section on its own white tile over the grey canvas, matching the Insights panel (v0.20).
     <div className="scrollbar-thin flex h-full flex-col gap-3 overflow-y-auto bg-canvas p-3">
       <section aria-labelledby="sec-level" className="card p-4">
-        <h2 id="sec-level" className="t-title mb-3 text-[15px] font-bold tracking-[-0.01em]">
-          Sea level
-        </h2>
+        {/* The colour toggle sits beside the title (v0.35): one colour for all the water, or a
+            colour for each foot (v0.34). Named Single and Layered in v0.35. */}
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 id="sec-level" className="t-title text-[15px] font-bold tracking-[-0.01em]">
+            Sea level
+          </h2>
+          <Segmented
+            label="Map colours"
+            size="sm"
+            className="w-[140px]"
+            value={colorMode}
+            onChange={(mode) => dispatch({ type: 'setColorMode', mode })}
+            options={[
+              { value: 'simple', label: 'Single' },
+              { value: 'detailed', label: 'Layered' },
+            ]}
+          />
+        </div>
         <ScenarioSelector
           available={available}
           value={scenarioFt}
@@ -37,28 +52,6 @@ export function ControlPanel({ manifest }: Props) {
           colorMode={colorMode}
           disabled={!manifest}
         />
-
-        {/* How the flood is coloured (v0.34): one colour that spreads as the sea rises, or a colour
-            for each foot. */}
-        <div className="mt-4 border-t border-line pt-3">
-          <div className="flex items-center justify-between gap-3">
-            <span className="t-label text-fg">Colours</span>
-            <Segmented
-              label="Colours"
-              size="sm"
-              className="w-[164px]"
-              value={colorMode}
-              onChange={(mode) => dispatch({ type: 'setColorMode', mode })}
-              options={[
-                { value: 'simple', label: 'Simple' },
-                { value: 'detailed', label: 'Detailed' },
-              ]}
-            />
-          </div>
-          <p className="mt-1.5 t-caption">
-            {colorMode === 'simple' ? 'One colour for all the water at this level' : 'A colour for each foot the sea rises'}
-          </p>
-        </div>
       </section>
 
       <section aria-labelledby="sec-layers" className="card p-4">

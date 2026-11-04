@@ -188,6 +188,7 @@ The product went through numbered versions, each tagged in git with screenshots 
   - A slim vertical colour scale instead of the legend box; the Insights cards float over the map again; a spot card without Height and Footprint.
 
   Still open: where "Land underwater" belongs (it changes with the slider but not with clicks on the map), and a wider typography and hierarchy pass.
+- **v0.34 → v0.35:** the owner's own pass on v0.34. Less on screen: the play button, the (i) note, the "Colours" label and its captions went, and the colour toggle moved beside the "Sea level" title as "Single / Layered". The legend shows only when colours need decoding (Layered), and the left panel fits without scrolling on a 1366 × 768 laptop. The map controls moved into one bottom-right column, with a dial around the compass replacing the labelled Rotate/Tilt panel. The owner chose new layered colours; measured, they separate as well as v0.34's, but +1 ft is almost the map's water colour.
 
 ## 11. Known limitations
 

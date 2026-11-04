@@ -1,7 +1,7 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { ScenarioSelector } from './ScenarioSelector'
 
 function Harness({ onChange, start = 2 }: { onChange?: (ft: number) => void; start?: number }) {
@@ -19,8 +19,6 @@ function Harness({ onChange, start = 2 }: { onChange?: (ft: number) => void; sta
 }
 
 describe('<ScenarioSelector>', () => {
-  afterEach(() => vi.useRealTimers())
-
   it('exposes a labelled slider with a meaningful value text', () => {
     render(<Harness />)
     const slider = screen.getByRole('slider', { name: /sea-level rise above today/i })
@@ -49,28 +47,11 @@ describe('<ScenarioSelector>', () => {
     expect(onChange).toHaveBeenCalledWith(1)
   })
 
-  it('reveals a short explanation of the levels on demand', async () => {
+  it('has no play or info button: the caption says what the number means (v0.35)', () => {
     render(<Harness />)
-    const btn = screen.getByRole('button', { name: /what do these levels mean/i })
-    expect(btn).toHaveAttribute('aria-expanded', 'false')
-    await userEvent.click(btn)
-    expect(btn).toHaveAttribute('aria-expanded', 'true')
-    const info = screen.getByText('+1 ft means the sea is 1 ft above today’s high tide, not a year.')
-    // Two lines at most in the panel, so opening it never makes the panel scroll.
-    expect(info.textContent!.length).toBeLessThanOrEqual(70)
-  })
-
-  it('plays the rise from today to the top level, then stops', () => {
-    vi.useFakeTimers()
-    const onChange = vi.fn()
-    render(<Harness onChange={onChange} start={3} />)
-    // Named for the one-way climb, not "Watch the water rise", which read as tides (v0.34).
-    expect(screen.queryByText(/watch the water rise/i)).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: 'Step up to +3 ft' }))
-    // Starting at the top restarts from today
-    expect(onChange).toHaveBeenLastCalledWith(0)
-    act(() => vi.advanceTimersByTime(1400 * 4))
-    expect(onChange.mock.calls.map((c) => c[0])).toEqual([0, 1, 2, 3])
-    expect(screen.getByRole('button', { name: 'Step up to +3 ft' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByText('above today’s high tide')).toBeInTheDocument()
+    // Only the level names (hidden from assistive tech; the slider is the keyboard route) are buttons.
+    expect(screen.queryAllByRole('button')).toHaveLength(0)
+    expect(screen.getAllByRole('button', { hidden: true }).map((b) => b.textContent)).toEqual(['Today', '+1 ft', '+2 ft', '+3 ft'])
   })
 })

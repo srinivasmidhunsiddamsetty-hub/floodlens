@@ -31,7 +31,10 @@ test.describe('FloodLens — core flows', () => {
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('7.43')
-    // The legend is a plain vertical scale: every level listed, the chosen one marked, nothing a button.
+    // The legend is a plain vertical scale, shown with Layered colours (v0.35): every level listed,
+    // the chosen one marked, nothing a button.
+    await page.getByRole('radio', { name: 'Layered' }).click()
+    await slider.focus()
     const legendBox = page.getByRole('region', { name: 'Map legend' })
     await expect(legendBox.getByRole('listitem')).toHaveCount(6)
     await expect(legendBox.getByRole('listitem').filter({ hasText: '+3 ft' })).toContainText('(chosen level)')
@@ -44,15 +47,24 @@ test.describe('FloodLens — core flows', () => {
     expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1)
   })
 
-  test('play steps through every level and stops at the top', async ({ page }) => {
-    await page.goto('/')
-    await waitForMap(page)
-    // Named for the one-way climb (v0.34): "Watch the water rise" read as tides that come and go.
-    await page.getByRole('button', { name: 'Step up to +5 ft' }).click()
-    const slider = page.getByRole('slider')
-    await expect(slider).toHaveAttribute('aria-orientation', 'vertical')
-    await expect(slider).toHaveAttribute('aria-valuetext', '+5 ft above MHHW', { timeout: 15_000 })
-    await expect(page.getByRole('button', { name: 'Step up to +5 ft' })).toHaveAttribute('aria-pressed', 'false')
+  test('the left panel fits without scrolling, with no play or info button (v0.35)', async ({ page }) => {
+    // 650 px is about the browser window of a 1366 × 768 laptop.
+    for (const height of [900, 650]) {
+      await page.setViewportSize({ width: 1440, height })
+      await page.goto('/')
+      await waitForMap(page)
+      const panel = page.locator('#control-panel > div')
+      const { scroll, client } = await panel.evaluate((el) => ({ scroll: el.scrollHeight, client: el.clientHeight }))
+      expect(scroll).toBeLessThanOrEqual(client)
+      await expect(page.getByRole('switch', { name: 'City limits' })).toBeInViewport()
+    }
+    const left = page.getByRole('complementary', { name: 'Sea level and layers' })
+    await expect(left.getByRole('button', { name: /step up|watch|play|what do these levels mean/i })).toHaveCount(0)
+    // The colour toggle sits in the Sea level title row.
+    const title = page.getByRole('heading', { name: 'Sea level' })
+    const toggle = page.getByRole('radiogroup', { name: 'Map colours' })
+    const [t, g] = [(await title.boundingBox())!, (await toggle.boundingBox())!]
+    expect(Math.abs(t.y + t.height / 2 - (g.y + g.height / 2))).toBeLessThan(4)
   })
 
   test('chart bars select levels; one row shows what the selected foot adds', async ({ page }) => {
@@ -127,13 +139,15 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('button', { name: 'Entire Miami Beach' })).toHaveCount(1)
   })
 
-  test('zoom, rotate and tilt sit at the bottom of the map; rotate and tilt only in 3D (v0.34)', async ({ page }) => {
+  test('the map controls sit in one column at the bottom right; the dial turns and tilts in 3D (v0.35)', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const map = (await page.locator('#map-region').boundingBox())!
-    for (const name of ['Zoom in', 'Zoom out', 'Rotate left', 'Tilt up']) {
+    const zoomIn = (await page.getByRole('button', { name: 'Zoom in' }).boundingBox())!
+    for (const name of ['2D view', '3D view', 'Entire Miami Beach', 'Tilt up', 'Rotate left', 'Point north', 'Rotate right', 'Tilt down', 'Zoom in', 'Zoom out']) {
       const b = (await page.getByRole('button', { name }).boundingBox())!
       expect(b.y).toBeGreaterThan(map.y + map.height / 2)
+      expect(Math.abs(b.x + b.width / 2 - (zoomIn.x + zoomIn.width / 2))).toBeLessThanOrEqual(25)
     }
     const bearing = async () => Number(await page.locator('[data-bearing]').getAttribute('data-bearing'))
     expect(await bearing()).toBe(-15)
@@ -146,27 +160,30 @@ test.describe('FloodLens — core flows', () => {
     await page.getByRole('button', { name: 'Tilt down' }).click()
     await expect.poll(() => mapPitch(page)).toBe(40)
     await page.getByRole('button', { name: '2D view' }).click()
-    await expect(page.getByRole('group', { name: 'Rotate and tilt' })).toHaveCount(0)
+    await expect(page.getByRole('group', { name: 'Compass, turn and tilt' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Rotate left' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Point north' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Zoom in' })).toBeVisible()
   })
 
-  test('colour modes: Simple by default, Detailed gives each foot its own colour, and the choice is remembered', async ({ page }) => {
+  test('colour modes: Single by default, Layered gives each foot its own colour, and the choice is remembered', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    const modes = page.getByRole('radiogroup', { name: 'Colours' })
-    await expect(modes.getByRole('radio', { name: 'Simple' })).toHaveAttribute('aria-checked', 'true')
+    const modes = page.getByRole('radiogroup', { name: 'Map colours' })
+    await expect(modes.getByRole('radio', { name: 'Single' })).toHaveAttribute('aria-checked', 'true')
     const topBarColours = () =>
       page.locator('g.bar').last().locator('rect.seg').evaluateAll((els) => [...new Set(els.map((e) => e.getAttribute('fill')))])
     expect(await topBarColours()).toEqual(['#3d84e6'])
-    await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Sea level')
+    // One colour needs no key (v0.35).
+    await expect(page.getByRole('region', { name: 'Map legend' })).toHaveCount(0)
 
-    await modes.getByRole('radio', { name: 'Detailed' }).click()
+    await modes.getByRole('radio', { name: 'Layered' }).click()
     // The +5 ft bar stacks the five feet above today's high tide, each in its own colour.
     await expect.poll(async () => (await topBarColours()).length).toBe(5)
     await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
     await page.reload()
     await waitForMap(page)
-    await expect(page.getByRole('radio', { name: 'Detailed' })).toHaveAttribute('aria-checked', 'true')
+    await expect(page.getByRole('radio', { name: 'Layered' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('the map credit starts open, folds into an (i) on the first drag, and the (i) opens it again', async ({ page }) => {
@@ -224,16 +241,19 @@ test.describe('FloodLens — core flows', () => {
     await expect(card).toHaveCount(0)
   })
 
-  test('layer toggles respond, and the legend follows the flooding and low-spot layers', async ({ page }) => {
+  test('layer toggles respond, and the legend follows the flooding layer', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
+    await page.getByRole('radio', { name: 'Layered' }).click()
     const low = page.getByRole('switch', { name: 'Low spots' })
     const req = page.waitForRequest(/low_2ft\.geojson/)
     await low.click()
     await req
     await expect(low).toHaveAttribute('aria-checked', 'true')
+    // The legend keys only the sea-level colours, never low spots (v0.35).
     const legend = page.getByRole('region', { name: 'Map legend' })
-    await expect(legend).toContainText('Low spot')
+    await expect(legend.getByRole('listitem')).toHaveCount(6)
+    await expect(legend).not.toContainText('Low spot')
     // City limits can be hidden (and shown again).
     const limits = page.getByRole('switch', { name: 'City limits' })
     await expect(limits).toHaveAttribute('aria-checked', 'true')
@@ -243,8 +263,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(limits).toHaveAttribute('aria-checked', 'true')
     // The scale shows only the sea-level colours (v0.34), so it goes with the flooding layer.
     await page.getByRole('switch', { name: /Flooding/ }).click()
-    await expect(legend.getByRole('listitem')).toHaveCount(0)
-    await expect(legend).toContainText('Low spot')
+    await expect(legend).toHaveCount(0)
   })
 
   test('area chips highlight the area you are in once zoomed in', async ({ page }) => {

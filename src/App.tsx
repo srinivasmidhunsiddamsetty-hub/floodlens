@@ -67,7 +67,6 @@ export default function App() {
               scenarioFt={state.scenarioFt}
               colorMode={state.colorMode}
               showFlood={state.layers.inundation}
-              showLowLying={state.layers.lowLying}
             />
           </div>
 
