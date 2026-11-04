@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.41 (tag `v0.41`): Plasma for By level, "Total / By level", pill chips, answer-box-style figure boxes, semibold card values.
+- **Current version:** v0.42 (tag `v0.42`): Soft light boxes, grouped place facts, vermilion selection, folded-map icon, 300 px left panel.
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 19 end-to-end tests pass, at 1440×900 (some also check 650 px tall windows).
@@ -78,13 +78,15 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
   - Canvas `#f1f3f6`, surface white.
   - Text: `fg #151515`, `fg-muted #474747`, `fg-subtle #6a6a6a`.
   - Accent `#0069b0`.
-  - Selection colour: charcoal `#1f2937` (v0.38; vermilion `#e8452c` before, which the warm ramp would swallow).
+  - Selection colour: vermilion `#e8452c` (v0.42, the owner's pick again; charcoal in v0.38–v0.41).
 - **No blue numbers.** Blue is only for links and selection. Numbers use `text-fg`.
 - **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
 - **Legend (v0.34, v0.35):** a slim vertical colour scale, bottom left, shown **only with By level colours**: only the sea-level colours, today at the bottom, the chosen level in bold. No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. It is a **static key**: nothing in it may be clickable (v0.28). (The chart that spotlighted levels was removed in v0.36.)
 - **Colour modes (v0.34):** a "Total / By level" toggle beside the "Sea level" title (v0.41; "Individual" in v0.38–v0.40), with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. By level uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
 - **By level ramp (v0.41):** matplotlib's Plasma (`#f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887`, 0 ft to +5 ft), the owner's pick from rendered options: a different colour per level, easy to tell apart. Worst neighbouring pair OKLab ΔE 15.1 (deuteranopia 9.0, protanopia 6.2). +4 ft is close to the low-spot purple; the hatch keeps them apart. v0.40 used the owner's yellow → orange swatches (ΔE 3.9). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
+
+- **Surfaces inside cards (v0.42):** `.surface-soft` in `index.css` ("Soft light": white → `#f2f4f7`, hairline `#e4e7ec`, inner highlight). Used by the sea-level figure boxes and the place card's answer and facts boxes. The owner rejected a pale blue gradient as a cliché.
 
 **Card typography (as agreed):**
 
@@ -95,19 +97,19 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | Fact values | 20 px semibold (v0.41; medium before) |
 | The answer ("+2 ft") | 24 px bold |
 | Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
-| Sea level figures: the area and the share (equal weight) | 24 px bold, centred in an answer-box-style box (gradient + hairline, v0.41), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
+| Sea level figures: the area and the share (equal weight) | 24 px bold, centred in a Soft light box (`.surface-soft`, v0.42), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
 | Level chips on the slider | 12 px, centred pills (v0.41); light fill at rest, the chosen one accent-tinted and bold |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
 **Layout (v0.35): desktop and laptop only.**
 
-- The left panel is docked on the grey canvas, 280 px wide.
+- The left panel is docked on the grey canvas, 300 px wide (v0.42; 280 before).
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 224 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a box styled like the place card's answer box (faint blue gradient, hairline), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 224 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a Soft light box (`.surface-soft`: white to cool grey, hairline, inner highlight; v0.42), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows (750 px tall or less) use the `short` Tailwind variant (`@custom-variant` in `index.css`) to tighten the left panel: card padding, layer rows, figure boxes. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
-- Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (frame-corners icon, v0.40; the owner found the house misleading), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned, and the owner agreed it's needed. Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
+- Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (folded-map icon, v0.42; frame corners in v0.40–v0.41; the owner found the house misleading), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned, and the owner agreed it's needed. Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
 - The left panel must fit without scrolling in windows down to about 650 px tall (v0.35). The slider shrinks from 168 to 116 px on short windows to make room (`TRACK_H` in `ScenarioSelector`).
 - One layout, made for screens 1024 px wide and up. A narrower window scrolls sideways (`#root` has `min-width: 1024px`), and the viewport meta is `width=1280`. Don't add phone or tablet layouts; the owner removed them on purpose.
@@ -184,7 +186,7 @@ npm run build            # tsc -b && vite build → dist/
 
 - `.claude/launch.json` defines dev servers on ports 5173 and 5179.
 - The e2e tests use the locally installed Chrome (`channel: 'chrome'`) with SwiftShader WebGL. No Playwright browser download is needed.
-- `tests/e2e/screenshots.spec.ts` clicks fixed map coordinates, such as (622, 470) and (868, 346; 858 before the v0.38 360 px Insights). If the layout or panel widths change, check that those clicks still land on buildings.
+- `tests/e2e/screenshots.spec.ts` clicks fixed map coordinates, such as (632, 470) and (878, 346) since the 300 px left panel (v0.42). If the layout or panel widths change, check that those clicks still land on buildings.
 - The shell is zsh on macOS:
   - Quote globs (`--include='*.ts'`).
   - Use `${var}` inside strings.
@@ -250,6 +252,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.39 | Area and share in soft tinted boxes, centred, 6 px apart; km² / acres switch under the number (one unit at a time again); square centred level chips; the panel tightens on short windows |
 | v0.40 | The owner's yellow → orange swatches for Individual; "0 ft" instead of "Today"; level chips with 6 px corners; frame corners instead of the house; compass kept |
 | v0.41 | Plasma for the By level colours; "Total / By level"; pill chips; figure boxes styled like the answer box, equal height, roomier, with a taller slider; semibold card values |
+| v0.42 | "Soft light" surface for the figure boxes and the place card's answer and facts (facts now grouped in one box); vermilion selection again; folded-map icon; left panel 300 px |
 
 ---
 

@@ -36,7 +36,7 @@ export function InsightPanel({ manifestState, inspection }: Props) {
     />
   ) : manifestState.status === 'ready' ? (
     <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-dashed border-[#d3d9e2] bg-surface px-4 py-3">
-      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#eceef1] text-[#1f2937]" aria-hidden>
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#fdebe7] text-[#d03a22]" aria-hidden>
         <MousePointerClick className="size-4" />
       </span>
       <p className="t-body">

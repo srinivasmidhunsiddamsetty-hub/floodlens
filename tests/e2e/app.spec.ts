@@ -171,8 +171,8 @@ test.describe('FloodLens — core flows', () => {
     // The view reset lives only in the map — no duplicate in the header or panels.
     await expect(page.getByRole('banner').getByRole('button', { name: /reset|show all/i })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Entire Miami Beach' })).toHaveCount(1)
-    // Frame corners, the "fit to view" symbol (v0.40; a house in v0.34–v0.39).
-    await expect(page.getByRole('button', { name: 'Entire Miami Beach' }).locator('svg')).toHaveClass(/lucide-maximize/)
+    // A folded map (v0.42; frame corners in v0.40–v0.41, a house in v0.34–v0.39).
+    await expect(page.getByRole('button', { name: 'Entire Miami Beach' }).locator('svg')).toHaveClass(/(^|\s)lucide-map(\s|$)/)
   })
 
   test('the map controls sit in one column in the bottom-right corner; turn and tilt only in 3D (v0.37)', async ({ page }) => {

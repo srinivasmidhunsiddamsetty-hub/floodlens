@@ -63,11 +63,11 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
   return (
     <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
-      {/* What and where: a 36 px tile for the place (v0.37), its charcoal matching the selection
-          on the map (v0.38; vermilion before), then the name and, under it, the coordinates with a
+      {/* What and where: a 36 px tile for the place (v0.37), its vermilion matching the selection
+          on the map (charcoal in v0.38–v0.41), then the name and, under it, the coordinates with a
           small tile of their own. */}
       <div className="flex items-start gap-2.5">
-        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#eceef1] text-[#1f2937]" aria-hidden>
+        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#fdebe7] text-[#d03a22]" aria-hidden>
           <Icon className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
@@ -131,7 +131,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
             <div aria-live="polite">
               {/* The answer, emphasised, on the label's row (label left, value right, like the facts
                   below), with every level in context under it. A long answer wraps under the label. */}
-              <div className="mt-3 rounded-lg border border-[#d5e6fa] bg-gradient-to-b from-[#f6faff] to-[#ecf4fd] px-3 pt-2 pb-1.5">
+              <div className="surface-soft mt-3 rounded-lg px-3 pt-2 pb-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                   <p className="text-[14px] leading-5 font-medium text-fg">{label}</p>
                   <p className="text-[24px] leading-8 font-bold tracking-[-0.03em] text-fg tabular">{answer}</p>
@@ -144,7 +144,8 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
               {/* Facts in one column. Height and footprint only for a building (v0.34): a spot has
                   neither, so it no longer shows empty rows. Icons in tinted tiles (v0.37): a ruler, a
                   plot of land for the footprint, and a hollow holding water for a low spot (v0.38). */}
-              <dl className="mt-1 divide-y divide-line">
+              {/* Grouped in one box (v0.42; straight on the card before), the same surface as the answer. */}
+              <dl className="surface-soft mt-2.5 divide-y divide-line rounded-lg px-3">
                 {building && (
                   <>
                     <Row

@@ -108,6 +108,16 @@
     background: var(--color-surface);
     box-shadow: var(--shadow-card);
   }
+  /* "Soft light" (v0.42): white fading to a cool grey from the top, a hairline and a faint inner
+     highlight. The surface for the boxes inside cards: the sea-level figures, the place card's
+     answer and its facts. The owner found v0.41's pale blue gradient a cliché. */
+  .surface-soft {
+    background: radial-gradient(120% 100% at 50% 0%, #ffffff 0%, #f2f4f7 100%);
+    border: 1px solid #e4e7ec;
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      0 1px 2px rgb(16 24 40 / 0.05);
+  }
   /* Frosted controls over the map: the map shows through, softened (v0.25). 88% white keeps
      accent text at 4.5:1 even over the darkest flood blue; secondary text is a step darker
      here for the same reason. */

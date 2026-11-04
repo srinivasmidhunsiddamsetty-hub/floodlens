@@ -49,7 +49,7 @@ export default function App() {
       <div className="relative flex min-h-0 flex-1">
         {/* ---------------- Left: sea level + layers */}
         {controlsOpen && (
-          <aside id="control-panel" aria-label="Sea level and layers" className="panel w-[280px] shrink-0 border-r">
+          <aside id="control-panel" aria-label="Sea level and layers" className="panel w-[300px] shrink-0 border-r">
             <ControlPanel manifest={manifest} />
           </aside>
         )}

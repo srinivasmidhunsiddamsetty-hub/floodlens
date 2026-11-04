@@ -45,8 +45,24 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.39 | 4 Nov 2026 | Figures in tinted boxes, a km² / acres switch, square level chips | [`docs/versions/v0.39/`](docs/versions/v0.39/) |
 | v0.40 | 4 Nov 2026 | The owner's yellow → orange swatches, "0 ft", rounded level chips, frame icon | [`docs/versions/v0.40/`](docs/versions/v0.40/) |
 | v0.41 | 4 Nov 2026 | Plasma colours, "By level", pill chips, answer-style figure boxes | [`docs/versions/v0.41/`](docs/versions/v0.41/) |
+| v0.42 | 4 Nov 2026 | Soft light boxes, grouped place facts, vermilion selection, folded-map icon, wider left panel | [`docs/versions/v0.42/`](docs/versions/v0.42/) |
 
 ---
+
+## v0.42: Soft light boxes and grouped facts (4 Nov 2026)
+
+From the owner's notes on v0.41. The surface and the selection colour were picked from options (the selection colours rendered on the real map); the owner kept the not-reached wording.
+
+- **A new surface for the boxes, "Soft light":** white fading to a cool grey from the top, a hairline and a faint inner highlight (`.surface-soft`).
+  - It replaces the pale blue gradient, which the owner found recognisably "vibe-coded".
+  - It's used by the two sea-level figure boxes and by the place card's "Water reaches at" box.
+- **Height, Footprint and Low spot are grouped in one Soft light box** on the place card, instead of sitting straight on the card.
+- **The selected building is vermilion again** (`#e8452c`, as in v0.20–v0.37). The owner found charcoal dull. Against the Plasma levels it measures at least ΔE 10 (9 for deuteranopia). The card's place tile follows it.
+- **"Entire Miami Beach" shows a folded map.**
+- **The left panel is a little wider:** 300 px (was 280).
+- **Kept:** the not-reached answer "Up to +5 ft · Doesn't reach it" (options were offered).
+- The screenshot clicks moved 10 px right with the wider panel: (632, 470) and (878, 346).
+- Tests: 107 unit/component tests and 19 end-to-end tests.
 
 ## v0.41: Plasma, "By level" and better figure boxes (4 Nov 2026)
 

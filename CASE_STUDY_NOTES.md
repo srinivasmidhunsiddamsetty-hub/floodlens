@@ -195,6 +195,7 @@ The product went through numbered versions, each tagged in git with screenshots 
 - **v0.38 → v0.39:** visual weight for the numbers. The area and share moved into soft tinted boxes, centred and close together; the unit came back as a switch under the number (one unit at a time), and the level chips became square with centred names. Short windows tighten the panel so it still never scrolls.
 - **v0.39 → v0.40:** the owner chose their own yellow → orange swatches over the stronger ramp we'd measured (we noted they sit closer together; the white edges help). Today's level became "0 ft", so the whole scale reads as numbers; the house icon gave way to frame corners ("fit to view"); the compass stayed after we explained why rotatable maps carry one.
 - **v0.40 → v0.41:** the owner asked for a distinct colour per level that still looks designed. We rendered four multi-hue palettes on the real map; they chose Plasma, the most distinct (closest levels ΔE 15 against 3.9 before). "Individual" became "By level"; the figure boxes took the place card's answer-box style so both panels share one look, with more room inside and equal heights; card values went semibold.
+- **v0.41 → v0.42:** the owner spotted the pale blue gradient as an AI-design cliché; four quieter surfaces were mocked and "Soft light" (white to cool grey with a hairline) now carries every box, including a new box that groups the place facts. The selected building went back to vermilion after renders on the real map, and the left panel widened slightly.
 
 ## 11. Known limitations
 

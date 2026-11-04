@@ -37,12 +37,12 @@ export const colors = {
   // data
   lowLying: '#6b35aa',
   accent: '#0069b0',
-  // Charcoal (v0.38): the warm Individual ramp runs through vermilion, so the selection moved
-  // to the one colour far from everything (worst-case OKLab ΔE 19 against every flood band in
-  // both modes, water, buildings, parks, low spots and land, for normal and colour-blind
-  // vision). Vermilion `#e8452c` (v0.20–v0.37) would have scored 0 for deuteranopia.
-  selection: '#1f2937',
-  selectionLine: '#000000',
+  // Vermilion again (v0.42, the owner's pick; v0.20–v0.37 too). Against the Plasma By level
+  // ramp, water, buildings, parks, low spots and land its worst-case OKLab ΔE is 10 for normal
+  // vision and 9 for deuteranopia. Charcoal `#1f2937` (v0.38–v0.41) was chosen while the ramp
+  // was orange; the owner found it dull.
+  selection: '#e8452c',
+  selectionLine: '#9e2410',
   studyArea: '#3d4655',
   mask: '#ffffff',
 
