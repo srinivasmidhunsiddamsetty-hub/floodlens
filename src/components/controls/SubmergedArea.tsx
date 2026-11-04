@@ -14,19 +14,20 @@ interface Props {
 }
 
 /**
- * One figure in a box, centred: label, then the number at the agreed stat size (24 px bold), then
+ * One figure in a box, centred: label, then the number (28 px bold since v0.43; 24 px before), then
  * anything under it. The box shares the "Soft light" surface (`.surface-soft`, v0.42) with the
  * place card's answer and facts, so the two panels read as one design (v0.41 had a pale blue
- * gradient; v0.39–v0.40 a flat grey-blue fill). The elements have room to breathe (8 px label to number, 10 px number to switch).
+ * gradient; v0.39–v0.40 a flat grey-blue fill). These two boxes have a slightly heavier hairline,
+ * 1.5 px (v0.43), than the card's boxes. The elements have room to breathe (8 px label to number, 10 px number to switch).
  * Both boxes take an equal share of the column (basis 0), so they're the same height whenever
  * there's room; on the shortest windows the second gives way first. They tighten on short windows
  * (the `short` variant), so the panel still fits without scrolling.
  */
 function Figure({ label, value, children }: { label: string; value: string; children?: ReactNode }) {
   return (
-    <div className="flex flex-1 basis-0 flex-col items-center justify-center surface-soft rounded-lg px-2 py-3 text-center short:py-0.5">
+    <div className="flex flex-1 basis-0 flex-col items-center justify-center surface-soft rounded-lg border-[1.5px] px-2 py-3 text-center short:py-0.5">
       <p className="text-[12px] leading-4 font-medium whitespace-nowrap text-fg short:text-[11px] short:leading-[14px]">{label}</p>
-      <p className="mt-2 text-[24px] leading-7 font-bold tracking-[-0.03em] text-fg tabular short:mt-1 short:text-[20px] short:leading-6">{value}</p>
+      <p className="mt-2 text-[28px] leading-8 font-bold tracking-[-0.03em] text-fg tabular short:mt-1 short:text-[20px] short:leading-6">{value}</p>
       {children}
     </div>
   )

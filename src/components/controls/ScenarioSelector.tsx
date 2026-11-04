@@ -21,7 +21,7 @@ interface Props {
  * panel adds (the low-spot area, v0.36). It never goes below the height of the two figure boxes
  * beside it on a short window.
  */
-const TRACK_H = 'clamp(132px, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 224px)'
+const TRACK_H = 'clamp(132px, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 250px)'
 const THUMB = 20
 
 /**

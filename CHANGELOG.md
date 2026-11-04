@@ -46,8 +46,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.40 | 4 Nov 2026 | The owner's yellow → orange swatches, "0 ft", rounded level chips, frame icon | [`docs/versions/v0.40/`](docs/versions/v0.40/) |
 | v0.41 | 4 Nov 2026 | Plasma colours, "By level", pill chips, answer-style figure boxes | [`docs/versions/v0.41/`](docs/versions/v0.41/) |
 | v0.42 | 4 Nov 2026 | Soft light boxes, grouped place facts, vermilion selection, folded-map icon, wider left panel | [`docs/versions/v0.42/`](docs/versions/v0.42/) |
+| v0.43 | 4 Nov 2026 | Bigger sea-level figures, heavier box hairline | [`docs/versions/v0.43/`](docs/versions/v0.43/) |
 
 ---
+
+## v0.43: Bigger figures (4 Nov 2026)
+
+From the owner's notes on v0.42. The number size was picked from renders of the real card at 24, 28 and 30 px.
+
+- **The two sea-level figures are 28 px bold** (24 before). 30 px was offered but outweighed the card's title. Even "3,770" acres fits easily.
+- **The two figure boxes have a 1.5 px hairline** (1 px before). The place card's boxes keep 1 px.
+- **The scale grew from 224 to 250 px** so the two boxes stay exactly the same height.
+- **The short-window tightening now starts at 770 px** (750 before). The panel still fits without scrolling down to about 650 px, with or without the low-spot line.
+- Tests: 107 unit/component tests and 19 end-to-end tests.
 
 ## v0.42: Soft light boxes and grouped facts (4 Nov 2026)
 

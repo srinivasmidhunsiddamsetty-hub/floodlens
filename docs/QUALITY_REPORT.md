@@ -56,6 +56,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The owner's yellow → orange swatches for the Individual colours, "0 ft" in place of "Today", rounded level chips, and frame corners for Entire Miami Beach (v0.40).
 - Plasma for the By level colours (closest levels ΔE 15.1), "Total / By level", pill chips, figure boxes styled like the answer box with more room and equal heights, and semibold card values (v0.41).
 - A "Soft light" surface for the figure, answer and facts boxes; the place facts grouped in one box; a vermilion selection again; a folded-map icon; a 300 px left panel (v0.42).
+- The two sea-level figures at 28 px in boxes with a 1.5 px hairline, the scale extended to keep them equal (v0.43).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
