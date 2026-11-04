@@ -37,11 +37,12 @@ export const colors = {
   // data
   lowLying: '#6b35aa',
   accent: '#0069b0',
-  // Vermilion (v0.20): the colour farthest from everything else on the map (worst-case
-  // OKLab ΔE 21 against water, every flood band, buildings, parks and low spots, for
-  // normal and colour-blind vision). Orange, before, was 18.
-  selection: '#e8452c',
-  selectionLine: '#9e2410',
+  // Charcoal (v0.38): the warm Individual ramp runs through vermilion, so the selection moved
+  // to the one colour far from everything (worst-case OKLab ΔE 19 against every flood band in
+  // both modes, water, buildings, parks, low spots and land, for normal and colour-blind
+  // vision). Vermilion `#e8452c` (v0.20–v0.37) would have scored 0 for deuteranopia.
+  selection: '#1f2937',
+  selectionLine: '#000000',
   studyArea: '#3d4655',
   mask: '#ffffff',
 
@@ -62,23 +63,25 @@ export type ColorMode = 'simple' | 'detailed'
 export const SIMPLE_COLOR = '#3d84e6'
 
 /**
- * Detailed mode: the level where water first reaches each area, light → dark as the sea
- * rises (more water, darker). +1 ft to +5 ft are the owner's colours (v0.37). Drawn at 85%
- * over the land, the closest neighbouring pair is OKLab ΔE 9.6 for normal vision and 8.6 for
- * colour-blind vision (v0.35's ramp: 10.0 and 9.1). +1 ft is close to the basemap's water
- * colour (ΔE 2); the white edge on each level (`BAND_EDGE`) helps there. Today is a lighter
- * tint of the same blue.
+ * Detailed mode ("Individual"): the level where water first reaches each area, light → dark as
+ * the sea rises (more water, darker). v0.38 turned it warm, pale yellow → orange → red-brown, at
+ * the owner's request: one-hue blues read as "lighter" and "darker" rather than as colours you
+ * can name. The owner's own swatches measured too close together (ΔE 3.9), so this is the same
+ * idea with stronger steps (ColorBrewer YlOrBr). Drawn at 85% over the land, the closest
+ * neighbouring pair is OKLab ΔE 7.3 for normal vision and 6.8 for colour-blind vision, and every
+ * band stands well apart from the water (ΔE 15+).
+ * v0.37: #ddf0fb #a9d9f5 #6fb9e8 #3593d2 #1168b2 #083d77 (the owner's blues).
  * v0.35–v0.36: #dceff5 #a6d8ed #6db6db #338ec4 #1766a1 #083b75.
  * v0.34: #80cffd #4ba3f7 #3672e9 #3a45c8 #31248a #1c0b4d.
  * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#ddf0fb',
-  1: '#a9d9f5',
-  2: '#6fb9e8',
-  3: '#3593d2',
-  4: '#1168b2',
-  5: '#083d77',
+  0: '#fee391',
+  1: '#fec44f',
+  2: '#fe9929',
+  3: '#ec7014',
+  4: '#cc4c02',
+  5: '#8c2d04',
 }
 
 /**

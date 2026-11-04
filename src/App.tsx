@@ -13,10 +13,11 @@ import { useMapData } from './hooks/useMapData'
 import { useAppDispatch, useAppState } from './state/AppState'
 
 /**
- * Insights width (v0.37): fixed, with no resize handle or close tab, at the width long card
- * titles were measured for (v0.27). The owner wants it simply wide enough.
+ * Insights width: fixed, with no resize handle or close tab (v0.37); 360 px since v0.38 (380
+ * before), a little narrower at the owner's request. The place card fits; a very long street name
+ * wraps its title to two lines.
  */
-const INSIGHTS_WIDTH = 380
+const INSIGHTS_WIDTH = 360
 
 /** Desktop and laptop only (v0.33): a docked panel on the left; the Insights cards float over the right of the map (v0.34). */
 export default function App() {

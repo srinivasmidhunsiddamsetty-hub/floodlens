@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { AREA_UNITS, formatArea, formatScenario } from '../../lib/format'
+import { formatArea } from '../../lib/format'
 import { lowLyingByFeet } from '../../lib/manifest'
 import { useAppDispatch, useAppState } from '../../state/AppState'
 import type { LayerKey } from '../../state/reducer'
@@ -23,7 +23,7 @@ const LAYERS: { key: LayerKey; label: string; description: string; swatch: Swatc
 ]
 
 export function ControlPanel({ manifest }: Props) {
-  const { available, scenarioFt, layers, colorMode, areaUnit } = useAppState()
+  const { available, scenarioFt, layers, colorMode } = useAppState()
   const dispatch = useAppDispatch()
   const hasLowLying = !!manifest && manifest.lowLying.length > 0
   // The low-spot area at the chosen level, under its switch while the layer is on (v0.36; in the
@@ -40,7 +40,8 @@ export function ControlPanel({ manifest }: Props) {
     >
       <section aria-labelledby="sec-level" className="card p-4">
         {/* The colour toggle sits beside the title (v0.35): one colour for all the water, or a
-            colour for each foot (v0.34). Named Single and Layered in v0.35, Overview and Layered in v0.37. */}
+            colour for each foot (v0.34). Named Single and Layered in v0.35, Overview and Layered in v0.37,
+            Total and Individual in v0.38 (the owner's names). */}
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 id="sec-level" className="t-title text-[15px] font-bold tracking-[-0.01em]">
             Sea level
@@ -52,8 +53,8 @@ export function ControlPanel({ manifest }: Props) {
             value={colorMode}
             onChange={(mode) => dispatch({ type: 'setColorMode', mode })}
             options={[
-              { value: 'simple', label: 'Overview' },
-              { value: 'detailed', label: 'Layered' },
+              { value: 'simple', label: 'Total' },
+              { value: 'detailed', label: 'Individual' },
             ]}
           />
         </div>
@@ -68,8 +69,6 @@ export function ControlPanel({ manifest }: Props) {
             manifest={manifest}
             scenarioFt={scenarioFt}
             colorMode={colorMode}
-            unit={areaUnit}
-            onUnitChange={(unit) => dispatch({ type: 'setAreaUnit', unit })}
           />
         </ScenarioSelector>
       </section>
@@ -88,8 +87,9 @@ export function ControlPanel({ manifest }: Props) {
               l.key === 'lowLying' && low ? (
                 <>
                   {l.description}
+                  {/* Both units, as beside the slider (v0.38); the level is the slider's. */}
                   <span className="block font-medium text-fg tabular">
-                    {formatArea(low.areaM2, areaUnit)} {AREA_UNITS[areaUnit].short} {low.feet === 0 ? 'today' : `at ${formatScenario(low.feet)}`}
+                    {formatArea(low.areaM2, 'km2')} km² · {formatArea(low.areaM2, 'acres')} acres
                   </span>
                 </>
               ) : (

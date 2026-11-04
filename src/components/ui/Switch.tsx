@@ -9,11 +9,14 @@ interface Props {
   disabled?: boolean
 }
 
-/** Accessible toggle: a native button with role="switch"; the whole row is clickable. */
+/**
+ * Accessible toggle: a native button with role="switch"; the whole row is clickable. Rows tighten
+ * slightly on windows 700 px tall or less (v0.38), so the left panel still fits without scrolling.
+ */
 export function Switch({ checked, onChange, label, description, swatch, disabled }: Props) {
   const id = useId()
   return (
-    <div className={`-mx-2 flex items-center gap-3 rounded px-2 py-2 hover:bg-surface-2 ${disabled ? 'opacity-50' : ''}`}>
+    <div className={`-mx-2 flex items-center gap-3 rounded px-2 py-2 hover:bg-surface-2 [@media(max-height:700px)]:py-1.5 ${disabled ? 'opacity-50' : ''}`}>
       {swatch && <span className="shrink-0">{swatch}</span>}
       <div className="min-w-0 flex-1">
         <label htmlFor={id} className="block cursor-pointer t-label text-fg">

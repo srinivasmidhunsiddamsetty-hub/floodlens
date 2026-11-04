@@ -1,8 +1,9 @@
-import { Building2, Crosshair, Droplets, LandPlot, Loader2, MapPin, Ruler, Waves, X, type LucideIcon } from 'lucide-react'
+import { Building2, Crosshair, LandPlot, Loader2, MapPin, Ruler, Waves, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCoord, formatScenario, formatSmallArea } from '../../lib/format'
 import type { InspectionState } from '../../hooks/useInspection'
 import type { Selection } from '../../state/reducer'
+import { LowSpot } from '../ui/LowSpotIcon'
 import { LevelTrack } from './LevelTrack'
 
 interface Props {
@@ -60,10 +61,11 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
   return (
     <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
-      {/* What and where: a 36 px tile for the place (v0.37), its vermilion matching the selection
-          on the map, then the name and, under it, the coordinates with a small tile of their own. */}
+      {/* What and where: a 36 px tile for the place (v0.37), its charcoal matching the selection
+          on the map (v0.38; vermilion before), then the name and, under it, the coordinates with a
+          small tile of their own. */}
       <div className="flex items-start gap-2.5">
-        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#fdebe7] text-[#d03a22]" aria-hidden>
+        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#eceef1] text-[#1f2937]" aria-hidden>
           <Icon className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
@@ -139,8 +141,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
               {/* Facts in one column. Height and footprint only for a building (v0.34): a spot has
                   neither, so it no longer shows empty rows. Icons in tinted tiles (v0.37): a ruler, a
-                  plot of land for the footprint, and water drops for a low spot, where water pools
-                  (v0.34–v0.36's arrow down to a line read as "download"). */}
+                  plot of land for the footprint, and a hollow holding water for a low spot (v0.38). */}
               <dl className="mt-1 divide-y divide-line">
                 {building && (
                   <>
@@ -155,7 +156,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                 )}
                 {/* No area caption (v0.31): it showed the whole low-spot area the building touches,
                     not the building's part of it, and the level is what matters. */}
-                <Row icon={Droplets} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
+                <Row icon={LowSpot} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
               </dl>
             </div>
           )

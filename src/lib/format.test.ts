@@ -27,6 +27,9 @@ describe('format', () => {
     expect(formatSmallArea(11_420.6)).toBe('11,421 m²')
     expect(formatPercent(0.0004)).toBe('<0.1%')
     expect(formatPercent(0.598)).toBe('60%')
+    // Zero is a plain 0%, never "0.0%" or a blank (v0.38).
+    expect(formatPercent(0)).toBe('0%')
+    expect(formatPercent(0, true)).toBe('0%')
     expect(formatCoord(-80.1342, 25.7811)).toBe('25.78110° N, 80.13420° W')
   })
 

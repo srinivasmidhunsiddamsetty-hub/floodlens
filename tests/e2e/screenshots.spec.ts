@@ -16,12 +16,12 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // Layered colours at the top level (+5 ft): what +5 ft adds, beside the slider
-    await page.getByRole('radio', { name: 'Layered' }).click()
+    // Individual colours at the top level (+5 ft): what +5 ft adds, beside the slider
+    await page.getByRole('radio', { name: 'Individual' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
-    await page.screenshot({ path: `${OUT}/02-layered-5ft.png` })
+    await page.screenshot({ path: `${OUT}/02-individual-5ft.png` })
 
     // 2D + inspection of the map centre
     await page.getByRole('button', { name: '2D view' }).click()
@@ -36,9 +36,9 @@ test.describe('screenshots', () => {
     await page.screenshot({ path: `${OUT}/04-about-data.png` })
     await page.keyboard.press('Escape')
 
-    // South Beach in 3D at +2 ft in Overview colours, with a building selected (Euclid Avenue at this viewport)
+    // South Beach in 3D at +2 ft in Total colours, with a building selected (Euclid Avenue at this viewport)
     await page.keyboard.press('Escape')
-    await page.getByRole('radio', { name: 'Overview' }).click()
+    await page.getByRole('radio', { name: 'Total' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('ArrowLeft', { delay: 50 })
     await page.keyboard.press('ArrowLeft', { delay: 50 })
@@ -56,15 +56,16 @@ test.describe('screenshots', () => {
     await page.keyboard.press('End')
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'North Beach' }).click()
     await page.waitForTimeout(5000)
-    await page.mouse.click(858, 346)
+    await page.mouse.click(868, 346)
     await page.mouse.move(700, 120)
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/09-north-beach-not-reached.png` })
 
-    // The sea-level figures in acres
+    // Today's high tide: the figures read 0, never a blank (v0.38)
     await page.keyboard.press('Escape')
-    await page.getByRole('combobox', { name: 'Area unit' }).selectOption('acres')
-    await page.waitForTimeout(800)
-    await page.screenshot({ path: `${OUT}/10-sea-level-acres.png` })
+    await page.getByRole('slider').focus()
+    await page.keyboard.press('Home')
+    await page.waitForTimeout(1500)
+    await page.screenshot({ path: `${OUT}/10-today-zero.png` })
   })
 })

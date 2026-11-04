@@ -540,30 +540,32 @@ export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
       {/* maplibre-gl.css forces `position: relative` on the container, so size it explicitly. */}
       <div ref={containerRef} className="h-full w-full" />
 
-      {/* Chips, controls, the keyboard crosshair and status messages sit in the part of the map
-          the floating Insights cards don't cover. */}
+      {/* The map controls sit at the screen's right edge, under the Insights card (v0.38). */}
+      {ready && (
+        <MapControls
+          viewMode={viewMode}
+          bearing={camera.bearing}
+          pitch={camera.pitch}
+          zoom={camera.zoom}
+          onZoomIn={() => ease((m) => m.zoomIn(anim))}
+          onZoomOut={() => ease((m) => m.zoomOut(anim))}
+          onResetNorth={() => ease((m) => m.easeTo({ bearing: 0, ...anim }))}
+          onShowAll={showAll}
+          onSetMode={(mode) => dispatch({ type: 'setViewMode', mode })}
+          onRotate={(deg) => ease((m) => m.easeTo({ bearing: m.getBearing() + deg, ...anim }))}
+          // Never quite flat in 3D, so the buildings still read as 3D; 70° is the map's limit.
+          onTilt={(deg) => ease((m) => m.easeTo({ pitch: Math.min(70, Math.max(10, m.getPitch() + deg)), ...anim }))}
+        />
+      )}
+
+      {/* Chips, the keyboard crosshair and status messages sit in the part of the map the floating
+          Insights card doesn't cover. */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10" style={{ right: rightInset }}>
         {ready && (
           <AreaBookmarks
             onGo={goTo}
             onShowAll={showAll}
             active={pickedArea === SHOW_ALL ? null : (pickedArea ?? nearestBookmark(camera.center, camera.zoom, AREA_BOOKMARKS))}
-          />
-        )}
-        {ready && (
-          <MapControls
-            viewMode={viewMode}
-            bearing={camera.bearing}
-            pitch={camera.pitch}
-            zoom={camera.zoom}
-            onZoomIn={() => ease((m) => m.zoomIn(anim))}
-            onZoomOut={() => ease((m) => m.zoomOut(anim))}
-            onResetNorth={() => ease((m) => m.easeTo({ bearing: 0, ...anim }))}
-            onShowAll={showAll}
-            onSetMode={(mode) => dispatch({ type: 'setViewMode', mode })}
-            onRotate={(deg) => ease((m) => m.easeTo({ bearing: m.getBearing() + deg, ...anim }))}
-            // Never quite flat in 3D, so the buildings still read as 3D; 70° is the map's limit.
-            onTilt={(deg) => ease((m) => m.easeTo({ pitch: Math.min(70, Math.max(10, m.getPitch() + deg)), ...anim }))}
           />
         )}
 

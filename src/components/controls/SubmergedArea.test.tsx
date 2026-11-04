@@ -1,8 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
-import type { AreaUnit } from '../../lib/format'
 import type { ColorMode } from '../../lib/theme'
 import { makeManifest } from '../../test/fixtures'
 import type { DataManifest } from '../../types/data'
@@ -27,53 +24,40 @@ const withLand = makeManifest({
 })
 
 function Harness({ ft, mode, manifest = withLand }: { ft: number; mode: ColorMode; manifest?: DataManifest | null }) {
-  const [unit, setUnit] = useState<AreaUnit>('km2')
-  return <SubmergedArea manifest={manifest} scenarioFt={ft} colorMode={mode} unit={unit} onUnitChange={setUnit} />
+  return <SubmergedArea manifest={manifest} scenarioFt={ft} colorMode={mode} />
 }
 
-const figure = () => screen.getByText(/underwater at/i).nextSibling as HTMLElement
-const unitMenu = () => screen.getByRole('combobox', { name: 'Area unit' })
+/** The area block, then the share block, as text. */
+const blocks = (container: HTMLElement) => [...container.firstElementChild!.children].map((b) => b.textContent)
 
 describe('<SubmergedArea>', () => {
-  it('Overview: everything underwater at the level, and its share of the city’s land', () => {
-    render(<Harness ft={3} mode="simple" />)
-    expect(screen.getByText('Underwater at +3 ft')).toBeInTheDocument()
-    // +3 ft includes what +1 and +2 ft reached: 2.30 km² of 10 km² of land.
-    expect(figure()).toHaveTextContent('2.30')
-    expect(unitMenu()).toHaveValue('km2')
-    expect(screen.getByText('of the city’s land', { exact: false })).toHaveTextContent('23% of the city’s land')
+  it('Total: everything covered at the level, in km² and acres, and its share of the city’s land', () => {
+    const { container } = render(<Harness ft={3} mode="simple" />)
+    // +3 ft includes what +1 and +2 ft reached: 2.30 km² (568 acres) of 10 km² of land.
+    expect(blocks(container)).toEqual(['Total area covered2.30km²568 acres', 'Share of city land23%'])
   })
 
-  it('Layered: only what the level adds to the one below, with the same denominator (v0.37: one word apart)', () => {
-    render(<Harness ft={3} mode="detailed" />)
-    expect(screen.getByText('Newly underwater at +3 ft')).toBeInTheDocument()
-    expect(figure()).toHaveTextContent('1.80')
-    expect(screen.getByText('of the city’s land', { exact: false })).toHaveTextContent('18% of the city’s land')
+  it('Individual: only what the level adds to the one below, with the same denominator', () => {
+    const { container } = render(<Harness ft={3} mode="detailed" />)
+    expect(blocks(container)).toEqual(['New area covered1.80km²445 acres', 'Share of city land18%'])
   })
 
-  it('picks km² or acres from a small menu right after the number (v0.37)', async () => {
+  it('gives the share the same weight as the area (v0.38)', () => {
     render(<Harness ft={2} mode="simple" />)
-    expect(figure()).toHaveTextContent('0.50')
-    expect(figure().lastElementChild).toContainElement(unitMenu())
-    await userEvent.selectOptions(unitMenu(), 'acres')
-    expect(figure()).toHaveTextContent('124')
-    expect(unitMenu()).toHaveValue('acres')
-    expect(screen.getAllByRole('option').map((o) => o.textContent)).toEqual(['km²', 'acres'])
+    expect(screen.getByText('5%')).toHaveClass('text-[24px]', 'font-bold')
+    expect(screen.getByText('0.50')).toHaveClass('text-[24px]', 'font-bold')
   })
 
-  it('says “None yet” at today’s high tide, in either mode', () => {
-    const { rerender } = render(<Harness ft={0} mode="simple" />)
-    expect(screen.getByText('At today’s high tide')).toBeInTheDocument()
-    expect(screen.getByText('None yet')).toBeInTheDocument()
+  it('shows 0 at today’s high tide, never a blank, in either mode (v0.38)', () => {
+    const { container, rerender } = render(<Harness ft={0} mode="simple" />)
+    expect(blocks(container)).toEqual(['Total area covered0km²0 acres', 'Share of city land0%'])
     rerender(<Harness ft={0} mode="detailed" />)
-    expect(screen.getByText('None yet')).toBeInTheDocument()
-    expect(screen.queryByText(/of the city’s land/)).toBeNull()
+    expect(blocks(container)).toEqual(['New area covered0km²0 acres', 'Share of city land0%'])
   })
 
   it('leaves out the share when the city’s land area is unknown, and shows nothing without data', () => {
     const { container, rerender } = render(<Harness ft={2} mode="simple" manifest={plain} />)
-    expect(figure()).toHaveTextContent('0.50')
-    expect(screen.queryByText(/of the city’s land/)).toBeNull()
+    expect(blocks(container)).toEqual(['Total area covered0.50km²124 acres'])
     rerender(<Harness ft={2} mode="simple" manifest={null} />)
     expect(container).toBeEmptyDOMElement()
   })

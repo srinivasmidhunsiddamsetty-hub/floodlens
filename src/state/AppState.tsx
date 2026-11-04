@@ -1,19 +1,8 @@
 import { createContext, useContext, useEffect, useReducer, type Dispatch, type ReactNode } from 'react'
-import type { AreaUnit } from '../lib/format'
 import type { ColorMode } from '../lib/theme'
 import { initialState, reducer, type Action, type AppState } from './reducer'
 
-const UNIT_KEY = 'floodlens.areaUnit'
 const COLOR_KEY = 'floodlens.colorMode'
-
-const readUnit = (): AreaUnit => {
-  try {
-    const v = localStorage.getItem(UNIT_KEY)
-    return v === 'acres' || v === 'km2' ? v : initialState.areaUnit
-  } catch {
-    return initialState.areaUnit
-  }
-}
 
 const readColorMode = (): ColorMode => {
   try {
@@ -28,15 +17,7 @@ const StateCtx = createContext<AppState | null>(null)
 const DispatchCtx = createContext<Dispatch<Action> | null>(null)
 
 export function AppStateProvider({ children, initial }: { children: ReactNode; initial?: Partial<AppState> }) {
-  const [state, dispatch] = useReducer(reducer, null, () => ({ ...initialState, areaUnit: readUnit(), colorMode: readColorMode(), ...initial }))
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(UNIT_KEY, state.areaUnit)
-    } catch {
-      /* storage unavailable (private mode): the unit just isn't remembered */
-    }
-  }, [state.areaUnit])
+  const [state, dispatch] = useReducer(reducer, null, () => ({ ...initialState, colorMode: readColorMode(), ...initial }))
 
   useEffect(() => {
     try {

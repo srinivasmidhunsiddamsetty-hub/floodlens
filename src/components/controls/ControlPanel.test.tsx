@@ -20,19 +20,19 @@ const panel = (over = {}) =>
 describe('<ControlPanel>', () => {
   it('shows the land underwater beside the slider, and the colour toggle picks total or added (v0.36)', async () => {
     panel()
-    expect(screen.getByRole('radio', { name: 'Overview' })).toHaveAttribute('aria-checked', 'true')
-    expect(screen.getByText('Underwater at +2 ft')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Total' })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByText('Total area covered')).toBeInTheDocument()
     expect(screen.getByText('0.50')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('radio', { name: 'Layered' }))
-    expect(screen.getByText('Newly underwater at +2 ft')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('radio', { name: 'Individual' }))
+    expect(screen.getByText('New area covered')).toBeInTheDocument()
     expect(screen.getByText('0.48')).toBeInTheDocument()
   })
 
   it('shows the low-spot area under its switch only while that layer is on (v0.36)', () => {
     const { unmount } = panel()
-    expect(screen.queryByText('0.94 km² at +2 ft')).toBeNull()
+    expect(screen.queryByText('0.94 km² · 232 acres')).toBeNull()
     unmount()
     panel({ layers: { ...initialState.layers, lowLying: true } })
-    expect(screen.getByRole('switch', { name: 'Low spots' })).toHaveAccessibleDescription(/cut off from the sea.*0\.94 km² at \+2 ft/)
+    expect(screen.getByRole('switch', { name: 'Low spots' })).toHaveAccessibleDescription(/cut off from the sea.*0\.94 km² · 232 acres/)
   })
 })

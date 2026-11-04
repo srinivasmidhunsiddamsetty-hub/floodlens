@@ -41,8 +41,31 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.35 | 3 Nov 2026 | Owner's pass on v0.34: Single / Layered beside Sea level, new layered colours, one control column with a dial, no-scroll left panel | [`docs/versions/v0.35/`](docs/versions/v0.35/) |
 | v0.36 | 4 Nov 2026 | Land underwater moves beside the slider; Insights only for the selection | [`docs/versions/v0.36/`](docs/versions/v0.36/) |
 | v0.37 | 4 Nov 2026 | New layered colours with white edges, Overview / Layered, controls in the corner, icon tiles | [`docs/versions/v0.37/`](docs/versions/v0.37/) |
+| v0.38 | 4 Nov 2026 | Warm Individual colours, Total / Individual, both units, controls at the screen's edge | [`docs/versions/v0.38/`](docs/versions/v0.38/) |
 
 ---
+
+## v0.38: Warm colours, Total / Individual and figures that never go blank (4 Nov 2026)
+
+From the owner's notes on v0.37. The palette, the mode names and the low-spot icon were picked from options; the owner left the units to us.
+
+- **Warm Individual colours:** pale yellow → orange → red-brown (`#fee391` `#fec44f` `#fe9929` `#ec7014` `#cc4c02` `#8c2d04`, today to +5 ft). The owner found the blues hard to tell apart. Their numbers were good, but one hue reads as "lighter" and "darker" rather than as colours you can name.
+  - The owner's own yellow-to-orange swatches measured too close together (closest neighbours ΔE 3.9), so this is the same idea with stronger steps. Closest neighbours: ΔE 7.3 for normal vision, 6.8 for colour-blind vision. Every level stands well apart from the water (ΔE 15+).
+  - Rendered side by side on the real map before choosing.
+- **The selected building turns charcoal** (`#1f2937`, outline black), because vermilion sat inside the new orange ramp (ΔE 0 for deuteranopia). Charcoal is at least ΔE 19 from everything on the map. The card's place tile and the prompt's tile follow it.
+- **"Total / Individual"** replace "Overview / Layered", the owner's names.
+- **The figures:**
+  - Labels "Total area covered" and "New area covered" replace "Underwater at +2 ft" and "Newly underwater at +2 ft".
+  - The share of the city's land is now a figure in its own right ("Share of city land", 24 px bold), as large as the area.
+  - The area shows in km² with acres under it. There is no unit control any more: the owner found the switch and the menu unclear.
+  - The two figures fill the slider's height, area at the top and share at the bottom.
+  - Today's high tide reads "0 km²", "0 acres" and "0%" instead of "None yet". Nothing is left blank.
+- **Every level on the slider is a chip you can click:** a light fill at rest, darker on hover, the chosen one accent-tinted and bold. On short windows the chips shrink so they never overlap.
+- **The map controls moved to the screen's right edge, under the Insights card,** 16 px from the right and bottom. On windows shorter than 760 px they split into two columns, so they never reach a building's card. The scale bar and credit went back to the bottom right of the visible map.
+- **Insights is 360 px wide** (380 before).
+- **A new Low spot icon:** a hollow in the ground holding water, drawn in Lucide's style. The water drops didn't say "a dip below the water line".
+- The low-spot line under its switch shows both units: "0.94 km² · 232 acres".
+- Tests: 105 unit/component tests (new: the two equal figures, both units, zeros at today, 0%, the low-spot icon; removed: the unit setting) and 18 end-to-end tests (new: Total and Individual figures at 0, +1, +2 and +3 ft with both units, clicking a level chip, the controls under the card in one or two columns; removed: the unit test). Screenshots `02-individual-5ft` and `10-today-zero` replace `02-layered-5ft` and `10-sea-level-acres`.
 
 ## v0.37: Colours, words, corner controls and icon tiles (4 Nov 2026)
 

@@ -66,19 +66,11 @@ describe('view state', () => {
     expect(s).toMatchObject({ viewMode: '2d', scenarioFt: 3 })
   })
 
-  it('starts in km² and switches the area unit without touching anything else', () => {
-    expect(initialState.areaUnit).toBe('km2')
-    const before = loaded({ scenarioFt: 3 })
-    const s = reducer(before, { type: 'setAreaUnit', unit: 'acres' })
-    expect(s).toMatchObject({ areaUnit: 'acres', scenarioFt: 3 })
-    expect(reducer(s, { type: 'setAreaUnit', unit: 'acres' })).toBe(s)
-  })
-
   it('starts in Simple colours and switches to Detailed without touching anything else (v0.34)', () => {
     expect(initialState.colorMode).toBe('simple')
     const before = loaded({ scenarioFt: 3 })
     const s = reducer(before, { type: 'setColorMode', mode: 'detailed' })
-    expect(s).toMatchObject({ colorMode: 'detailed', scenarioFt: 3, areaUnit: before.areaUnit })
+    expect(s).toMatchObject({ colorMode: 'detailed', scenarioFt: 3 })
     expect(reducer(s, { type: 'setColorMode', mode: 'detailed' })).toBe(s)
   })
 })

@@ -1,5 +1,4 @@
 import type { Feature, MultiPolygon, Polygon } from 'geojson'
-import type { AreaUnit } from '../lib/format'
 import type { LngLat } from '../lib/geo'
 import type { ColorMode } from '../lib/theme'
 
@@ -40,8 +39,6 @@ export interface AppState {
   inspectCenterToken: number
   /** The left panel collapses with its edge tab; Insights is always shown (v0.37). */
   panels: { controls: boolean }
-  /** Unit for areas in the Insights panel; remembered in this browser. */
-  areaUnit: AreaUnit
   /** One colour for all the water, or a colour for each foot (v0.34); remembered in this browser. */
   colorMode: ColorMode
 }
@@ -58,7 +55,6 @@ export type Action =
   | { type: 'resetCamera' }
   | { type: 'inspectCenter' }
   | { type: 'setPanel'; panel: keyof AppState['panels']; open: boolean }
-  | { type: 'setAreaUnit'; unit: AreaUnit }
   | { type: 'setColorMode'; mode: ColorMode }
 
 export const DEFAULT_SCENARIO_FT = 2
@@ -73,7 +69,6 @@ export const initialState: AppState = {
   cameraResetToken: 0,
   inspectCenterToken: 0,
   panels: { controls: true },
-  areaUnit: 'km2',
   colorMode: 'simple',
 }
 
@@ -118,8 +113,6 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, inspectCenterToken: state.inspectCenterToken + 1 }
     case 'setPanel':
       return { ...state, panels: { ...state.panels, [action.panel]: action.open } }
-    case 'setAreaUnit':
-      return action.unit === state.areaUnit ? state : { ...state, areaUnit: action.unit }
     case 'setColorMode':
       return action.mode === state.colorMode ? state : { ...state, colorMode: action.mode }
     default:

@@ -15,11 +15,13 @@ interface Props {
 
 /**
  * Height of the vertical slider, and the thumb size (the track runs between the thumb's centres).
- * The slider gives up height on short windows (v0.35), down to 100 px, so the left panel fits
- * without scrolling in windows down to about 650 px tall; 532 px is the rest of the panel and
- * the top bar, and `--fl-panel-extra` is any line the panel adds (the low-spot area, v0.36).
+ * The slider gives up height on short windows (v0.35), so the left panel fits without scrolling
+ * in windows down to about 650 px tall; 532 px is the rest of the panel and the top bar, and
+ * `--fl-panel-extra` is any line the panel adds (the low-spot area, v0.36). It never goes below
+ * 118 px, the height of the two figures beside it (v0.38); the layer rows tighten on short
+ * windows to make up the difference (see Switch).
  */
-const TRACK_H = 'clamp(100px, calc(100vh - 532px - var(--fl-panel-extra, 0px)), 168px)'
+const TRACK_H = 'clamp(118px, calc(100vh - 532px - var(--fl-panel-extra, 0px)), 168px)'
 const THUMB = 20
 
 /**
@@ -49,6 +51,8 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
 
   // The thumb's centre for each level, measured up from the bottom of the slider.
   const pos = (i: number) => `calc(${THUMB / 2}px + ${i / max} * (100% - ${THUMB}px))`
+  // Each level's chip: 22 px tall, or less when a short window squeezes the slider, so chips never overlap.
+  const chipH = `min(22px, calc((100% - ${THUMB}px) / ${max} - 2px))`
 
   return (
     <div>
@@ -77,18 +81,19 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
               aria-valuetext={formatScenarioLong(value)}
             />
           </div>
-          {/* Level names beside the stops; clicking one picks it (the slider is the keyboard route). */}
-          {/* 42 px fits the widest name, a bold "Today", and leaves the most room for `children`. */}
-          <div className="relative ml-1 w-[42px]" aria-hidden="true">
+          {/* Each level is a chip you can click (v0.38; plain text before): a light fill at rest, darker on
+              hover, the chosen one filled with the accent tint and bold. The slider is the keyboard route.
+              48 px fits the widest name, a bold "Today", and leaves the most room for `children`. */}
+          <div className="relative ml-1 w-12" aria-hidden="true">
             {available.map((ft, i) => (
               <button
                 key={ft}
                 type="button"
                 tabIndex={-1}
                 onClick={() => onChange(ft)}
-                style={{ bottom: `calc(${pos(i)} - 9px)` }}
-                className={`absolute left-0 h-[18px] rounded px-1 text-left text-xs leading-[18px] whitespace-nowrap tabular transition-colors ${
-                  ft === value ? 'font-bold text-fg' : 'text-fg-subtle hover:text-fg'
+                style={{ bottom: pos(i), height: chipH }}
+                className={`absolute left-0 flex w-full translate-y-1/2 cursor-pointer items-center rounded-md px-1.5 text-left text-xs whitespace-nowrap tabular transition-colors ${
+                  ft === value ? 'bg-accent-soft font-bold text-fg ring-1 ring-accent/35 ring-inset' : 'bg-canvas text-fg-muted hover:bg-[#e4e8ee] hover:text-fg'
                 }`}
               >
                 {ft === 0 ? 'Today' : formatScenario(ft)}

@@ -81,10 +81,10 @@ describe('<InspectionCard>', () => {
     card(levels(2))
     const labels = screen.getAllByRole('term').map((t) => t.textContent)
     expect(labels).toEqual(['Height', 'Footprint', 'Low spot'])
-    // Each icon sits in a tinted tile (v0.37); Low spot shows water drops, not a download-like arrow.
+    // Each icon sits in a tinted tile (v0.37); Low spot shows a hollow holding water (v0.38).
     const icon = (label: string) => screen.getAllByRole('term').find((t) => t.textContent === label)!.querySelector('svg')!
     for (const label of ['Height', 'Footprint', 'Low spot']) expect(icon(label).parentElement).toHaveClass('size-7', 'rounded-lg')
-    expect(icon('Low spot')).toHaveClass('lucide-droplets')
+    expect(icon('Low spot')).toHaveClass('lucide-low-spot')
   })
 
   it('explains places outside the city boundary instead of showing results', () => {
