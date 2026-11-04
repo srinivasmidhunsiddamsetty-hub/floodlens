@@ -37,12 +37,13 @@ export const colors = {
   // data
   lowLying: '#6b35aa',
   accent: '#0069b0',
-  // Vermilion again (v0.42, the owner's pick; v0.20–v0.37 too). Against the Plasma By level
-  // ramp, water, buildings, parks, low spots and land its worst-case OKLab ΔE is 10 for normal
-  // vision and 9 for deuteranopia. Charcoal `#1f2937` (v0.38–v0.41) was chosen while the ramp
-  // was orange; the owner found it dull.
-  selection: '#e8452c',
-  selectionLine: '#9e2410',
+  // Bright green (v0.46, the owner's colour), with a deep green outline. Against the Plasma By
+  // level ramp, water, buildings, parks, low spots and land its worst-case OKLab ΔE is 18 for
+  // normal vision but 5 for deuteranopia and 8 for protanopia, so some red-green colour-blind
+  // readers may find it closer to the map's colours than vermilion was. Before: vermilion
+  // `#e8452c` (v0.42–v0.45, v0.20–v0.37) and charcoal `#1f2937` (v0.38–v0.41).
+  selection: '#3ee67e',
+  selectionLine: '#15803d',
   studyArea: '#3d4655',
   mask: '#ffffff',
 

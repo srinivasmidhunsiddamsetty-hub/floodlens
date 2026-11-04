@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.45 (tag `v0.45`): the two sea-level figures at 30 px (24 px only on windows ≤ 725 px tall).
+- **Current version:** v0.46 (tag `v0.46`): the selected building in green `#3ee67e`.
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
@@ -78,7 +78,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
   - Canvas `#f1f3f6`, surface white.
   - Text: `fg #151515`, `fg-muted #474747`, `fg-subtle #6a6a6a`.
   - Accent `#0069b0`.
-  - Selection colour: vermilion `#e8452c` (v0.42, the owner's pick again; charcoal in v0.38–v0.41).
+  - Selection colour: green `#3ee67e`, outline `#15803d` (v0.46, the owner's colour; vermilion before, charcoal in v0.38–v0.41). The card's place tile uses `#15803d` on `#e9fbf0`.
 - **No blue numbers.** Blue is only for links and selection. Numbers use `text-fg`.
 - **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
@@ -256,6 +256,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.43 | The two sea-level figures at 28 px (from 24) in boxes with a 1.5 px hairline; slider up to 250 px so the boxes stay equal |
 | v0.44 | Fix: the figures stay 28 px on laptop windows (v0.43 compacted them to 20 px at ≤ 770 px); compaction only at ≤ 725 px and only to 24 px; panel tightening from 800 px keeps the boxes equal |
 | v0.45 | The two sea-level figures at 30 px (the owner's call); slider up to 254 px so the boxes stay equal |
+| v0.46 | Selected building green `#3ee67e` (outline `#15803d`); the card's place tile and the spot ring follow it |
 
 ---
 

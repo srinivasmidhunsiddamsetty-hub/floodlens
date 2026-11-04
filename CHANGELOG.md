@@ -49,8 +49,17 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.43 | 4 Nov 2026 | Bigger sea-level figures, heavier box hairline | [`docs/versions/v0.43/`](docs/versions/v0.43/) |
 | v0.44 | 4 Nov 2026 | Fix: the figures stay 28 px on laptop windows | [`docs/versions/v0.44/`](docs/versions/v0.44/) |
 | v0.45 | 4 Nov 2026 | The sea-level figures at 30 px | [`docs/versions/v0.45/`](docs/versions/v0.45/) |
+| v0.46 | 4 Nov 2026 | Green selection | [`docs/versions/v0.46/`](docs/versions/v0.46/) |
 
 ---
+
+## v0.46: Green selection (4 Nov 2026)
+
+- **The selected building, and the ring round a selected spot, are now green `#3ee67e`** (the owner's colour), with a deep green outline `#15803d`. They were vermilion.
+- **The card's place tile follows the colour**, using deep green on pale green (`#15803d` on `#e9fbf0`). The bright green itself is too faint for a small icon on a pale tile (contrast 1.6:1).
+- **Measured against the map's colours:** it stands out more than vermilion for most people (closest colour ΔE 18 against 10). For red-green colour-blind readers it's weaker: ΔE 5 for deuteranopia and 8 for protanopia, against 9 and 13.
+- **Fixed along the way:** the faint wash inside a selected spot's ring had been hard-coded to vermilion, so it never followed the selection colour, even in the charcoal versions (v0.38–v0.41). It now uses the same green.
+- Tests: 107 unit/component tests and 20 end-to-end tests.
 
 ## v0.45: Figures at 30 px (4 Nov 2026)
 

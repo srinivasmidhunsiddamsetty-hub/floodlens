@@ -63,11 +63,11 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
   return (
     <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
-      {/* What and where: a 36 px tile for the place (v0.37), its vermilion matching the selection
-          on the map (charcoal in v0.38–v0.41), then the name and, under it, the coordinates with a
-          small tile of their own. */}
+      {/* What and where: a 36 px tile for the place (v0.37), its green matching the selection on
+          the map (v0.46; a deeper green for the icon, since #3ee67e on a pale tile is too faint),
+          then the name and, under it, the coordinates with a small tile of their own. */}
       <div className="flex items-start gap-2.5">
-        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#fdebe7] text-[#d03a22]" aria-hidden>
+        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#e9fbf0] text-[#15803d]" aria-hidden>
           <Icon className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
