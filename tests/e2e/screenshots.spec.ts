@@ -5,8 +5,8 @@
 import { test } from '@playwright/test'
 import { waitForMap } from './helpers'
 
-/** The +2 ft band's colour (src/lib/theme.ts BAND_COLORS[2]). */
-const BAND_2FT = '#3d80d2'
+/** The +2 ft band's colour in Detailed mode (src/lib/theme.ts BAND_COLORS[2]). */
+const BAND_2FT = '#3672e9'
 
 const OUT = process.env.SCREENSHOT_DIR ?? 'docs/screenshots'
 
@@ -19,7 +19,9 @@ test.describe('screenshots', () => {
     await page.waitForTimeout(2500)
     await page.screenshot({ path: `${OUT}/01-overview-2ft-3d.png` })
 
-    // The top level (+5 ft) with the +2 ft band spotlighted from the chart (its slice of the +5 ft bar)
+    // Detailed colours at the top level (+5 ft), with the +2 ft band spotlighted from the chart
+    // (its slice of the +5 ft bar)
+    await page.getByRole('radio', { name: 'Detailed' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('End')
     await page.waitForTimeout(2500)
@@ -41,8 +43,9 @@ test.describe('screenshots', () => {
     await page.screenshot({ path: `${OUT}/04-about-data.png` })
     await page.keyboard.press('Escape')
 
-    // South Beach in 3D at +2 ft, with a building selected (Euclid Avenue at this viewport)
+    // South Beach in 3D at +2 ft in Simple colours, with a building selected (Euclid Avenue at this viewport)
     await page.keyboard.press('Escape')
+    await page.getByRole('radio', { name: 'Simple' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('ArrowLeft', { delay: 50 })
     await page.keyboard.press('ArrowLeft', { delay: 50 })

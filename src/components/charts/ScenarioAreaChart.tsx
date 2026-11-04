@@ -2,7 +2,7 @@ import * as d3 from 'd3'
 import { useEffect, useId, useRef, useState } from 'react'
 import { AREA_UNITS, formatArea, formatScenario, toUnit, type AreaUnit } from '../../lib/format'
 import type { FloodBand } from '../../lib/manifest'
-import { bandColor, colors } from '../../lib/theme'
+import { bandColor, colors, type ColorMode } from '../../lib/theme'
 import { useReducedMotion } from '../../hooks/useMediaQuery'
 
 interface Props {
@@ -10,6 +10,8 @@ interface Props {
   /** Areas show in one unit at a time, chosen in the Insights panel. */
   unit: AreaUnit
   selectedFt: number
+  /** The map's colour mode, so the bars wear the same colours as the map (v0.34). */
+  colorMode: ColorMode
   highlightFt: number | null
   onHighlight: (ft: number | null) => void
   onSelect: (feet: number) => void
@@ -44,7 +46,7 @@ const margins = (unit: AreaUnit) => ({ top: 20, right: 4, bottom: 26, left: unit
  * first reached — the same colours as the map. Values come from the processing
  * manifest (geodesic areas of the exported NOAA polygons); nothing is estimated.
  */
-export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHighlight, onSelect }: Props) {
+export function ScenarioAreaChart({ bands, unit, selectedFt, colorMode, highlightFt, onHighlight, onSelect }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const [width, setWidth] = useState(280)
@@ -229,7 +231,7 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
       .join((enter) => enter.append('rect').attr('class', 'seg').attr('y', innerH).attr('height', 0))
       .attr('x', 0)
       .attr('width', x.bandwidth())
-      .attr('fill', (s) => bandColor(s.band))
+      .attr('fill', (s) => bandColor(s.band, colorMode))
       .on('mouseenter', (_, s) => {
         cb.current.onHighlight(s.band)
         setTip({ x: (x(s.bar.feet) ?? 0) + M.left + x.bandwidth() / 2, y: y(toU(s.y1)) + M.top, bar: s.bar, band: s.band })
@@ -250,7 +252,7 @@ export function ScenarioAreaChart({ bands, unit, selectedFt, highlightFt, onHigh
       .transition(t)
       .attr('y', (d) => y(toU(d.totalM2)) - 10)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bands, unit, selectedFt, highlightFt, width, reduced])
+  }, [bands, unit, selectedFt, colorMode, highlightFt, width, reduced])
 
   return (
     <figure className="m-0">

@@ -1,12 +1,18 @@
-import { BAND_COLORS, colors } from '../../lib/theme'
+import { BAND_COLORS, colors, SIMPLE_COLOR, type ColorMode } from '../../lib/theme'
 
 export type SwatchKind = 'flood' | 'lowLying' | 'building' | 'water' | 'land' | 'selection' | 'study' | 'outside' | 'labels'
 
-/** Legend swatch drawn with the exact colours the map uses. */
-export function Swatch({ kind, size = 14 }: { kind: SwatchKind; size?: number }) {
+/** Legend swatch drawn with the exact colours the map uses. `mode` picks the flood colours (v0.34). */
+export function Swatch({ kind, size = 14, mode = 'detailed' }: { kind: SwatchKind; size?: number; mode?: ColorMode }) {
   const common = { width: size, height: size, 'aria-hidden': true } as const
   switch (kind) {
     case 'flood':
+      if (mode === 'simple')
+        return (
+          <svg {...common} viewBox="0 0 14 14">
+            <rect x=".5" y=".5" width="13" height="13" rx="2.5" fill={SIMPLE_COLOR} stroke="rgba(0,0,0,.15)" />
+          </svg>
+        )
       return (
         <svg {...common} viewBox="0 0 14 14">
           <rect x="0" y="0" width="14" height="14" rx="3" fill={BAND_COLORS[3]} />

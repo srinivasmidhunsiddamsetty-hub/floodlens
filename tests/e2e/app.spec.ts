@@ -31,10 +31,12 @@ test.describe('FloodLens — core flows', () => {
     await req
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toContainText('7.43')
-    // The legend is a plain key: every level listed, none of them a button.
+    // The legend is a plain vertical scale: every level listed, the chosen one marked, nothing a button.
     const legendBox = page.getByRole('region', { name: 'Map legend' })
-    await expect(legendBox.getByText('+3 ft', { exact: true })).toBeVisible()
-    await expect(legendBox.getByRole('button')).toHaveCount(1)
+    await expect(legendBox.getByRole('listitem')).toHaveCount(6)
+    await expect(legendBox.getByRole('listitem').filter({ hasText: '+3 ft' })).toContainText('(chosen level)')
+    await expect(legendBox.getByText('(chosen level)')).toHaveCount(1)
+    await expect(legendBox.getByRole('button')).toHaveCount(0)
 
     await page.keyboard.press('Home')
     await expect(slider).toHaveAttribute('aria-valuetext', 'Current MHHW (0 ft)')
@@ -45,10 +47,12 @@ test.describe('FloodLens — core flows', () => {
   test('play steps through every level and stops at the top', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
-    await page.getByRole('button', { name: 'Watch the water rise' }).click()
+    // Named for the one-way climb (v0.34): "Watch the water rise" read as tides that come and go.
+    await page.getByRole('button', { name: 'Step up to +5 ft' }).click()
     const slider = page.getByRole('slider')
+    await expect(slider).toHaveAttribute('aria-orientation', 'vertical')
     await expect(slider).toHaveAttribute('aria-valuetext', '+5 ft above MHHW', { timeout: 15_000 })
-    await expect(page.getByRole('button', { name: 'Watch the water rise' })).toHaveAttribute('aria-pressed', 'false')
+    await expect(page.getByRole('button', { name: 'Step up to +5 ft' })).toHaveAttribute('aria-pressed', 'false')
   })
 
   test('chart bars select levels; one row shows what the selected foot adds', async ({ page }) => {
@@ -107,7 +111,7 @@ test.describe('FloodLens — core flows', () => {
     expect(fit.content).toBeLessThanOrEqual(fit.visible)
   })
 
-  test('in-map controls: 2D/3D keeps the level, "show all" restores the 3D city view', async ({ page }) => {
+  test('in-map controls: 2D/3D keeps the level, "Entire Miami Beach" restores the 3D city view', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     expect(await mapPitch(page)).toBe(40)
@@ -115,12 +119,54 @@ test.describe('FloodLens — core flows', () => {
     await expect.poll(() => mapPitch(page)).toBe(0)
     await expect(page.getByRole('button', { name: '2D view' })).toHaveAttribute('aria-pressed', 'true')
     await expect(page.getByRole('slider')).toHaveAttribute('aria-valuetext', '+2 ft above MHHW')
-    await page.getByRole('button', { name: 'Show all of Miami Beach' }).click()
+    await page.getByRole('button', { name: 'Entire Miami Beach' }).click()
     await expect.poll(() => mapPitch(page)).toBe(40)
     await expect(page.getByRole('button', { name: '3D view' })).toHaveAttribute('aria-pressed', 'true')
     // The view reset lives only in the map — no duplicate in the header or panels.
     await expect(page.getByRole('banner').getByRole('button', { name: /reset|show all/i })).toHaveCount(0)
-    await expect(page.getByRole('button', { name: 'Show all of Miami Beach' })).toHaveCount(1)
+    await expect(page.getByRole('button', { name: 'Entire Miami Beach' })).toHaveCount(1)
+  })
+
+  test('zoom, rotate and tilt sit at the bottom of the map; rotate and tilt only in 3D (v0.34)', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const map = (await page.locator('#map-region').boundingBox())!
+    for (const name of ['Zoom in', 'Zoom out', 'Rotate left', 'Tilt up']) {
+      const b = (await page.getByRole('button', { name }).boundingBox())!
+      expect(b.y).toBeGreaterThan(map.y + map.height / 2)
+    }
+    const bearing = async () => Number(await page.locator('[data-bearing]').getAttribute('data-bearing'))
+    expect(await bearing()).toBe(-15)
+    await page.getByRole('button', { name: 'Rotate left' }).click()
+    await expect.poll(bearing).toBe(15)
+    await page.getByRole('button', { name: 'Rotate right' }).click()
+    await expect.poll(bearing).toBe(-15)
+    await page.getByRole('button', { name: 'Tilt up' }).click()
+    await expect.poll(() => mapPitch(page)).toBe(50)
+    await page.getByRole('button', { name: 'Tilt down' }).click()
+    await expect.poll(() => mapPitch(page)).toBe(40)
+    await page.getByRole('button', { name: '2D view' }).click()
+    await expect(page.getByRole('group', { name: 'Rotate and tilt' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Zoom in' })).toBeVisible()
+  })
+
+  test('colour modes: Simple by default, Detailed gives each foot its own colour, and the choice is remembered', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const modes = page.getByRole('radiogroup', { name: 'Colours' })
+    await expect(modes.getByRole('radio', { name: 'Simple' })).toHaveAttribute('aria-checked', 'true')
+    const topBarColours = () =>
+      page.locator('g.bar').last().locator('rect.seg').evaluateAll((els) => [...new Set(els.map((e) => e.getAttribute('fill')))])
+    expect(await topBarColours()).toEqual(['#3d84e6'])
+    await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Sea level')
+
+    await modes.getByRole('radio', { name: 'Detailed' }).click()
+    // The +5 ft bar stacks the five feet above today's high tide, each in its own colour.
+    await expect.poll(async () => (await topBarColours()).length).toBe(5)
+    await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
+    await page.reload()
+    await waitForMap(page)
+    await expect(page.getByRole('radio', { name: 'Detailed' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('the map credit starts open, folds into an (i) on the first drag, and the (i) opens it again', async ({ page }) => {
@@ -178,7 +224,7 @@ test.describe('FloodLens — core flows', () => {
     await expect(card).toHaveCount(0)
   })
 
-  test('layer toggles and collapsible legend respond', async ({ page }) => {
+  test('layer toggles respond, and the legend follows the flooding and low-spot layers', async ({ page }) => {
     await page.goto('/')
     await waitForMap(page)
     const low = page.getByRole('switch', { name: 'Low spots' })
@@ -188,20 +234,17 @@ test.describe('FloodLens — core flows', () => {
     await expect(low).toHaveAttribute('aria-checked', 'true')
     const legend = page.getByRole('region', { name: 'Map legend' })
     await expect(legend).toContainText('Low spot')
-    // City limits can be hidden (and shown again), and the legend follows.
+    // City limits can be hidden (and shown again).
     const limits = page.getByRole('switch', { name: 'City limits' })
     await expect(limits).toHaveAttribute('aria-checked', 'true')
-    await expect(legend).toContainText('City limits')
     await limits.click()
     await expect(limits).toHaveAttribute('aria-checked', 'false')
-    await expect(legend).not.toContainText('City limits')
     await limits.click()
-    await expect(legend).toContainText('City limits')
-
-    const toggle = legend.getByRole('button', { name: 'Legend' })
-    await toggle.click()
-    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
-    await expect(legend).not.toContainText('Low spot')
+    await expect(limits).toHaveAttribute('aria-checked', 'true')
+    // The scale shows only the sea-level colours (v0.34), so it goes with the flooding layer.
+    await page.getByRole('switch', { name: /Flooding/ }).click()
+    await expect(legend.getByRole('listitem')).toHaveCount(0)
+    await expect(legend).toContainText('Low spot')
   })
 
   test('area chips highlight the area you are in once zoomed in', async ({ page }) => {

@@ -17,7 +17,7 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 1. **Lead with what it means for a person.** "Land underwater at +2 ft", not "Area flooded beyond today's high tide (MHHW)".
 2. **Swap jargon for everyday words.** Keep the technical term once, where it's explained ("About the data"): MHHW, inundation extent, hydrologic connectivity. The (i) note under the sea level stays to two lines (v0.21), so opening it never makes the panel scroll. It explains by example, in the slider's own terms: "+1 ft means the sea is 1 ft above today's high tide, not a year." Don't call the levels "steps": that's the control talking, not the reader.
 3. **Never promise safety or predict damage.** Water reaching a building on NOAA's map isn't a flood forecast, and not reaching it doesn't mean "safe". So: "water reaches it", "not by +3 ft".
-4. **Sentence case, short labels, no trailing full stops on single phrases.** Buttons say what happens: "Watch the water rise", "Show all of Miami Beach".
+4. **Sentence case, short labels, no trailing full stops on single phrases.** Buttons say what happens: "Step up to +5 ft", "Entire Miami Beach".
 5. **One name for one thing.** Sea level (the slider), high tide (today's baseline), "+2 ft" (a level), low spots (unconnected areas), city limits (the boundary).
 6. **Errors say what happened and what to do, without blame.** "We couldn't reach the flood data. Check your connection and reload."
 7. **Use "we" for FloodLens and "you" sparingly**, for the user's own actions ("You're looking at +2 ft").
@@ -176,3 +176,18 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Where | Before | After |
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
+
+## Before and after (v0.33 → v0.34)
+
+From the review feedback on v0.33.
+
+| Where | Before | After |
+| --- | --- | --- |
+| Play button | Watch the water rise | Step up to +5 ft (the old label read as tides that rise and fall back) |
+| Full-extent map button | Show all of Miami Beach (frame icon, browser tooltip) | Entire Miami Beach (house icon, tooltip on hover and focus) |
+| Rotate and tilt (3D only) | (no buttons; trackpad or right-drag only) | Rotate: Rotate left / Rotate right · Tilt: Tilt up / Tilt down |
+| Colour mode | (none) | Colours: Simple / Detailed, with "One colour for all the water at this level" or "A colour for each foot the sea rises" |
+| Legend title | Legend / Water first reaches | Water first reaches (Detailed) or Sea level (Simple); no "Legend" header |
+| Legend, today | Today's high tide | Today (the scale's labels match the slider's) |
+| Legend, other keys | Water · Building · Selected · City limits | (removed; the "On the map" switches show those swatches) |
+| Card, a spot | Height — / Footprint — / Low spot No | Low spot No |

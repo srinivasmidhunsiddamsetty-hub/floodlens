@@ -64,7 +64,7 @@ export function ResizeHandle({ width, min, max, onChange, onReset, controls, lab
       onPointerCancel={end}
       onDoubleClick={onReset}
       onKeyDown={onKeyDown}
-      className="group absolute inset-y-0 -left-1.5 z-30 w-3 cursor-col-resize touch-none outline-none"
+      className="group pointer-events-auto absolute inset-y-0 -left-1.5 z-30 w-3 cursor-col-resize touch-none outline-none"
     >
       <span className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 transition-colors group-hover:bg-accent/60 group-focus-visible:bg-accent group-active:bg-accent" />
     </div>

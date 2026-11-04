@@ -77,7 +77,7 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText(/dry|safe|Not up to/i)).toBeNull()
   })
 
-  it('lists the facts in one column: height, footprint, low spot', () => {
+  it('lists a building’s facts in one column: height, footprint, low spot', () => {
     card(levels(2))
     const labels = screen.getAllByRole('term').map((t) => t.textContent)
     expect(labels).toEqual(['Height', 'Footprint', 'Low spot'])
@@ -94,10 +94,13 @@ describe('<InspectionCard>', () => {
     expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^Today$/)
   })
 
-  it('keeps height and footprint for a spot that isn’t a building, with no value', () => {
-    card(levels(2), { selection: { ...building, building: null } })
-    expect(screen.getByText('Height').nextSibling).toHaveTextContent('no building here')
-    expect(screen.getByText('Footprint').nextSibling).toHaveTextContent('no building here')
+  it('gives a spot its own card: low spot only, no height or footprint (v0.34)', () => {
+    card(levels(2), { selection: { ...building, building: null, street: { name: 'Euclid Avenue', distanceM: 12 } } })
+    expect(screen.getByRole('heading', { name: 'Spot near Euclid Avenue' })).toBeInTheDocument()
+    expect(screen.getAllByRole('term').map((t) => t.textContent)).toEqual(['Low spot'])
+    expect(screen.queryByText('Height')).toBeNull()
+    expect(screen.queryByText('Footprint')).toBeNull()
+    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^\+2 ft$/)
   })
 
   it('closes from the × button', async () => {

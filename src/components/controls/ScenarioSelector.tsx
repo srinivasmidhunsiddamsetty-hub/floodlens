@@ -1,26 +1,31 @@
 import { Info, Pause, Play } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { formatScenario, formatScenarioLong } from '../../lib/format'
-import { bandColor } from '../../lib/theme'
+import { bandColor, type ColorMode } from '../../lib/theme'
 import { useReducedMotion } from '../../hooks/useMediaQuery'
 
 interface Props {
   available: number[]
   value: number
   onChange: (feet: number) => void
+  /** The map's colour mode, so the track wears the same colours as the map. */
+  colorMode?: ColorMode
   disabled?: boolean
 }
 
 const STEP_MS = 1400
+/** Height of the vertical slider, and the thumb size (the track runs between the thumb's centres). */
+const TRACK_H = 168
+const THUMB = 20
 
 /**
- * Water-level control. A native range input provides keyboard, touch and
- * screen-reader support; the track is painted with the same colour ramp as the
- * map so the slider doubles as a key. Positions are discrete NOAA scenarios —
- * nothing is interpolated between them. "Play" steps through the levels so the
- * rise can be watched spreading across the map.
+ * Water-level control, upright (v0.34): today at the bottom and the top level at the top, so
+ * raising it reads as the sea rising. A native range input provides keyboard, touch and
+ * screen-reader support; the track is painted with the map's colours so the slider doubles as
+ * a key. Positions are discrete NOAA scenarios — nothing is interpolated between them. "Step up"
+ * plays through the levels, one way only, so the rise can be watched spreading across the map.
  */
-export function ScenarioSelector({ available, value, onChange, disabled }: Props) {
+export function ScenarioSelector({ available, value, onChange, colorMode = 'detailed', disabled }: Props) {
   const id = useId()
   const reduced = useReducedMotion()
   const [showInfo, setShowInfo] = useState(false)
@@ -65,84 +70,97 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
       const i = k + 1
       const a = ((i - 1) / max) * 100
       const b = (i / max) * 100
-      const c = i <= index ? bandColor(ft) : '#d9d9d9'
+      const c = i <= index ? bandColor(ft, colorMode) : '#d9d9d9'
       return `${c} ${a}%, ${c} ${b}%`
     })
     .join(', ')
 
+  // The thumb's centre for each level, measured up from the bottom of the slider.
+  const pos = (i: number) => THUMB / 2 + (i / max) * (TRACK_H - THUMB)
+  const top = available.at(-1)
+
   return (
     <div>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <output htmlFor={id} className="block t-display" aria-live="polite">
-            {formatScenario(value)}
-          </output>
-          <p className="mt-1 t-caption">above today’s high tide</p>
+      <div className="flex gap-4">
+        <div className="relative flex shrink-0" style={{ height: TRACK_H }}>
+          <label htmlFor={id} className="sr-only">
+            Sea-level rise above today’s high tide
+          </label>
+          <div className="relative w-5">
+            {/* Colour-ramp track behind the transparent native track */}
+            <div
+              className="pointer-events-none absolute left-1/2 w-1.5 -translate-x-1/2 rounded-full"
+              style={{ top: THUMB / 2, bottom: THUMB / 2, background: `linear-gradient(to top, ${stops})` }}
+            />
+            <input
+              id={id}
+              type="range"
+              className="fl-range fl-range-v relative"
+              min={0}
+              max={max}
+              step={1}
+              value={index}
+              disabled={disabled || available.length === 0}
+              onChange={(e) => {
+                setPlaying(false)
+                onChange(available[Number(e.target.value)])
+              }}
+              aria-orientation="vertical"
+              aria-valuetext={formatScenarioLong(value)}
+            />
+          </div>
+          {/* Level names beside the stops; clicking one picks it (the slider is the keyboard route). */}
+          <div className="relative ml-1.5 w-12" aria-hidden="true">
+            {available.map((ft, i) => (
+              <button
+                key={ft}
+                type="button"
+                tabIndex={-1}
+                onClick={() => {
+                  setPlaying(false)
+                  onChange(ft)
+                }}
+                style={{ bottom: pos(i) - 9 }}
+                className={`absolute left-0 h-[18px] rounded px-1 text-left text-xs leading-[18px] whitespace-nowrap tabular transition-colors ${
+                  ft === value ? 'font-bold text-fg' : 'text-fg-subtle hover:text-fg'
+                }`}
+              >
+                {ft === 0 ? 'Today' : formatScenario(ft)}
+              </button>
+            ))}
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowInfo((v) => !v)}
-          aria-expanded={showInfo}
-          aria-controls={`${id}-info`}
-          aria-label="What do these levels mean?"
-          title="What do these levels mean?"
-          className="btn-ghost size-8 justify-center px-0"
-        >
-          <Info className="size-4" aria-hidden />
-        </button>
+
+        <div className="flex min-w-0 flex-1 items-start justify-between gap-2">
+          <div>
+            <output htmlFor={id} className="block t-display" aria-live="polite">
+              {formatScenario(value)}
+            </output>
+            <p className="mt-1 t-caption">above today’s high tide</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowInfo((v) => !v)}
+            aria-expanded={showInfo}
+            aria-controls={`${id}-info`}
+            aria-label="What do these levels mean?"
+            title="What do these levels mean?"
+            className="btn-ghost -mt-1 -mr-1 size-8 shrink-0 justify-center px-0"
+          >
+            <Info className="size-4" aria-hidden />
+          </button>
+        </div>
       </div>
 
       {showInfo && (
         // Two lines at most, so opening it never makes the panel scroll. The technical name
         // (Mean Higher High Water) is explained in "About the data".
-        <p id={`${id}-info`} className="mt-2 rounded border border-line bg-surface-2 px-2.5 py-2 t-caption text-fg-muted animate-slide-up">
+        <p id={`${id}-info`} className="mt-3 rounded border border-line bg-surface-2 px-2.5 py-2 t-caption text-fg-muted animate-slide-up">
           +1 ft means the sea is 1 ft above today’s high tide, not a year.
         </p>
       )}
 
-      <div className="mt-5">
-        <label htmlFor={id} className="sr-only">
-          Sea-level rise above today’s high tide
-        </label>
-        <div className="relative">
-          {/* Colour-ramp track behind the transparent native track */}
-          <div className="pointer-events-none absolute top-1/2 right-[10px] left-[10px] h-1.5 -translate-y-1/2 rounded-full" style={{ background: `linear-gradient(to right, ${stops})` }} />
-          <input
-            id={id}
-            type="range"
-            className="fl-range relative"
-            min={0}
-            max={max}
-            step={1}
-            value={index}
-            disabled={disabled || available.length === 0}
-            onChange={(e) => {
-              setPlaying(false)
-              onChange(available[Number(e.target.value)])
-            }}
-            aria-valuetext={formatScenarioLong(value)}
-          />
-        </div>
-        <div className="mt-1 flex justify-between px-[2px]" aria-hidden="true">
-          {available.map((ft) => (
-            <button
-              key={ft}
-              type="button"
-              tabIndex={-1}
-              onClick={() => {
-                setPlaying(false)
-                onChange(ft)
-              }}
-              className={`flex flex-col items-center gap-1 rounded px-1 text-xs tabular transition-colors ${
-                ft === value ? 'font-medium text-fg' : 'text-fg-subtle hover:text-fg'
-              }`}
-            >
-              {ft === 0 ? 'Today' : formatScenario(ft)}
-            </button>
-          ))}
-        </div>
-      </div>
-
+      {/* "Watch the water rise" read as tides that come and go (v0.34): name the one-way climb instead. */}
       <button
         type="button"
         onClick={togglePlay}
@@ -151,7 +169,7 @@ export function ScenarioSelector({ available, value, onChange, disabled }: Props
         className="btn-outline mt-4 w-full"
       >
         {playing ? <Pause className="size-4" aria-hidden /> : <Play className="size-4" aria-hidden />}
-        {playing ? 'Pause' : 'Watch the water rise'}
+        {playing ? 'Pause' : `Step up to ${top === undefined ? 'the top level' : formatScenario(top)}`}
       </button>
     </div>
   )

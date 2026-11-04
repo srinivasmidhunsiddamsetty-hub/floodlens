@@ -52,25 +52,36 @@ export const colors = {
 } as const
 
 /**
- * Sequential ramp for "where water first reaches" at each NOAA water level:
- * one blue hue, light → dark as the water level rises (more water, darker blue).
- * Six steps (today to +5 ft) evenly spaced in OKLab lightness, from the same
- * light blue as before to a dark navy, so lightness alone carries the order: it
- * survives greyscale printing and colour-vision deficiencies (worst neighbouring
- * pair ΔE 10.5 for deuteranopia). v0.17 re-spaced the v0.7 four-step blues; the
- * old +3 ft navy is now +4 ft. (v0.6 tried a viridis-style ramp; the blues read
- * better as water.)
+ * How the flood is coloured (v0.34). "Simple" (the default) draws all the water at the chosen
+ * level in one blue, spreading as the sea rises. "Detailed" gives the area each foot adds its
+ * own colour, from the ramp below.
+ */
+export type ColorMode = 'simple' | 'detailed'
+
+/** Simple mode: one blue for all the water at the chosen level. */
+export const SIMPLE_COLOR = '#3d84e6'
+
+/**
+ * Detailed mode: the level where water first reaches each area, light → dark as the sea
+ * rises (more water, darker), and turning from sky blue through royal blue to indigo so
+ * neighbouring levels differ in hue as well as lightness. v0.34 re-picked it because people
+ * couldn't tell the v0.17 blues apart: the worst neighbouring pair, drawn at 85% over the
+ * land, went from OKLab ΔE 8.6 to 9.3 for colour-blind vision and 8.8 to 10.1 for normal
+ * vision. That is about the ceiling for six steps in the hues the basemap leaves free
+ * (greens are parks, aqua is water, purple is low spots, red is the selection).
+ * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#9ec5f4',
-  1: '#67a3ea',
-  2: '#3d80d2',
-  3: '#1f5fae',
-  4: '#104180',
-  5: '#022555',
+  0: '#80cffd',
+  1: '#4ba3f7',
+  2: '#3672e9',
+  3: '#3a45c8',
+  4: '#31248a',
+  5: '#1c0b4d',
 }
 
-export const bandColor = (feet: number) => BAND_COLORS[feet] ?? BAND_COLORS[2]
+export const bandColor = (feet: number, mode: ColorMode = 'detailed') =>
+  mode === 'simple' ? SIMPLE_COLOR : (BAND_COLORS[feet] ?? BAND_COLORS[2])
 
 export const opacity = {
   band: 0.85,

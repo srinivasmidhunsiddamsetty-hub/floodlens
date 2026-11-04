@@ -25,6 +25,8 @@ describe('<ScenarioSelector>', () => {
     render(<Harness />)
     const slider = screen.getByRole('slider', { name: /sea-level rise above today/i })
     expect(slider).toHaveAttribute('aria-valuetext', '+2 ft above MHHW')
+    // Upright (v0.34): raising it reads as the sea rising.
+    expect(slider).toHaveAttribute('aria-orientation', 'vertical')
     expect(screen.getByText('+2 ft', { selector: 'output' })).toBeInTheDocument()
   })
 
@@ -62,11 +64,13 @@ describe('<ScenarioSelector>', () => {
     vi.useFakeTimers()
     const onChange = vi.fn()
     render(<Harness onChange={onChange} start={3} />)
-    fireEvent.click(screen.getByRole('button', { name: /watch the water rise/i }))
+    // Named for the one-way climb, not "Watch the water rise", which read as tides (v0.34).
+    expect(screen.queryByText(/watch the water rise/i)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Step up to +3 ft' }))
     // Starting at the top restarts from today
     expect(onChange).toHaveBeenLastCalledWith(0)
     act(() => vi.advanceTimersByTime(1400 * 4))
     expect(onChange.mock.calls.map((c) => c[0])).toEqual([0, 1, 2, 3])
-    expect(screen.getByRole('button', { name: /watch the water rise/i })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Step up to +3 ft' })).toHaveAttribute('aria-pressed', 'false')
   })
 })

@@ -1,7 +1,7 @@
 import type { FeatureCollection } from 'geojson'
 import type { DataDrivenPropertyValueSpecification, ExpressionSpecification, GeoJSONSource, Map as MLMap } from 'maplibre-gl'
 import { GROUND_OVERLAY_BEFORE } from './mapStyle'
-import { BAND_COLORS, colors, opacity } from './theme'
+import { BAND_COLORS, colors, opacity, SIMPLE_COLOR, type ColorMode } from './theme'
 
 export const SRC = {
   flood: 'fl-flood',
@@ -62,13 +62,23 @@ const firstSymbolLayer = (map: MLMap) => map.getStyle().layers?.find((l) => l.ty
 const buildingHeight: ExpressionSpecification = ['coalesce', ['get', 'render_height'], 0]
 const buildingBase: ExpressionSpecification = ['coalesce', ['get', 'render_min_height'], 0]
 
-/** `band` (ft) → ramp colour. */
-const bandColorExpr = [
-  'match',
-  ['get', 'band'],
-  ...Object.entries(BAND_COLORS).flatMap(([ft, c]) => [Number(ft), c]),
-  BAND_COLORS[2],
-] as unknown as ExpressionSpecification
+/** `band` (ft) → ramp colour in Detailed mode; one blue for every band in Simple mode. */
+export function bandColorExpr(mode: ColorMode): DataDrivenPropertyValueSpecification<string> {
+  if (mode === 'simple') return SIMPLE_COLOR
+  return [
+    'match',
+    ['get', 'band'],
+    ...Object.entries(BAND_COLORS).flatMap(([ft, c]) => [Number(ft), c]),
+    BAND_COLORS[2],
+  ] as unknown as ExpressionSpecification
+}
+
+/** Recolour the flood bands when the colour mode changes. */
+export function setBandColors(map: MLMap, mode: ColorMode) {
+  if (!map.getLayer(LYR.floodFill)) return
+  map.setPaintProperty(LYR.floodFill, 'fill-color', bandColorExpr(mode))
+  map.setPaintProperty(LYR.floodLine, 'line-color', bandColorExpr(mode))
+}
 
 /** Opacity for the flood bands, optionally emphasising one band and dimming the others. */
 export function bandOpacity(highlight: number | null): DataDrivenPropertyValueSpecification<number> {
@@ -81,7 +91,7 @@ export function bandOpacity(highlight: number | null): DataDrivenPropertyValueSp
  * Flood bands sit beneath basemap water (so they read as "water reaching land"),
  * buildings sit above the overlays, and labels stay on top of everything.
  */
-export function addFloodLensLayers(map: MLMap) {
+export function addFloodLensLayers(map: MLMap, mode: ColorMode) {
   const ground = before(map, GROUND_OVERLAY_BEFORE)
   const labels = firstSymbolLayer(map)
   const hasBasemap = !!map.getSource(SRC.basemap)
@@ -99,7 +109,7 @@ export function addFloodLensLayers(map: MLMap) {
       type: 'fill',
       source: SRC.flood,
       paint: {
-        'fill-color': bandColorExpr,
+        'fill-color': bandColorExpr(mode),
         'fill-opacity': opacity.band,
         'fill-opacity-transition': { duration: 300, delay: 0 },
       },
@@ -112,7 +122,7 @@ export function addFloodLensLayers(map: MLMap) {
       type: 'line',
       source: SRC.flood,
       minzoom: 14,
-      paint: { 'line-color': bandColorExpr, 'line-width': 0.6, 'line-opacity': 0.9 },
+      paint: { 'line-color': bandColorExpr(mode), 'line-width': 0.6, 'line-opacity': 0.9 },
     },
     ground,
   )

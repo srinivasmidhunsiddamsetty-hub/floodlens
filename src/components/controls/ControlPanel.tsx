@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppState } from '../../state/AppState'
 import type { LayerKey } from '../../state/reducer'
 import type { DataManifest } from '../../types/data'
+import { Segmented } from '../ui/Segmented'
 import { Swatch, type SwatchKind } from '../ui/Swatch'
 import { Switch } from '../ui/Switch'
 import { ScenarioSelector } from './ScenarioSelector'
@@ -18,7 +19,7 @@ const LAYERS: { key: LayerKey; label: string; description: string; swatch: Swatc
 ]
 
 export function ControlPanel({ manifest }: Props) {
-  const { available, scenarioFt, layers } = useAppState()
+  const { available, scenarioFt, layers, colorMode } = useAppState()
   const dispatch = useAppDispatch()
   const hasLowLying = !!manifest && manifest.lowLying.length > 0
 
@@ -33,8 +34,31 @@ export function ControlPanel({ manifest }: Props) {
           available={available}
           value={scenarioFt}
           onChange={(feet) => dispatch({ type: 'setScenario', feet })}
+          colorMode={colorMode}
           disabled={!manifest}
         />
+
+        {/* How the flood is coloured (v0.34): one colour that spreads as the sea rises, or a colour
+            for each foot. */}
+        <div className="mt-4 border-t border-line pt-3">
+          <div className="flex items-center justify-between gap-3">
+            <span className="t-label text-fg">Colours</span>
+            <Segmented
+              label="Colours"
+              size="sm"
+              className="w-[164px]"
+              value={colorMode}
+              onChange={(mode) => dispatch({ type: 'setColorMode', mode })}
+              options={[
+                { value: 'simple', label: 'Simple' },
+                { value: 'detailed', label: 'Detailed' },
+              ]}
+            />
+          </div>
+          <p className="mt-1.5 t-caption">
+            {colorMode === 'simple' ? 'One colour for all the water at this level' : 'A colour for each foot the sea rises'}
+          </p>
+        </div>
       </section>
 
       <section aria-labelledby="sec-layers" className="card p-4">
@@ -48,7 +72,7 @@ export function ControlPanel({ manifest }: Props) {
             onChange={() => dispatch({ type: 'toggleLayer', layer: l.key })}
             label={l.label}
             description={l.description}
-            swatch={<Swatch kind={l.swatch} size={16} />}
+            swatch={<Swatch kind={l.swatch} size={16} mode={colorMode} />}
           />
         ))}
       </section>

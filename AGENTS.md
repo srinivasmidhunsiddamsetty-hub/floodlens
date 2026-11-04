@@ -11,10 +11,10 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.33 (tag `v0.33`): desktop and laptop only.
+- **Current version:** v0.34 (tag `v0.34`): changes from the review feedback on v0.33.
 - **Test status at handoff:**
-  - 105 unit and component tests in 12 files pass.
-  - 17 end-to-end tests pass, all at 1440×900.
+  - 108 unit and component tests in 12 files pass.
+  - 19 end-to-end tests pass, all at 1440×900.
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
 ---
@@ -80,10 +80,11 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
   - Accent `#0069b0`.
   - Selection colour: vermilion `#e8452c`.
 - **No blue numbers.** Blue is only for links and selection. Numbers use `text-fg`.
-- **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). Info sits on white cards over the grey canvas, in both side panels.
-- **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips and map controls). It falls back to solid when the user prefers reduced transparency.
-- **Legend:** solid (not glass) and a **static key**. Its rows must not be clickable (v0.28). Spotlighting a level is done from the chart bars and the chart's "adds" row.
-- **Flood ramp:** one blue hue, light to dark, in six steps (today to +5 ft). It is validated for colour-blind readers. Don't change it without measuring.
+- **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
+- **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
+- **Legend (v0.34):** a slim vertical colour scale, bottom left: only the sea-level colours, today at the bottom, the chosen level in bold, plus "Low spot" when that layer is on. It is a **static key**: nothing in it may be clickable (v0.28). Spotlighting a level is done from the chart bars and the chart's "adds" row.
+- **Colour modes (v0.34):** "Colours: Simple / Detailed" in the Sea level card, remembered per browser (`floodlens.colorMode`). Simple (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Detailed uses `BAND_COLORS`. Everything that shows flood colour takes the mode: map, slider track, chart, "adds" row, Flooding swatch, legend.
+- **Detailed ramp (v0.34):** six steps (today to +5 ft), light to dark, turning from sky blue to indigo. It is measured for colour-blind readers (worst neighbouring pair OKLab ΔE 9.3, normal vision 10.1, drawn at 85% over the land). Don't change it without measuring.
 
 **Insights card typography (as agreed):**
 
@@ -99,12 +100,13 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 
 The chart title has no icon.
 
-**Layout (v0.33): desktop and laptop only.**
+**Layout (v0.34): desktop and laptop only.**
 
-- Desktop has two docked panels on the grey canvas.
-  - Left: 280 px.
-  - Right (Insights): 380 px by default, resizable from 300 to 560 px, and remembered per browser.
-- Edge tabs collapse each panel.
+- The left panel is docked on the grey canvas, 280 px wide.
+- The Insights cards float over the right of the map with no panel behind them (v0.34, as in v0.27–v0.31). The column is 380 px by default, resizable from 300 to 560 px, and remembered per browser. The map's camera is padded by that width (`rightInset` in `MapView`).
+- Edge tabs collapse each side.
+- Map controls: 2D/3D and "Entire Miami Beach" (house icon) top right; in 3D a Rotate and Tilt panel, then the compass and zoom, bottom right. Every map button has a tooltip.
+- The sea-level slider is upright: today at the bottom, +5 ft at the top. Its play button says "Step up to +5 ft".
 - One layout, made for screens 1024 px wide and up. A narrower window scrolls sideways (`#root` has `min-width: 1024px`), and the viewport meta is `width=1280`. Don't add phone or tablet layouts; the owner removed them on purpose.
 - The Insights panel must fit at 1440×900 without scrolling.
 - The "What this map can and can't tell you" footer link was removed (v0.26). "About the data" stays in the top bar.
@@ -129,13 +131,13 @@ The chart title has no icon.
 
 ```
 src/
-  App.tsx                     layout: top bar, docked left panel, map, docked right panel
-  state/reducer.ts            single typed reducer: scenarioFt, layers, viewMode, selection, dialog, panels, areaUnit
+  App.tsx                     layout: top bar, docked left panel, map with the Insights cards floating over its right side
+  state/reducer.ts            single typed reducer: scenarioFt, layers, viewMode, selection, dialog, panels, areaUnit, colorMode
   components/map/MapView.tsx  owns every MapLibre call: style, layers, picking, camera, credit, chips, controls
-  components/map/             MapControls, AreaBookmarks (chips), MapLegend (static), MapStatus
+  components/map/             MapControls, AreaBookmarks (chips), MapLegend (static vertical colour scale), MapStatus
   components/insights/        InsightPanel (headline tile + chart), InspectionCard (selected place), LevelTrack
   components/charts/          ScenarioAreaChart (D3 stacked bars, tooltips, screen-reader table)
-  components/controls/        ControlPanel, ScenarioSelector (slider + "Watch the water rise")
+  components/controls/        ControlPanel (with the Colours switch), ScenarioSelector (upright slider + "Step up to +5 ft")
   components/dialogs/         AboutDataDialog, DataSourcesDialog
   hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), usePanelWidth, useMediaQuery (reduced motion)
   lib/                        pure, unit-tested: format, geo, manifest, mapStyle, mapLayers, buildingPick, theme, constants
@@ -154,6 +156,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
   - The camera-reset effect sets it.
   - `moveend` clears it.
   - While it is set, no chip is lit as the camera zooms out.
+- **Floating Insights:** `MapView` pads the camera by `rightInset`, and `overviewCamera` subtracts it from the width. Chips, controls and status sit in an overlay that stops at the cards; `.maplibregl-ctrl-bottom-right` uses `--map-inset-right`. The collapse tab must stay below the resize handle (z-10), or it blocks the handle.
 - **Inspection:** `useInspection` does not depend on the slider. It checks every level, so the slider must not re-run it.
 - **Flood bands:** the `diff_Nft_Mft.geojson` files are differences between neighbouring levels, computed and validated offline (see `manifest.processing.validation`). Low-lying areas (`low_*.geojson`) are a separate layer and are never merged with the ocean-connected extents.
 
@@ -170,7 +173,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 105 tests
+npm test                 # Vitest: 108 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -229,13 +232,14 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.24 | Chart x-axis labels at 10 px |
 | v0.25 | Building areas in m²; "premium" pass: soft-shadow cards, glass chips and controls, bolder type. The owner declined map lighting and a navy header. |
 | v0.26 | Solid legend back; footer link removed; bold card title and "Land underwater"; facts 20 px |
-| v0.27 | Insights default 380 px; cards floated over the map (reverted in v0.32); solid chips that toggle; 14 px medium black labels |
+| v0.27 | Insights default 380 px; cards floated over the map (docked again in v0.32, floating again in v0.34); solid chips that toggle; 14 px medium black labels |
 | v0.28 | Legend is a static key |
 | v0.29 | Shorter credit that folds into an (i) on the first drag |
 | v0.30 | Not-reached answer: "Up to +5 ft · Doesn't reach it" |
 | v0.31 | Wrong low-spot area caption removed; inspection no longer depends on the slider |
 | v0.32 | Insights docked in a grey panel again, matching the left (the owner wanted both sides consistent) |
 | v0.33 | Desktop and laptop only: the phone and tablet layout and its tests removed |
+| v0.34 | Review feedback: Simple/Detailed colour modes and a clearer Detailed ramp; upright slider and "Step up to +5 ft"; zoom, rotate and tilt at the bottom; "Entire Miami Beach" with a house icon; vertical colour scale for the legend; Insights cards float again; spot card without Height and Footprint |
 
 ---
 
@@ -254,4 +258,9 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 
 ## 12. Open items
 
-- None. Wait for the owner's next request.
+From the v0.33 review feedback, still to decide with the owner (don't act without asking):
+
+- Where "Land underwater" goes (#3, #11). It changes with the slider but not with clicks on the map, so it doesn't fit beside the selection card.
+- A wider typography and visual-hierarchy pass (#12, #14).
+- Whether the left panel should float too, now that the Insights cards do.
+- Whether the upright slider and the vertical colour scale should become one control.

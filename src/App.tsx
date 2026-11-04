@@ -14,7 +14,7 @@ import { useMapData } from './hooks/useMapData'
 import { INSIGHTS_WIDTH, usePanelWidth } from './hooks/usePanelWidth'
 import { useAppDispatch, useAppState } from './state/AppState'
 
-/** Desktop and laptop only (v0.33): two docked panels either side of the map. */
+/** Desktop and laptop only (v0.33): a docked panel on the left; the Insights cards float over the right of the map (v0.34). */
 export default function App() {
   const state = useAppState()
   const dispatch = useAppDispatch()
@@ -54,15 +54,20 @@ export default function App() {
 
         {/* ---------------- Center: map */}
         <main id="map-region" tabIndex={-1} className="relative min-w-0 flex-1 outline-none">
-          <MapView data={mapData} studyBbox={manifest?.studyArea.bbox ?? null} highlightFt={highlightFt} />
+          <MapView
+            data={mapData}
+            studyBbox={manifest?.studyArea.bbox ?? null}
+            highlightFt={highlightFt}
+            rightInset={insightsOpen ? insightsWidth.width : 0}
+          />
 
-          <div className="pointer-events-none absolute bottom-12 left-4 z-10">
+          <div className="pointer-events-none absolute bottom-4 left-4 z-10">
             <MapLegend
               bands={mapData.bands}
+              scenarioFt={state.scenarioFt}
+              colorMode={state.colorMode}
               showFlood={state.layers.inundation}
               showLowLying={state.layers.lowLying}
-              showBuildings={state.layers.buildings}
-              showStudyArea={state.layers.studyArea}
             />
           </div>
 
@@ -76,40 +81,43 @@ export default function App() {
           >
             {controlsOpen ? <ChevronLeft className="size-3.5" aria-hidden /> : <ChevronRight className="size-3.5" aria-hidden />}
           </button>
+          {/* Sits in the 20 px gutter beside the floating cards, or at the edge when they're hidden. */}
           <button
             type="button"
             onClick={() => dispatch({ type: 'setPanel', panel: 'insights', open: !insightsOpen })}
-            className="absolute top-1/2 right-0 z-10 grid h-12 w-5 -translate-y-1/2 place-items-center rounded-l border border-r-0 border-line bg-surface text-fg-subtle shadow-panel hover:text-fg"
+            style={{ right: insightsOpen ? insightsWidth.width - 20 : 0 }}
+            className="absolute top-1/2 z-10 grid h-12 w-5 -translate-y-1/2 place-items-center rounded-l border border-r-0 border-line bg-surface text-fg-subtle shadow-panel hover:text-fg"
             aria-label={insightsOpen ? 'Collapse insights' : 'Expand insights'}
             aria-expanded={insightsOpen}
             aria-controls="insight-panel"
           >
             {insightsOpen ? <ChevronRight className="size-3.5" aria-hidden /> : <ChevronLeft className="size-3.5" aria-hidden />}
           </button>
-        </main>
 
-        {/* ---------------- Right: insights, docked like the left panel, with the cards on the same
-            grey canvas (v0.32; they floated over the map in v0.27–v0.31) */}
-        {insightsOpen && (
-          <aside id="insight-panel" aria-label="Insights" className="panel relative shrink-0 border-l" style={{ width: insightsWidth.width }}>
-            <ResizeHandle
-              width={insightsWidth.width}
-              min={insightsWidth.min}
-              max={insightsWidth.max}
-              onChange={insightsWidth.setWidth}
-              onReset={insightsWidth.reset}
-              controls="insight-panel"
-              label="Resize insights panel"
-            />
-            <InsightPanel
-              manifestState={manifestState}
-              inspection={inspection}
-              bands={mapData.bands}
-              highlightFt={highlightFt}
-              onHighlight={setHighlightFt}
-            />
-          </aside>
-        )}
+          {/* ---------------- Right: insights. The cards float over the map with no panel behind
+              them (v0.34, as in v0.27–v0.31; docked in v0.32–v0.33); the map is padded so they never
+              hide the city. */}
+          {insightsOpen && (
+            <aside id="insight-panel" aria-label="Insights" className="pointer-events-none absolute inset-y-0 right-0 z-20" style={{ width: insightsWidth.width }}>
+              <ResizeHandle
+                width={insightsWidth.width}
+                min={insightsWidth.min}
+                max={insightsWidth.max}
+                onChange={insightsWidth.setWidth}
+                onReset={insightsWidth.reset}
+                controls="insight-panel"
+                label="Resize insights panel"
+              />
+              <InsightPanel
+                manifestState={manifestState}
+                inspection={inspection}
+                bands={mapData.bands}
+                highlightFt={highlightFt}
+                onHighlight={setHighlightFt}
+              />
+            </aside>
+          )}
+        </main>
       </div>
 
       <AboutDataDialog open={state.dialog === 'about'} onClose={() => dispatch({ type: 'openDialog', dialog: null })} manifest={manifest} />

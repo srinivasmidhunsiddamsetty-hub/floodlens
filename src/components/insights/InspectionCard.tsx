@@ -1,4 +1,4 @@
-import { Building2, Crosshair, Loader2, MapPin, Mountain, Ruler, Scan, Waves, X, type LucideIcon } from 'lucide-react'
+import { ArrowDownToLine, Building2, Crosshair, LandPlot, Loader2, MapPin, Ruler, Waves, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCoord, formatScenario, formatSmallArea } from '../../lib/format'
 import type { InspectionState } from '../../hooks/useInspection'
@@ -24,13 +24,6 @@ function Chip({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode 
 }
 
 const TINTS = { blue: '#1f5fd0', violet: '#5b4bd1', green: '#1d7a3e' } as const
-
-/** Empty value for a spot that isn't a building, so the card keeps the same rows everywhere. */
-const NoValue = () => (
-  <span className="font-normal text-fg-subtle" title="No building here">
-    —<span className="sr-only">no building here</span>
-  </span>
-)
 
 /** One row of the card's single column: tinted icon and label, value on the right, extras underneath. */
 function Row({
@@ -58,8 +51,9 @@ function Row({
 /**
  * Selected building / location. Hierarchy: what and where → the answer, large
  * (the first sea level whose water reaches it, with every level in context) →
- * height, footprint and low spot in one column. Wording never says "will flood"
- * or "safe".
+ * the facts in one column. A building lists height, footprint and low spot; a spot
+ * or open water lists only low spot, since it has no height or footprint (v0.34).
+ * Wording never says "will flood" or "safe".
  */
 export function InspectionCard({ selection, inspection, scenarioFt, onClear }: Props) {
   const { building, street, lngLat, insideStudyArea, onWater } = selection
@@ -67,7 +61,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
   const Icon = building ? Building2 : onWater ? Waves : MapPin
 
   return (
-    <section aria-labelledby="insp-title" className="card p-3 animate-slide-up">
+    <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
       {/* What and where. The vermilion icon matches the selection on the map. */}
       <div className="flex items-start gap-2">
         <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d03a22]" aria-hidden />
@@ -137,18 +131,24 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                 </div>
               </div>
 
-              {/* Facts in one column. Height and footprint always show; "—" when the click isn't on a building. */}
+              {/* Facts in one column. Height and footprint only for a building (v0.34): a spot has
+                  neither, so it no longer shows empty rows. Icons (v0.34): a plot of land for the
+                  footprint, and an arrow down to a line for a spot below the water line. */}
               <dl className="mt-1 divide-y divide-line">
-                <Row
-                  icon={Ruler}
-                  tint="blue"
-                  label="Height"
-                  value={building?.renderHeightM != null ? `≈ ${Math.round(building.renderHeightM)} m` : <NoValue />}
-                />
-                <Row icon={Scan} tint="violet" label="Footprint" value={building ? `≈ ${formatSmallArea(building.footprintAreaM2)}` : <NoValue />} />
+                {building && (
+                  <>
+                    <Row
+                      icon={Ruler}
+                      tint="blue"
+                      label="Height"
+                      value={building.renderHeightM != null ? `≈ ${Math.round(building.renderHeightM)} m` : '—'}
+                    />
+                    <Row icon={LandPlot} tint="violet" label="Footprint" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
+                  </>
+                )}
                 {/* No area caption (v0.31): it showed the whole low-spot area the building touches,
                     not the building's part of it, and the level is what matters. */}
-                <Row icon={Mountain} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
+                <Row icon={ArrowDownToLine} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
               </dl>
             </div>
           )

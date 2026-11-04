@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useReducer, type Dispatch, type ReactNode } from 'react'
 import type { AreaUnit } from '../lib/format'
+import type { ColorMode } from '../lib/theme'
 import { initialState, reducer, type Action, type AppState } from './reducer'
 
 const UNIT_KEY = 'floodlens.areaUnit'
+const COLOR_KEY = 'floodlens.colorMode'
 
 const readUnit = (): AreaUnit => {
   try {
@@ -13,11 +15,20 @@ const readUnit = (): AreaUnit => {
   }
 }
 
+const readColorMode = (): ColorMode => {
+  try {
+    const v = localStorage.getItem(COLOR_KEY)
+    return v === 'simple' || v === 'detailed' ? v : initialState.colorMode
+  } catch {
+    return initialState.colorMode
+  }
+}
+
 const StateCtx = createContext<AppState | null>(null)
 const DispatchCtx = createContext<Dispatch<Action> | null>(null)
 
 export function AppStateProvider({ children, initial }: { children: ReactNode; initial?: Partial<AppState> }) {
-  const [state, dispatch] = useReducer(reducer, null, () => ({ ...initialState, areaUnit: readUnit(), ...initial }))
+  const [state, dispatch] = useReducer(reducer, null, () => ({ ...initialState, areaUnit: readUnit(), colorMode: readColorMode(), ...initial }))
 
   useEffect(() => {
     try {
@@ -26,6 +37,14 @@ export function AppStateProvider({ children, initial }: { children: ReactNode; i
       /* storage unavailable (private mode): the unit just isn't remembered */
     }
   }, [state.areaUnit])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(COLOR_KEY, state.colorMode)
+    } catch {
+      /* storage unavailable (private mode): the colour mode just isn't remembered */
+    }
+  }, [state.colorMode])
 
   return (
     <StateCtx.Provider value={state}>

@@ -37,8 +37,34 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.31 | 29 Oct 2026 | Wrong low-spot area caption removed | [`docs/versions/v0.31/`](docs/versions/v0.31/) |
 | v0.32 | 30 Oct 2026 | Insights docked in a panel again, matching the left | [`docs/versions/v0.32/`](docs/versions/v0.32/) |
 | v0.33 | 1 Nov 2026 | Desktop and laptop only | [`docs/versions/v0.33/`](docs/versions/v0.33/) |
+| v0.34 | 3 Nov 2026 | Review feedback: colour modes, upright slider, map controls at the bottom, floating Insights | [`docs/versions/v0.34/`](docs/versions/v0.34/) |
 
 ---
+
+## v0.34: Review feedback (3 Nov 2026)
+
+A product manager and a couple of users reviewed v0.33 and sent 14 points ("FloodLens v0.33 feedback"). This version acts on the ones that were settled. "Land underwater" stays where it is: its new place hasn't been decided.
+
+- **Two colour modes** (#9), a "Colours" switch in the Sea level card, remembered in the browser:
+  - **Simple** (the new default): all the water at the chosen level in one blue (`#3d84e6`), spreading as the sea rises.
+  - **Detailed**: the area each foot adds in its own colour, as before.
+  - The map, the slider track, the chart, the "adds" row, the Flooding swatch and the legend all follow the mode.
+- **Clearer Detailed colours** (#1). People couldn't tell the v0.17 blues apart. The new ramp turns from sky blue through royal blue to indigo, so neighbouring levels differ in hue as well as lightness: `#80cffd` `#4ba3f7` `#3672e9` `#3a45c8` `#31248a` `#1c0b4d`.
+  - Measured at 85% over the land, the worst neighbouring pair went from OKLab ΔE 8.8 to 10.1 for normal vision, and from 8.6 to 9.3 for colour-blind vision.
+  - That is about the limit for six steps in the hues the basemap leaves free: green is parks, aqua is water, purple is low spots and red is the selection. A search of about a million candidate ramps found nothing clearly better.
+- **The sea-level slider stands upright** (#2): today at the bottom and +5 ft at the top, so raising it reads as the sea rising. The big "+2 ft" sits beside it.
+- **"Watch the water rise" is now "Step up to +5 ft"** (#7). Users read the old label as tides that rise and fall back.
+- **Map controls** (#4, #6, #8):
+  - Zoom moves to the bottom right, with the compass above it.
+  - In 3D, a "Rotate" and "Tilt" panel sits above them, with buttons for the moves some trackpads and mice can't make: rotate 30° left or right, tilt 10° up or down.
+  - 2D/3D and a new "Entire Miami Beach" button stay at the top right. The button uses a house icon, the usual map symbol for the default view (v0.4 had swapped a house for the frame icon).
+  - Every map button shows its name in a tooltip on hover and keyboard focus.
+- **A slim vertical colour scale replaces the legend box** (#5): only the sea-level colours, today at the bottom, the chosen level in bold. In Simple mode, the levels above the chosen one are empty outlines. Low spot joins it when that layer is on. The water, building, selected and city-limits keys are gone; the switches in "On the map" already show those swatches.
+- **No panel behind the Insights cards** (#10): the two cards float over the map, which now runs under them, as in v0.27–v0.31. The camera is padded by the cards' width, so the city view, the area chips and "the middle of the map" use the part the cards don't cover. The left panel stays docked.
+- **Separate building and spot cards** (#13): a spot or open water no longer shows empty Height and Footprint rows ("—"); it lists only Low spot. A building keeps all three.
+- **New icons** (#12): a plot of land for Footprint (was a scan frame) and an arrow down to a line for Low spot (was a mountain, which suggested high ground).
+- **Not done yet:** where "Land underwater" goes (#3, #11), and the wider typography and hierarchy pass (#12, #14). Both need design decisions first.
+- Tests: 108 unit/component tests (new: the vertical scale in both modes, the spot card, the upright slider, the colour mode) and 19 end-to-end tests (new: the bottom controls with rotate and tilt; the colour modes, remembered after a reload).
 
 ## v0.33: Desktop and laptop only (1 Nov 2026)
 

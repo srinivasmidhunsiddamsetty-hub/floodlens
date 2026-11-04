@@ -277,6 +277,10 @@
   background: var(--color-surface) !important;
   box-shadow: var(--shadow-panel);
 }
+/* Scale bar and attribution stay left of the floating Insights cards (v0.34, as in v0.27). */
+.maplibregl-ctrl-bottom-right {
+  right: var(--map-inset-right, 0px);
+}
 .maplibregl-ctrl-scale {
   background: rgb(255 255 255 / 0.8);
   color: var(--color-fg-muted);
@@ -331,6 +335,25 @@
 }
 .fl-range:focus-visible::-moz-range-thumb {
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-accent);
+}
+/* Upright (v0.34): today at the bottom, the top level at the top. */
+.fl-range-v {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 20px;
+  height: 100%;
+}
+.fl-range-v::-webkit-slider-runnable-track {
+  width: 4px;
+  height: 100%;
+}
+.fl-range-v::-webkit-slider-thumb {
+  margin-top: 0;
+  margin-left: -8px;
+}
+.fl-range-v::-moz-range-track {
+  width: 4px;
+  height: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {

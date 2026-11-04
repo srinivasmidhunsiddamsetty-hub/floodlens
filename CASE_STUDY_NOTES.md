@@ -181,6 +181,13 @@ The product went through numbered versions, each tagged in git with screenshots 
 
   They passed on a compact legend.
 - **v0.17 → v0.19:** with six levels, the per-foot list under the chart grew to five rows, which repeated what the chart and legend already show. Now the legend keeps every level's true colour (v0.18), and only the selected level's "adds" row remains (v0.19).
+- **v0.33 → v0.34:** a product manager and a couple of users reviewed v0.33 and sent 14 points. The settled ones went into v0.34:
+  - Simple and Detailed colour modes; people couldn't tell the Detailed blues apart, so the ramp now turns from sky blue to indigo (measured: worst neighbouring pair ΔE 8.8 → 10.1).
+  - An upright slider, and "Step up to +5 ft" instead of "Watch the water rise", which read as tides.
+  - Zoom, rotate and tilt buttons at the bottom of the map, since not every trackpad can rotate or tilt; "Entire Miami Beach" with a house icon and a tooltip.
+  - A slim vertical colour scale instead of the legend box; the Insights cards float over the map again; a spot card without Height and Footprint.
+
+  Still open: where "Land underwater" belongs (it changes with the slider but not with clicks on the map), and a wider typography and hierarchy pass.
 
 ## 11. Known limitations
 
