@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.47 (tag `v0.47`): "Overall / Per foot", pill toggles, one map toolbar.
+- **Current version:** v0.48 (tag `v0.48`): a shorter outside-the-city message on the place card.
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
@@ -259,6 +259,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.45 | The two sea-level figures at 30 px (the owner's call); slider up to 254 px so the boxes stay equal |
 | v0.46 | Selected building green `#3ee67e` (outline `#15803d`); the card's place tile and the spot ring follow it |
 | v0.47 | "Overall / Per foot" (was Total / By level); both toggles as pills; the map controls as one toolbar with dividers, turn and tilt folding into one button on short windows |
+| v0.48 | Outside-the-city card reads just "This spot is outside Miami Beach." |
 
 ---
 

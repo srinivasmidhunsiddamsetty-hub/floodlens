@@ -51,8 +51,14 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.45 | 4 Nov 2026 | The sea-level figures at 30 px | [`docs/versions/v0.45/`](docs/versions/v0.45/) |
 | v0.46 | 4 Nov 2026 | Green selection | [`docs/versions/v0.46/`](docs/versions/v0.46/) |
 | v0.47 | 4 Nov 2026 | "Overall / Per foot", pill toggles, one map toolbar | [`docs/versions/v0.47/`](docs/versions/v0.47/) |
+| v0.48 | 4 Nov 2026 | Shorter outside-the-city message | [`docs/versions/v0.48/`](docs/versions/v0.48/) |
 
 ---
+
+## v0.48: Shorter outside-the-city message (4 Nov 2026)
+
+- **A place outside the city now reads just "This spot is outside Miami Beach."** The second sentence, "FloodLens only maps the city itself.", is gone, at the owner's request.
+- Tests: 107 unit/component tests and 20 end-to-end tests.
 
 ## v0.47: "Overall / Per foot", pill toggles and one toolbar (4 Nov 2026)
 

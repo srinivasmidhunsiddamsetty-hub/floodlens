@@ -92,7 +92,8 @@ describe('<InspectionCard>', () => {
 
   it('explains places outside the city boundary instead of showing results', () => {
     card(levels(2), { selection: { ...building, insideStudyArea: false } })
-    expect(screen.getByText(/This spot is outside Miami Beach/)).toBeInTheDocument()
+    // One short sentence (v0.48; "FloodLens only maps the city itself." followed it before).
+    expect(screen.getByText('This spot is outside Miami Beach.')).toBeInTheDocument()
     expect(screen.queryByText('Water reaches it')).toBeNull()
   })
 

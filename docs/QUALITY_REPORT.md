@@ -61,6 +61,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The two sea-level figures at 30 px, measured at every window height from 900 to 650 px (v0.45).
 - The selected building and spot ring in green `#3ee67e`, with the card's place tile to match (v0.46).
 - "Overall / Per foot", pill toggles, and the map controls as one toolbar that stays one column at every height (v0.47).
+- The outside-the-city message shortened to one sentence (v0.48).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

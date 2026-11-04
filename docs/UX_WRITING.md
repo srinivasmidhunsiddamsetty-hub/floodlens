@@ -177,6 +177,12 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
 
+## Before and after (v0.47 → v0.48)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Card, a place outside the city | This spot is outside Miami Beach. FloodLens only maps the city itself. | This spot is outside Miami Beach. |
+
 ## Before and after (v0.46 → v0.47)
 
 | Where | Before | After |

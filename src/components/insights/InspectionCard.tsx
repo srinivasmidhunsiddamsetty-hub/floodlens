@@ -96,7 +96,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
       {!insideStudyArea && (
         <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2.5 t-body">
-          This spot is outside Miami Beach. FloodLens only maps the city itself.
+          This spot is outside Miami Beach.
         </p>
       )}
 
