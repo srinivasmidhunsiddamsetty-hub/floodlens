@@ -47,8 +47,24 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.41 | 4 Nov 2026 | Plasma colours, "By level", pill chips, answer-style figure boxes | [`docs/versions/v0.41/`](docs/versions/v0.41/) |
 | v0.42 | 4 Nov 2026 | Soft light boxes, grouped place facts, vermilion selection, folded-map icon, wider left panel | [`docs/versions/v0.42/`](docs/versions/v0.42/) |
 | v0.43 | 4 Nov 2026 | Bigger sea-level figures, heavier box hairline | [`docs/versions/v0.43/`](docs/versions/v0.43/) |
+| v0.44 | 4 Nov 2026 | Fix: the figures stay 28 px on laptop windows | [`docs/versions/v0.44/`](docs/versions/v0.44/) |
 
 ---
+
+## v0.44: The figures stay 28 px (4 Nov 2026)
+
+A fix, reported by the owner: on their screen v0.43 showed the two figures at 20 px, not 28.
+
+- **The cause:** the compact layout for short windows used 20 px figures. v0.43 moved its threshold from 750 to 770 px of window height. Ordinary laptop windows (751–770 px tall) fell inside it, so their figures shrank below the old 24 px. Only the fit was checked, not the size.
+- **The fix:** short windows now tighten in two steps.
+  - At 800 px or less, the cards' padding and the layer rows tighten. The figures are untouched.
+  - Only at 725 px or less do the figure boxes compact, and then to 24 px, never smaller.
+- **Result:**
+  - The figures are 28 px on every window 726 px tall or more.
+  - The two boxes are the same height from 760 px up.
+  - The panel still fits without scrolling down to about 650 px.
+- **A new end-to-end test** checks the figures are 28 px at 900, 800, 760 and 730 px tall, and 24 px at 650.
+- Tests: 107 unit/component tests and 20 end-to-end tests.
 
 ## v0.43: Bigger figures (4 Nov 2026)
 

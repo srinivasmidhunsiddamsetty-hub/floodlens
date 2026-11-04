@@ -37,7 +37,7 @@ export function ControlPanel({ manifest }: Props) {
     // `--fl-panel-rest` is everything in the panel but the slider, plus the top bar; on short
     // windows the cards and rows tighten (v0.39), so it shrinks by 36 px.
     <div
-      className="scrollbar-thin flex h-full flex-col gap-3 overflow-y-auto bg-canvas p-3 [--fl-panel-rest:532px] short:[--fl-panel-rest:496px]"
+      className="scrollbar-thin flex h-full flex-col gap-3 overflow-y-auto bg-canvas p-3 [--fl-panel-rest:532px] short:[--fl-panel-rest:496px] tiny:[--fl-panel-rest:476px]"
       style={low ? ({ '--fl-panel-extra': '16px' } as CSSProperties) : undefined}
     >
       <section aria-labelledby="sec-level" className="card p-4 short:p-3">

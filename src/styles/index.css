@@ -1,9 +1,13 @@
 @import 'tailwindcss';
 @import 'maplibre-gl/dist/maplibre-gl.css';
 
-/* Windows 770 px tall or less (v0.39; 700 px until v0.40, 750 until v0.42): the left panel
-   tightens so it still fits without scrolling. */
-@custom-variant short (@media (max-height: 770px));
+/* Windows 800 px tall or less (v0.39; 700 px until v0.40, 750 until v0.42, 770 in v0.43): the
+   left panel's padding and layer rows tighten so it fits without scrolling and the two figure
+   boxes keep the same height. The figures themselves stay full size (see `tiny`). */
+@custom-variant short (@media (max-height: 800px));
+/* Windows 725 px tall or less (v0.44): only here do the sea-level figures compact, and never below
+   24 px. v0.43 compacted them to 20 px at the `short` height, which hit ordinary laptop windows. */
+@custom-variant tiny (@media (max-height: 725px));
 
 /* ---------------------------------------------------------------------------
    Design tokens — light, ArcGIS/Calcite-inspired. One source of truth for UI

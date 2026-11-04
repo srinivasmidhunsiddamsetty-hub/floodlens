@@ -337,6 +337,21 @@ test.describe('FloodLens — core flows', () => {
     await expect(chips.locator('[aria-current="location"]')).toHaveCount(0)
   })
 
+  test('the sea-level figures stay full size on laptop windows, and never shrink below 24 px (v0.44)', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const sizes = () => figure(page).locator('p.tabular').evaluateAll((els) => els.map((e) => getComputedStyle(e).fontSize))
+    // v0.43 shrank them to 20 px on ordinary laptop windows (751–770 px tall): keep them at 28 px.
+    for (const height of [900, 800, 760, 730]) {
+      await page.setViewportSize({ width: 1440, height })
+      await expect.poll(sizes).toEqual(['28px', '28px'])
+    }
+    // Only on short windows do they compact, and only to 24 px; the panel still fits.
+    await page.setViewportSize({ width: 1440, height: 650 })
+    await expect.poll(sizes).toEqual(['24px', '24px'])
+    expect(await page.locator('#control-panel > div').evaluate((el) => el.scrollHeight <= el.clientHeight)).toBe(true)
+  })
+
   test('Insights has a fixed width, with no resize handle or close tab (v0.37; 360 px in v0.38)', async ({ page }) => {
     // A width saved by an older version is ignored.
     await page.addInitScript(() => localStorage.setItem('floodlens.insightsWidth', '500'))

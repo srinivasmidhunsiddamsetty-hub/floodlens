@@ -57,6 +57,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Plasma for the By level colours (closest levels ΔE 15.1), "Total / By level", pill chips, figure boxes styled like the answer box with more room and equal heights, and semibold card values (v0.41).
 - A "Soft light" surface for the figure, answer and facts boxes; the place facts grouped in one box; a vermilion selection again; a folded-map icon; a 300 px left panel (v0.42).
 - The two sea-level figures at 28 px in boxes with a 1.5 px hairline, the scale extended to keep them equal (v0.43).
+- Fix: the figures stay 28 px on laptop windows; they compact only at 725 px tall or less, and only to 24 px; a test checks the size at 900–650 px (v0.44).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -73,7 +74,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
 | Unit and component tests | `npm test` | **13 files, 107 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **19 passed** (at 1440×900, some also at 650 px tall); 1 screenshot spec skipped by default |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **20 passed** (at 1440×900, some also at 650–800 px tall); 1 screenshot spec skipped by default |
 | Screenshot capture | `npm run screenshots` | 1 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage for 0–5 ft; all 5 neighbouring-band validations passed |
