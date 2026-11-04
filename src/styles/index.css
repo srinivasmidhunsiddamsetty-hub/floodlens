@@ -63,6 +63,8 @@
 
   --animate-fade-in: fade-in 180ms ease-out both;
   --animate-slide-up: slide-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  /* The place card's water flows in from the left once, when a place is picked (v0.51). */
+  --animate-water-in: water-in 700ms cubic-bezier(0.25, 0.8, 0.25, 1) both;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -71,6 +73,10 @@
   @keyframes slide-up {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes water-in {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
   }
 }
 
@@ -154,21 +160,32 @@
   }
   /* Premium fills and surfaces (v0.50), so every colour gets the same treatment as the navy boxes:
      light from the top, a crisp edge, a soft lift. Flat on the map itself: there colour is data. */
-  /* Selected toggles, the chosen area chip, switches that are on: navy with a faint glow. */
+  /* Selected toggles and switches that are on: navy with a soft shade from the top and a light
+     hairline (v0.51; a dark ring and a navy glow in v0.50, which looked heavy). */
   .fill-accent {
     background-color: var(--color-accent);
-    background-image:
-      radial-gradient(120% 120% at 20% 0%, rgb(120 170 230 / 0.22), transparent 60%),
-      linear-gradient(180deg, #2d5287, var(--color-accent));
+    background-image: linear-gradient(180deg, #2a4a75, var(--color-accent));
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.18),
-      0 0 0 1px var(--color-accent-strong),
-      0 1px 2px rgb(30 58 95 / 0.35),
-      0 6px 14px -6px rgb(30 58 95 / 0.45);
+      inset 0 1px 0 rgb(255 255 255 / 0.14),
+      0 0 0 1px rgb(30 58 95 / 0.15);
+  }
+  /* The chosen area chip over the map: frosted navy with a white hairline and the same neutral
+     shadow as the other chips (v0.51; the navy glow spilled onto the map). */
+  .fill-accent-frost {
+    background-color: rgb(30 58 95 / 0.9);
+    border-color: rgb(255 255 255 / 0.18);
+    box-shadow:
+      0 1px 2px rgb(16 24 40 / 0.12),
+      0 6px 14px -8px rgb(16 24 40 / 0.3);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .fill-accent-frost {
+      background-color: var(--color-accent);
+    }
   }
   /* The grey canvas behind the left panel's cards: a whisper of grain. */
   .canvas-grain {
-    background-image: url("'''+canvas_grain+'''");
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%201%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%20opacity%3D'.03'%2F%3E%3C%2Fsvg%3E");
   }
   /* Grey chips (the slider's levels): a top highlight and a hairline. */
   .chip-soft {

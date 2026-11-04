@@ -35,4 +35,15 @@ describe('<ControlPanel>', () => {
     panel({ layers: { ...initialState.layers, lowLying: true } })
     expect(screen.getByRole('switch', { name: 'Low spots' })).toHaveAccessibleDescription(/cut off from the sea.*0\.94 km² at \+2 ft/)
   })
+
+  it('draws switches with a light hairline, not a dark outline; off shows a grey knob (v0.51)', () => {
+    panel()
+    const on = screen.getByRole('switch', { name: 'Flooding' })
+    const off = screen.getByRole('switch', { name: 'Low spots' })
+    expect(on).toHaveAttribute('aria-checked', 'true')
+    expect(on).toHaveClass('fill-accent', 'border-transparent')
+    expect(off).toHaveAttribute('aria-checked', 'false')
+    expect(off).not.toHaveClass('border-control')
+    expect(off.firstElementChild).toHaveClass('bg-[#7d8796]')
+  })
 })

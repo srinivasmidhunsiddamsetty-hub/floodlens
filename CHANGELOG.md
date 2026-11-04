@@ -54,8 +54,22 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.48 | 4 Nov 2026 | Shorter outside-the-city message | [`docs/versions/v0.48/`](docs/versions/v0.48/) |
 | v0.49 | 4 Nov 2026 | Premium navy boxes | [`docs/versions/v0.49/`](docs/versions/v0.49/) |
 | v0.50 | 4 Nov 2026 | Navy brand colour and premium surfaces | [`docs/versions/v0.50/`](docs/versions/v0.50/) |
+| v0.51 | 4 Nov 2026 | Lighter switches, chip and pills; water that flows in | [`docs/versions/v0.51/`](docs/versions/v0.51/) |
 
 ---
+
+## v0.51: Lighter switches, chip and pills; water that flows in (4 Nov 2026)
+
+From the owner's notes on v0.50. The switch and chip styles were picked from options rendered on the real app, and the water motion from two recordings.
+
+- **Switches ("On the map") lose the dark outline** (option B). On, they're navy with a soft shade and a light navy hairline. Off, they have a light grey hairline on a pale track, and a grey knob (`#7d8796`, 3.4:1 on the track) so off still reads clearly.
+- **The chosen area chip no longer spills navy onto the map** (option C). It's frosted navy with a white hairline and the same neutral shadow as the other chips. v0.50's navy glow and dark ring are gone (solid navy for people who turn off transparency).
+- **The Overall / Per foot and km² / acres pills match the switches.** Same soft navy, no dark ring or glow, at the owner's request.
+- **"Water reaches at" track:**
+  - The dot on the water's surface is gone: it looked like a handle you could drag. The dashed line still marks the level.
+  - The water flows in from the left once when you pick a place (0.7 s), and the dashed line appears as the water reaches it. It doesn't loop. People who turn off motion see it still.
+- **Fix:** v0.50's faint grain on the grey panel background never showed, because a placeholder was written in place of the texture. It's there now.
+- Tests: 109 unit/component tests (2 new: switch style; the track's missing dot and its flow) and 20 end-to-end tests.
 
 ## v0.50: Navy brand colour and premium surfaces (4 Nov 2026)
 

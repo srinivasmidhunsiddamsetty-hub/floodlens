@@ -111,6 +111,15 @@ describe('<InspectionCard>', () => {
     expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^\+2 ft$/)
   })
 
+  it('draws the water without a dot, flowing in once with its marker (v0.51)', () => {
+    card(levels(3))
+    const track = screen.getByRole('list', { name: 'Water at this spot, by sea level' }).previousElementSibling!
+    // The dot on the surface looked like a handle you could drag.
+    expect(track.querySelectorAll('.rounded-full')).toHaveLength(0)
+    expect(track.querySelector('svg')).toHaveClass('motion-safe:animate-water-in')
+    expect(track.querySelector('.border-dashed')!.parentElement).toHaveClass('motion-safe:animate-water-in')
+  })
+
   it('closes from the × button', async () => {
     const onClear = vi.fn()
     card(levels(2), { onClear })

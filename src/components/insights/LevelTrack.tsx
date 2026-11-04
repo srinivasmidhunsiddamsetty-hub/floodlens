@@ -53,7 +53,10 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
   return (
     <div>
       <div className="relative" style={{ height: FILL }} aria-hidden="true">
-        <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 100 ${FILL}`} preserveAspectRatio="none">
+        {/* The water flows in from the left once per place (v0.51), then rests; the marker is revealed
+            by the same sweep, so it shows as the water reaches it. The track remounts with each new
+            place, since the card shows "Checking…" in between. No motion for people who ask for less. */}
+        <svg className="absolute inset-0 h-full w-full motion-safe:animate-water-in" viewBox={`0 0 100 ${FILL}`} preserveAspectRatio="none">
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#a9cff5" />
@@ -65,19 +68,16 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
         </svg>
         {/* On the navy answer box (v0.49): a light baseline, marker and labels. */}
         <span className="absolute inset-x-0 bottom-0 h-px bg-white/40" />
+        {/* Where the water first reaches the place: a dashed drop from the surface to the baseline.
+            No circles on the baseline (v0.22): the labels below mark the levels. No dot on the
+            surface either (v0.51): it looked like a handle you could drag. */}
         {first >= 0 && (
-          <>
-            {/* Where the water first reaches the place: a dashed drop from the surface to the baseline.
-                No circles on the baseline (v0.22): the labels below mark the levels. */}
+          <div className="absolute inset-0 motion-safe:animate-water-in">
             <span
               className="absolute w-0 -translate-x-1/2 border-l-[1.5px] border-dashed border-white"
               style={{ left: `${x(first)}%`, top: FILL - rise(first), height: rise(first) }}
             />
-            <span
-              className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#9fd0f5]"
-              style={{ left: `${x(first)}%`, top: FILL - rise(first) }}
-            />
-          </>
+          </div>
         )}
       </div>
       <ol className="mt-1.5 grid text-center" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }} aria-label="Water at this spot, by sea level">

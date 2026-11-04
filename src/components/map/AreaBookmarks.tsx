@@ -28,7 +28,7 @@ export function AreaBookmarks({ onGo, onShowAll, active }: Props) {
             title={on ? 'Show all of Miami Beach' : undefined}
             className={`glass shrink-0 rounded-full text-[13px] leading-5 font-medium transition-colors ${
               on
-                ? 'fill-accent border border-accent px-4 py-1.5 text-white'
+                ? 'fill-accent-frost border px-4 py-1.5 text-white'
                 : 'border border-white/80 px-4 py-1.5 text-fg hover:border-accent hover:text-accent'
             }`}
           >
