@@ -177,6 +177,13 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
 
+## Before and after (v0.38 → v0.39)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Area figure | 0.99 km² · 244 acres | 0.99, with a km² / acres switch under it |
+| Low spots, under the switch | 0.94 km² · 232 acres | 0.94 km² at +2 ft (in the chosen unit) |
+
 ## Before and after (v0.37 → v0.38)
 
 From the owner's notes. The owner chose the names and the "area covered" wording.

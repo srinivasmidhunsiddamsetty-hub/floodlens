@@ -1,5 +1,8 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
+import type { AreaUnit } from '../../lib/format'
 import type { ColorMode } from '../../lib/theme'
 import { makeManifest } from '../../test/fixtures'
 import type { DataManifest } from '../../types/data'
@@ -24,40 +27,59 @@ const withLand = makeManifest({
 })
 
 function Harness({ ft, mode, manifest = withLand }: { ft: number; mode: ColorMode; manifest?: DataManifest | null }) {
-  return <SubmergedArea manifest={manifest} scenarioFt={ft} colorMode={mode} />
+  const [unit, setUnit] = useState<AreaUnit>('km2')
+  return <SubmergedArea manifest={manifest} scenarioFt={ft} colorMode={mode} unit={unit} onUnitChange={setUnit} />
 }
 
-/** The area block, then the share block, as text. */
-const blocks = (container: HTMLElement) => [...container.firstElementChild!.children].map((b) => b.textContent)
+/** Each box's text: the area box (label, number, unit switch), then the share box. */
+const boxes = (container: HTMLElement) => [...container.firstElementChild!.children].map((b) => b.textContent)
 
 describe('<SubmergedArea>', () => {
-  it('Total: everything covered at the level, in km² and acres, and its share of the city’s land', () => {
+  it('Total: everything covered at the level, and its share of the city’s land', () => {
     const { container } = render(<Harness ft={3} mode="simple" />)
-    // +3 ft includes what +1 and +2 ft reached: 2.30 km² (568 acres) of 10 km² of land.
-    expect(blocks(container)).toEqual(['Total area covered2.30km²568 acres', 'Share of city land23%'])
+    // +3 ft includes what +1 and +2 ft reached: 2.30 km² of 10 km² of land.
+    expect(boxes(container)).toEqual(['Total area covered2.30km²acres', 'Share of city land23%'])
   })
 
   it('Individual: only what the level adds to the one below, with the same denominator', () => {
     const { container } = render(<Harness ft={3} mode="detailed" />)
-    expect(blocks(container)).toEqual(['New area covered1.80km²445 acres', 'Share of city land18%'])
+    expect(boxes(container)).toEqual(['New area covered1.80km²acres', 'Share of city land18%'])
   })
 
-  it('gives the share the same weight as the area (v0.38)', () => {
+  it('puts each figure in its own centred box, the share as large as the area (v0.39)', () => {
     render(<Harness ft={2} mode="simple" />)
-    expect(screen.getByText('5%')).toHaveClass('text-[24px]', 'font-bold')
-    expect(screen.getByText('0.50')).toHaveClass('text-[24px]', 'font-bold')
+    for (const n of ['0.50', '5%']) {
+      const value = screen.getByText(n)
+      expect(value).toHaveClass('text-[24px]', 'font-bold')
+      expect(value.parentElement).toHaveClass('text-center', 'bg-[#f2f5f9]')
+    }
+  })
+
+  it('shows one unit at a time, switched like Total / Individual (v0.39)', async () => {
+    render(<Harness ft={2} mode="simple" />)
+    const km2 = screen.getByRole('radio', { name: 'Square kilometres' })
+    expect(km2).toHaveAttribute('aria-checked', 'true')
+    // Only the number in the chosen unit: no acres figure alongside the km² one (v0.38 showed both).
+    expect(screen.queryByText(/\d+ acres/)).toBeNull()
+    await userEvent.click(screen.getByRole('radio', { name: 'Acres' }))
+    expect(screen.getByText('124')).toBeInTheDocument()
+    expect(screen.queryByText('0.50')).toBeNull()
+    // Arrow keys move within the group, like any radio group.
+    screen.getByRole('radio', { name: 'Acres' }).focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(km2).toHaveAttribute('aria-checked', 'true')
   })
 
   it('shows 0 at today’s high tide, never a blank, in either mode (v0.38)', () => {
     const { container, rerender } = render(<Harness ft={0} mode="simple" />)
-    expect(blocks(container)).toEqual(['Total area covered0km²0 acres', 'Share of city land0%'])
+    expect(boxes(container)).toEqual(['Total area covered0km²acres', 'Share of city land0%'])
     rerender(<Harness ft={0} mode="detailed" />)
-    expect(blocks(container)).toEqual(['New area covered0km²0 acres', 'Share of city land0%'])
+    expect(boxes(container)).toEqual(['New area covered0km²acres', 'Share of city land0%'])
   })
 
   it('leaves out the share when the city’s land area is unknown, and shows nothing without data', () => {
     const { container, rerender } = render(<Harness ft={2} mode="simple" manifest={plain} />)
-    expect(blocks(container)).toEqual(['Total area covered0.50km²124 acres'])
+    expect(boxes(container)).toEqual(['Total area covered0.50km²acres'])
     rerender(<Harness ft={2} mode="simple" manifest={null} />)
     expect(container).toBeEmptyDOMElement()
   })

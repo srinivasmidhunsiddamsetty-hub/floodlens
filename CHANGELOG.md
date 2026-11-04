@@ -42,8 +42,21 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.36 | 4 Nov 2026 | Land underwater moves beside the slider; Insights only for the selection | [`docs/versions/v0.36/`](docs/versions/v0.36/) |
 | v0.37 | 4 Nov 2026 | New layered colours with white edges, Overview / Layered, controls in the corner, icon tiles | [`docs/versions/v0.37/`](docs/versions/v0.37/) |
 | v0.38 | 4 Nov 2026 | Warm Individual colours, Total / Individual, both units, controls at the screen's edge | [`docs/versions/v0.38/`](docs/versions/v0.38/) |
+| v0.39 | 4 Nov 2026 | Figures in tinted boxes, a km² / acres switch, square level chips | [`docs/versions/v0.39/`](docs/versions/v0.39/) |
 
 ---
+
+## v0.39: Figures in boxes (4 Nov 2026)
+
+From the owner's notes on v0.38: the figures looked like "text thrown on to the white box". The box style was picked from three options.
+
+- **The area and the share each sit in a soft tinted box** (pale blue-grey, 8 px corners, no border), centred, with only 6 px between them. The two boxes share the slider's height.
+- **One unit at a time again**, with a km² / acres switch under the area number, in the same style as Total / Individual, and remembered in the browser. v0.38 showed both units at once.
+  - The switch sits under the number rather than beside it, because the column is about 142 px wide: a figure like "3,770" and the switch don't fit side by side.
+- **The level chips are square, with their names centred.**
+- **On windows 700 px tall or less the left panel tightens slightly** (card padding, layer rows, and smaller figures), so it still fits without scrolling down to about 650 px, with or without the low-spot line.
+- The low-spot line under its switch follows the chosen unit again: "0.94 km² at +2 ft".
+- Tests: 107 unit/component tests (new: the boxes, the unit switch; back: the unit setting) and 19 end-to-end tests (back: the unit switch, remembered after a reload).
 
 ## v0.38: Warm colours, Total / Individual and figures that never go blank (4 Nov 2026)
 

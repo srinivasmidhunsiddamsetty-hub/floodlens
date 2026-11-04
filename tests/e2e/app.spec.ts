@@ -3,7 +3,7 @@ import { insights, mapPitch, mapZoom, trackErrors, waitForMap } from './helpers'
 
 /** The left panel: sea level, its figures and the layer switches. */
 const seaLevel = (page: Page) => page.getByRole('complementary', { name: 'Sea level and layers' })
-/** The figures beside the slider: label, area in km², the same in acres, then the share. */
+/** The two figure boxes beside the slider: label, area, the km² / acres switch ("km²acres"), then the share. */
 const figure = (page: Page) => seaLevel(page).locator('[aria-live="polite"]')
 
 test.describe('FloodLens — core flows', () => {
@@ -15,7 +15,7 @@ test.describe('FloodLens — core flows', () => {
     await waitForMap(page)
 
     // The land underwater sits beside the slider (v0.36), not in Insights.
-    await expect(figure(page)).toHaveText('Total area covered0.99km²244 acresShare of city land5%')
+    await expect(figure(page)).toHaveText('Total area covered0.99km²acresShare of city land5%')
     await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toHaveCount(0)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/OpenStreetMap/)
     await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText(/NOAA/)
@@ -48,7 +48,7 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('Home')
     await expect(slider).toHaveAttribute('aria-valuetext', 'Current MHHW (0 ft)')
     // Never a blank at today's high tide (v0.38).
-    await expect(figure(page)).toHaveText('New area covered0km²0 acresShare of city land0%')
+    await expect(figure(page)).toHaveText('New area covered0km²acresShare of city land0%')
     expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1)
   })
 
@@ -63,7 +63,7 @@ test.describe('FloodLens — core flows', () => {
       expect(await fits()).toBe(true)
       await expect(page.getByRole('switch', { name: 'City limits' })).toBeInViewport()
       await page.getByRole('switch', { name: 'Low spots' }).click()
-      await expect(seaLevel(page)).toContainText('0.94 km² · 232 acres')
+      await expect(seaLevel(page)).toContainText('0.94 km² at +2 ft')
       expect(await fits()).toBe(true)
       await expect(page.getByRole('switch', { name: 'City limits' })).toBeInViewport()
       await page.getByRole('switch', { name: 'Low spots' }).click()
@@ -85,28 +85,43 @@ test.describe('FloodLens — core flows', () => {
     const fig = figure(page)
     const slider = page.getByRole('slider')
     // +2 ft: 0.99 km² in all, of which +2 ft adds 0.95 km² (the rest came at +1 ft).
-    await expect(fig).toHaveText('Total area covered0.99km²244 acresShare of city land5%')
+    await expect(fig).toHaveText('Total area covered0.99km²acresShare of city land5%')
     await page.getByRole('radio', { name: 'Individual' }).click()
-    await expect(fig).toHaveText('New area covered0.95km²235 acresShare of city land5%')
+    await expect(fig).toHaveText('New area covered0.95km²acresShare of city land5%')
     await slider.focus()
     await page.keyboard.press('ArrowRight')
-    await expect(fig).toHaveText('New area covered6.44km²1,592 acresShare of city land32%')
+    await expect(fig).toHaveText('New area covered6.44km²acresShare of city land32%')
     await page.getByRole('radio', { name: 'Total' }).click()
-    await expect(fig).toHaveText('Total area covered7.43km²1,837 acresShare of city land37%')
+    await expect(fig).toHaveText('Total area covered7.43km²acresShare of city land37%')
     await slider.focus()
     await page.keyboard.press('Home')
-    await expect(fig).toHaveText('Total area covered0km²0 acresShare of city land0%')
+    await expect(fig).toHaveText('Total area covered0km²acresShare of city land0%')
     await page.getByRole('radio', { name: 'Individual' }).click()
     await slider.focus()
     await page.keyboard.press('ArrowRight')
-    await expect(fig).toHaveText('New area covered0.038km²9.5 acresShare of city land0.2%')
+    await expect(fig).toHaveText('New area covered0.038km²acresShare of city land0.2%')
     // Every level is a chip you can click (v0.38).
     // The chips are hidden from screen readers (the slider is their route), hence includeHidden.
     await seaLevel(page).getByRole('button', { name: '+4 ft', exact: true, includeHidden: true }).click()
     await expect(slider).toHaveAttribute('aria-valuetext', '+4 ft above MHHW')
-    // Both units always show, so there's no unit control (v0.38).
-    await expect(seaLevel(page).getByRole('combobox')).toHaveCount(0)
-    await expect(seaLevel(page).getByRole('radio', { name: /acres|Square kilometres/ })).toHaveCount(0)
+  })
+
+  test('the area switches between km² and acres beside the number, and is remembered (v0.39)', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const left = seaLevel(page)
+    const unit = left.getByRole('radiogroup', { name: 'Area unit' })
+    await expect(unit.getByRole('radio', { name: 'Square kilometres' })).toHaveAttribute('aria-checked', 'true')
+    await unit.getByRole('radio', { name: 'Acres' }).click()
+    await expect(figure(page)).toHaveText('Total area covered244km²acresShare of city land5%')
+    await page.getByRole('radio', { name: 'Individual' }).click()
+    await expect(figure(page)).toHaveText('New area covered235km²acresShare of city land5%')
+    // The low-spot line follows the unit.
+    await page.getByRole('switch', { name: /Low spots/ }).click()
+    await expect(page.getByRole('switch', { name: /Low spots/ })).toHaveAccessibleDescription(/232 acres at \+2 ft/)
+    await page.reload()
+    await waitForMap(page)
+    await expect(seaLevel(page).getByRole('radio', { name: 'Acres' })).toHaveAttribute('aria-checked', 'true')
   })
 
   test('with a place selected, every insight fits without scrolling at 1440×900', async ({ page }) => {

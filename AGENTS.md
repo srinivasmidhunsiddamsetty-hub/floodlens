@@ -11,10 +11,10 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.38 (tag `v0.38`): warm Individual colours, Total / Individual, both units, controls at the screen's edge.
+- **Current version:** v0.39 (tag `v0.39`): the area and share in tinted boxes, a km² / acres switch, square centred level chips.
 - **Test status at handoff:**
-  - 105 unit and component tests in 13 files pass.
-  - 18 end-to-end tests pass, at 1440×900 (some also check 650 px tall windows).
+  - 107 unit and component tests in 13 files pass.
+  - 19 end-to-end tests pass, at 1440×900 (some also check 650 px tall windows).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
 ---
@@ -95,8 +95,8 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | Fact values | 20 px medium |
 | The answer ("+2 ft") | 24 px bold |
 | Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
-| Sea level figures: the area and the share (v0.38, equal weight) | 24 px bold; "km²" 13 px; acres 12 px muted under the area |
-| Level chips on the slider (v0.38) | 12 px; light fill at rest, the chosen one accent-tinted and bold |
+| Sea level figures: the area and the share (equal weight) | 24 px bold, centred in a tinted box (v0.39); 20 px on short windows |
+| Level chips on the slider | 12 px, square, centred (v0.39); light fill at rest, the chosen one accent-tinted and bold |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
 **Layout (v0.35): desktop and laptop only.**
@@ -105,7 +105,8 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36–v0.38): no big "+2 ft". The slider's levels are clickable chips. Beside it, two figures of equal weight: "Total area covered" (Total) or "New area covered" (Individual) in km² with acres under it, and "Share of city land" as a %. No unit control: both units always show. Today reads 0 km², 0 acres, 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² · 232 acres") sits under the Low spots switch while that layer is on.
+- Sea level card (v0.36–v0.39): no big "+2 ft". The slider's levels are clickable chips, square with centred names. Beside it, two figures of equal weight, each centred in a soft tinted box (`#f2f5f9`), 6 px apart: "Total area covered" (Total) or "New area covered" (Individual), with a km² / acres switch under the number (one unit at a time, styled like Total / Individual, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Short windows (700 px tall or less) use the `short` Tailwind variant (`@custom-variant` in `index.css`) to tighten the left panel: card padding, layer rows, figure boxes. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (house icon), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
 - The left panel must fit without scrolling in windows down to about 650 px tall (v0.35). The slider shrinks from 168 to 116 px on short windows to make room (`TRACK_H` in `ScenarioSelector`).
@@ -175,7 +176,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 105 tests
+npm test                 # Vitest: 107 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Individual colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -246,6 +247,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.36 | Land underwater beside the slider (Single: total; Layered: added, as the difference of totals); Insights only for the selection; chart removed; low-spot area under its switch; 2D over 3D; zoom clear of the scale bar |
 | v0.37 | Owner's colours with a faint white edge; "Overview / Layered" and "Underwater" / "Newly underwater at +2 ft"; unit menu after the number; Insights fixed at 380 px, no close tab; controls in one corner column without the dial; icons in tinted tiles, water drops for Low spot |
 | v0.38 | Warm Individual ramp (yellow → red-brown) and charcoal selection; "Total / Individual", "Total area covered" / "New area covered"; both units shown, share at equal weight, 0 at today; clickable level chips; controls at the screen's right edge under the card; Insights 360 px; hollow low-spot icon |
+| v0.39 | Area and share in soft tinted boxes, centred, 6 px apart; km² / acres switch under the number (one unit at a time again); square centred level chips; the panel tightens on short windows |
 
 ---
 

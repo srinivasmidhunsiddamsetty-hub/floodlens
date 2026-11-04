@@ -30,9 +30,9 @@ describe('<ControlPanel>', () => {
 
   it('shows the low-spot area under its switch only while that layer is on (v0.36)', () => {
     const { unmount } = panel()
-    expect(screen.queryByText('0.94 km² · 232 acres')).toBeNull()
+    expect(screen.queryByText('0.94 km² at +2 ft')).toBeNull()
     unmount()
     panel({ layers: { ...initialState.layers, lowLying: true } })
-    expect(screen.getByRole('switch', { name: 'Low spots' })).toHaveAccessibleDescription(/cut off from the sea.*0\.94 km² · 232 acres/)
+    expect(screen.getByRole('switch', { name: 'Low spots' })).toHaveAccessibleDescription(/cut off from the sea.*0\.94 km² at \+2 ft/)
   })
 })
