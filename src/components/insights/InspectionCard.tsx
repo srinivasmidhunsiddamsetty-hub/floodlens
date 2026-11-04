@@ -13,7 +13,8 @@ interface Props {
   onClear: () => void
 }
 
-const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
+// Today's level is "0 ft" (v0.40; "Today" before), as on the slider and the legend.
+const levelName = formatScenario
 
 /** Icon colour and its tile's light fill (v0.37). */
 const TINTS = {
@@ -118,12 +119,12 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
           const reached = firstFeet !== null
           const lowAt = lowHits.filter((h) => h.within).map((h) => levelName(h.feet))
 
-          // Label and answer: "Water reaches at +2 ft", or "Today" (today's high tide, the
+          // Label and answer: "Water reaches at +2 ft", or "0 ft" (today's high tide, the
           // same name as the first pin). When no level reaches it: "Up to +5 ft · Doesn't
           // reach it" (v0.30). The label keeps the limit: we only map up to the top level, and
           // NOAA's map not reaching a place isn't a promise, so never "safe" or "dry".
           const label = reached ? 'Water reaches at' : `Up to ${formatScenario(top)}`
-          const answer = !reached ? 'Doesn’t reach it' : firstFeet === 0 ? 'Today' : formatScenario(firstFeet)
+          const answer = !reached ? 'Doesn’t reach it' : formatScenario(firstFeet)
 
           return (
             <div aria-live="polite">

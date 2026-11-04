@@ -64,24 +64,25 @@ export const SIMPLE_COLOR = '#3d84e6'
 
 /**
  * Detailed mode ("Individual"): the level where water first reaches each area, light → dark as
- * the sea rises (more water, darker). v0.38 turned it warm, pale yellow → orange → red-brown, at
- * the owner's request: one-hue blues read as "lighter" and "darker" rather than as colours you
- * can name. The owner's own swatches measured too close together (ΔE 3.9), so this is the same
- * idea with stronger steps (ColorBrewer YlOrBr). Drawn at 85% over the land, the closest
- * neighbouring pair is OKLab ΔE 7.3 for normal vision and 6.8 for colour-blind vision, and every
- * band stands well apart from the water (ΔE 15+).
+ * the sea rises (more water, darker). v0.40: the owner's own yellow → orange swatches (six of the
+ * eight in their reference, picked to stay furthest apart). Drawn at 85% over the land, the
+ * closest neighbouring pair is OKLab ΔE 3.9 for normal vision and 2.8 for colour-blind vision,
+ * closer than v0.38's ramp, and the yellow end is near the land and buildings for tritanopia;
+ * the white edge between levels (`BAND_EDGE`) helps tell them apart. Every band is ΔE 13+ from
+ * the water.
+ * v0.38–v0.39: #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #8c2d04 (yellow → red-brown, ΔE 7.3 / 6.8).
  * v0.37: #ddf0fb #a9d9f5 #6fb9e8 #3593d2 #1168b2 #083d77 (the owner's blues).
  * v0.35–v0.36: #dceff5 #a6d8ed #6db6db #338ec4 #1766a1 #083b75.
  * v0.34: #80cffd #4ba3f7 #3672e9 #3a45c8 #31248a #1c0b4d.
  * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#fee391',
-  1: '#fec44f',
-  2: '#fe9929',
-  3: '#ec7014',
-  4: '#cc4c02',
-  5: '#8c2d04',
+  0: '#f3f351',
+  1: '#f0dd4a',
+  2: '#f0b33f',
+  3: '#ec9a38',
+  4: '#e77631',
+  5: '#e7612a',
 }
 
 /**

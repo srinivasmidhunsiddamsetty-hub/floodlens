@@ -53,6 +53,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - From the owner's notes: new Layered colours with a faint white edge round each level, "Overview / Layered" and "Underwater" / "Newly underwater at +2 ft", a unit menu right after the number, Insights fixed at 380 px with no close tab, all map controls in one corner column without the dial, and icons in tinted tiles with water drops for Low spot (v0.37).
 - From the owner's notes on v0.37: a warm Individual ramp (pale yellow → red-brown) with a charcoal selection, "Total / Individual", "Total area covered" / "New area covered", the share as large as the area, both units with no control, zeros instead of "None yet", clickable level chips, the map controls at the screen's right edge under the Insights card (two columns on short windows), Insights at 360 px, and a hollow low-spot icon (v0.38).
 - The area and share in soft tinted boxes, centred; a km² / acres switch under the number again; square centred level chips; the left panel tightening on short windows (v0.39).
+- The owner's yellow → orange swatches for the Individual colours, "0 ft" in place of "Today", rounded level chips, and frame corners for Entire Miami Beach (v0.40).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

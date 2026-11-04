@@ -96,6 +96,8 @@ test.describe('FloodLens — core flows', () => {
     await slider.focus()
     await page.keyboard.press('Home')
     await expect(fig).toHaveText('Total area covered0km²acresShare of city land0%')
+    // Today's level is "0 ft" on the slider (v0.40; "Today" before).
+    await expect(seaLevel(page).getByRole('button', { name: '0 ft', exact: true, includeHidden: true })).toHaveClass(/font-bold/)
     await page.getByRole('radio', { name: 'Individual' }).click()
     await slider.focus()
     await page.keyboard.press('ArrowRight')
@@ -169,6 +171,8 @@ test.describe('FloodLens — core flows', () => {
     // The view reset lives only in the map — no duplicate in the header or panels.
     await expect(page.getByRole('banner').getByRole('button', { name: /reset|show all/i })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Entire Miami Beach' })).toHaveCount(1)
+    // Frame corners, the "fit to view" symbol (v0.40; a house in v0.34–v0.39).
+    await expect(page.getByRole('button', { name: 'Entire Miami Beach' }).locator('svg')).toHaveClass(/lucide-maximize/)
   })
 
   test('the map controls sit in one column in the bottom-right corner; turn and tilt only in 3D (v0.37)', async ({ page }) => {
@@ -228,8 +232,8 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('region', { name: 'Map legend' })).toHaveCount(0)
 
     await modes.getByRole('radio', { name: 'Individual' }).click()
-    // Warm, pale yellow to red-brown (v0.38): +1 ft and +2 ft.
-    await expect.poll(trackColours).toEqual(['rgb(254, 196, 79)', 'rgb(254, 153, 41)'])
+    // The owner's yellow → orange swatches (v0.40): +1 ft and +2 ft.
+    await expect.poll(trackColours).toEqual(['rgb(240, 221, 74)', 'rgb(240, 179, 63)'])
     await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
     await page.reload()
     await waitForMap(page)

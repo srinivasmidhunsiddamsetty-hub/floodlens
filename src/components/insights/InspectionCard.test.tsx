@@ -93,9 +93,9 @@ describe('<InspectionCard>', () => {
     expect(screen.queryByText('Water reaches it')).toBeNull()
   })
 
-  it('says "Today" for places water reaches at today’s high tide', () => {
+  it('says "0 ft" for places water reaches at today’s high tide (v0.40; "Today" before)', () => {
     card(levels(0))
-    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^Today$/)
+    expect(screen.getByText('Water reaches at').nextSibling).toHaveTextContent(/^0 ft$/)
   })
 
   it('gives a spot its own card: low spot only, no height or footprint (v0.34)', () => {

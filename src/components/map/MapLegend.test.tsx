@@ -13,13 +13,14 @@ const bands: FloodBand[] = [0, 1, 2, 3, 4, 5].map((feet) => ({
 
 const rgb = (hex: string) => hex.replace(/^#(..)(..)(..)$/, (_, r, g, b) => `rgb(${parseInt(r, 16)}, ${parseInt(g, 16)}, ${parseInt(b, 16)})`)
 const swatchOf = (label: string) => screen.getByText(label).closest('li')!.querySelector('span[aria-hidden]') as HTMLElement
-const name = (b: FloodBand) => (b.isReference ? 'Today' : `+${b.feet} ft`)
+const name = (b: FloodBand) => (b.isReference ? '0 ft' : `+${b.feet} ft`)
 
 describe('<MapLegend>', () => {
   it('is a vertical scale, today at the bottom and the top level at the top (v0.34)', () => {
     render(<MapLegend bands={bands} scenarioFt={2} colorMode="detailed" showFlood />)
     const rows = screen.getAllByRole('listitem').map((li) => li.textContent)
-    expect(rows).toEqual(['+5 ft', '+4 ft', '+3 ft', '+2 ft (chosen level)', '+1 ft', 'Today'])
+    // Today's level reads "0 ft" (v0.40), like the rest of the scale.
+    expect(rows).toEqual(['+5 ft', '+4 ft', '+3 ft', '+2 ft (chosen level)', '+1 ft', '0 ft'])
     // Only the sea-level colours: no water, low spot, building, selection or city-limits keys (v0.35).
     expect(screen.queryByText(/Low spot|Building|Selected|City limits|Water$/)).toBeNull()
   })

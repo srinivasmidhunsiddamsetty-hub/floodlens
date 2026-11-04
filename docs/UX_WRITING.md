@@ -177,6 +177,15 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
 
+## Before and after (v0.39 → v0.40)
+
+| Where | Before | After |
+| --- | --- | --- |
+| Today's level (slider, legend, card track) | Today | 0 ft |
+| Card answer at today's high tide | Water reaches at · Today | Water reaches at · 0 ft |
+| Low spot from today | Yes, from Today | Yes, from 0 ft |
+| Low spots, under the switch, at today | 0.11 km² today | 0.11 km² at 0 ft |
+
 ## Before and after (v0.38 → v0.39)
 
 | Where | Before | After |

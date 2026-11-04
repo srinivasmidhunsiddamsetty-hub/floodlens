@@ -93,7 +93,7 @@ export function ControlPanel({ manifest }: Props) {
                   {l.description}
                   {/* In the unit chosen beside the slider (v0.39). */}
                   <span className="block font-medium text-fg tabular">
-                    {formatArea(low.areaM2, areaUnit)} {AREA_UNITS[areaUnit].short} {low.feet === 0 ? 'today' : `at ${formatScenario(low.feet)}`}
+                    {formatArea(low.areaM2, areaUnit)} {AREA_UNITS[areaUnit].short} at {formatScenario(low.feet)}
                   </span>
                 </>
               ) : (

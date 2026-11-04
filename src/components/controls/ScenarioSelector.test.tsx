@@ -57,6 +57,6 @@ describe('<ScenarioSelector>', () => {
     expect(screen.getByText('Total submerged area')).toBeInTheDocument()
     // Only the level names (hidden from assistive tech; the slider is the keyboard route) are buttons.
     expect(screen.queryAllByRole('button')).toHaveLength(0)
-    expect(screen.getAllByRole('button', { hidden: true }).map((b) => b.textContent)).toEqual(['Today', '+1 ft', '+2 ft', '+3 ft'])
+    expect(screen.getAllByRole('button', { hidden: true }).map((b) => b.textContent)).toEqual(['0 ft', '+1 ft', '+2 ft', '+3 ft'])
   })
 })

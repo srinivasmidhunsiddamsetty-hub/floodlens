@@ -34,7 +34,7 @@ export function MapLegend({ bands, scenarioFt, colorMode, showFlood }: Props) {
                 style={{ background: bandColor(b.feet, colorMode) }}
               />
               <span className={`text-[12px] leading-[18px] tabular ${chosen ? 'font-bold text-fg' : 'text-fg-muted'}`}>
-                {b.isReference ? 'Today' : formatScenario(b.feet)}
+                {formatScenario(b.feet)}
                 {chosen && <span className="sr-only"> (chosen level)</span>}
               </span>
             </li>

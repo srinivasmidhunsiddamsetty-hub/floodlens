@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, House, Minus, Plus, RotateCcw, RotateCw } from 'lucide-react'
+import { ChevronDown, ChevronUp, Maximize, Minus, Plus, RotateCcw, RotateCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import type { ViewMode } from '../../state/reducer'
@@ -98,8 +98,10 @@ export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOu
   )
   const home = (
     <Group label="Default view">
+      {/* Frame corners, the usual "fit to view" symbol (v0.40): the owner found the house
+          (v0.34–v0.39) misleading, since the button fits the whole city rather than going home. */}
       <Btn label="Entire Miami Beach" onClick={onShowAll}>
-        <House className="size-4" aria-hidden />
+        <Maximize className="size-4" aria-hidden />
       </Btn>
     </Group>
   )

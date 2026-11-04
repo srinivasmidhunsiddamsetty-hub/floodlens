@@ -13,7 +13,8 @@ interface Props {
 /** Height (px) the water band can rise to above the baseline. */
 const FILL = 18
 
-const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
+// Today's level is "0 ft" (v0.40; "Today" before), so every level reads as a number.
+const levelName = formatScenario
 
 /**
  * Sea levels labelled along a baseline, with the water rising from left to right and

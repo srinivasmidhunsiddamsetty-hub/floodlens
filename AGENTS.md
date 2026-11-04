@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.39 (tag `v0.39`): the area and share in tinted boxes, a km² / acres switch, square centred level chips.
+- **Current version:** v0.40 (tag `v0.40`): the owner's yellow → orange swatches, "0 ft" for today, rounded level chips, a frame icon for Entire Miami Beach.
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 19 end-to-end tests pass, at 1440×900 (some also check 650 px tall windows).
@@ -53,7 +53,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 ## 4. Copy rules (see `docs/UX_WRITING.md`)
 
 - **Never say "safe", "dry" or "will flood".** NOAA's layers are screening-level. They don't model storms, rain or groundwater.
-- **Card answer, when water reaches the place:** "Water reaches at" + "+2 ft". At level 0 the answer is "Today".
+- **Card answer, when water reaches the place:** "Water reaches at" + "+2 ft". At level 0 the answer is "0 ft" (v0.40; "Today" before). Today's level is "0 ft" everywhere.
 - **Card answer, when no mapped level reaches it (v0.30):** "Up to +5 ft" + "Doesn't reach it". The label keeps the +5 ft limit so the answer never claims more than the data shows.
 - **Low spot row:** "Yes, from +N ft" or "No". There is no area caption. It was removed in v0.31 because it was a bug: it showed the area of the whole low-spot polygon, not the building's part.
 - **Units:**
@@ -84,7 +84,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
 - **Legend (v0.34, v0.35):** a slim vertical colour scale, bottom left, shown **only with Individual colours**: only the sea-level colours, today at the bottom, the chosen level in bold. No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. It is a **static key**: nothing in it may be clickable (v0.28). (The chart that spotlighted levels was removed in v0.36.)
 - **Colour modes (v0.34):** a "Total / Individual" toggle beside the "Sea level" title (v0.38, the owner's names), with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Individual uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
-- **Individual ramp (v0.38):** warm, pale yellow → orange → red-brown (`#fee391 #fec44f #fe9929 #ec7014 #cc4c02 #8c2d04`, today to +5 ft), chosen by the owner from previews because one-hue blues didn't read as distinct colours. Measured at 85% over the land: worst neighbouring pair OKLab ΔE 7.3 (colour-blind 6.8); every band ΔE 15+ from the water. Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
+- **Individual ramp (v0.40):** the owner's own yellow → orange swatches (`#f3f351 #f0dd4a #f0b33f #ec9a38 #e77631 #e7612a`, 0 ft to +5 ft; six of the eight in their reference). Measured at 85% over the land: worst neighbouring pair OKLab ΔE 3.9 (colour-blind 2.8), which the owner accepted; the white edges between levels help. v0.38–v0.39 used a stronger yellow → red-brown ramp. Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
 **Card typography (as agreed):**
 
@@ -96,7 +96,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | The answer ("+2 ft") | 24 px bold |
 | Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
 | Sea level figures: the area and the share (equal weight) | 24 px bold, centred in a tinted box (v0.39); 20 px on short windows |
-| Level chips on the slider | 12 px, square, centred (v0.39); light fill at rest, the chosen one accent-tinted and bold |
+| Level chips on the slider | 12 px, centred, 6 px corners (v0.40); light fill at rest, the chosen one accent-tinted and bold |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
 **Layout (v0.35): desktop and laptop only.**
@@ -105,9 +105,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36–v0.39): no big "+2 ft". The slider's levels are clickable chips, square with centred names. Beside it, two figures of equal weight, each centred in a soft tinted box (`#f2f5f9`), 6 px apart: "Total area covered" (Total) or "New area covered" (Individual), with a km² / acres switch under the number (one unit at a time, styled like Total / Individual, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Sea level card (v0.36–v0.39): no big "+2 ft". The slider's levels are clickable chips with centred names and 6 px corners; today's is "0 ft". Beside it, two figures of equal weight, each centred in a soft tinted box (`#f2f5f9`), 6 px apart: "Total area covered" (Total) or "New area covered" (Individual), with a km² / acres switch under the number (one unit at a time, styled like Total / Individual, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows (700 px tall or less) use the `short` Tailwind variant (`@custom-variant` in `index.css`) to tighten the left panel: card padding, layer rows, figure boxes. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
-- Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (house icon), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
+- Map controls (v0.38): at the **screen's right edge, under the Insights card**, 16 px from the right and bottom: 2D over 3D, "Entire Miami Beach" (frame-corners icon, v0.40; the owner found the house misleading), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned, and the owner agreed it's needed. Below 760 px of window height it splits into two columns so it never meets the card. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
 - The left panel must fit without scrolling in windows down to about 650 px tall (v0.35). The slider shrinks from 168 to 116 px on short windows to make room (`TRACK_H` in `ScenarioSelector`).
 - One layout, made for screens 1024 px wide and up. A narrower window scrolls sideways (`#root` has `min-width: 1024px`), and the viewport meta is `width=1280`. Don't add phone or tablet layouts; the owner removed them on purpose.
@@ -248,6 +248,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.37 | Owner's colours with a faint white edge; "Overview / Layered" and "Underwater" / "Newly underwater at +2 ft"; unit menu after the number; Insights fixed at 380 px, no close tab; controls in one corner column without the dial; icons in tinted tiles, water drops for Low spot |
 | v0.38 | Warm Individual ramp (yellow → red-brown) and charcoal selection; "Total / Individual", "Total area covered" / "New area covered"; both units shown, share at equal weight, 0 at today; clickable level chips; controls at the screen's right edge under the card; Insights 360 px; hollow low-spot icon |
 | v0.39 | Area and share in soft tinted boxes, centred, 6 px apart; km² / acres switch under the number (one unit at a time again); square centred level chips; the panel tightens on short windows |
+| v0.40 | The owner's yellow → orange swatches for Individual; "0 ft" instead of "Today"; level chips with 6 px corners; frame corners instead of the house; compass kept |
 
 ---
 

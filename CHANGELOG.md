@@ -43,8 +43,22 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.37 | 4 Nov 2026 | New layered colours with white edges, Overview / Layered, controls in the corner, icon tiles | [`docs/versions/v0.37/`](docs/versions/v0.37/) |
 | v0.38 | 4 Nov 2026 | Warm Individual colours, Total / Individual, both units, controls at the screen's edge | [`docs/versions/v0.38/`](docs/versions/v0.38/) |
 | v0.39 | 4 Nov 2026 | Figures in tinted boxes, a km² / acres switch, square level chips | [`docs/versions/v0.39/`](docs/versions/v0.39/) |
+| v0.40 | 4 Nov 2026 | The owner's yellow → orange swatches, "0 ft", rounded level chips, frame icon | [`docs/versions/v0.40/`](docs/versions/v0.40/) |
 
 ---
+
+## v0.40: The owner's swatches, "0 ft" and a frame icon (4 Nov 2026)
+
+From the owner's notes on v0.39. The name for today, the chip corners and the icon were picked from options; the owner also asked whether the compass is needed and kept it.
+
+- **Individual colours are now the owner's own swatches**, yellow → orange: `#f3f351` `#f0dd4a` `#f0b33f` `#ec9a38` `#e77631` `#e7612a` (0 ft to +5 ft). These are six of the eight colours in their reference, picked to stay furthest apart.
+  - Measured, neighbouring levels are closer than v0.38's ramp: ΔE 3.9 for normal vision and 2.8 for colour-blind vision, against 7.3 and 6.8. The thin white edges between levels help tell them apart.
+- **Today's level is "0 ft"**, everywhere: the slider, the legend, the place card's track, and its answer ("Water reaches at · 0 ft"). Every level now reads as a number.
+- **The level chips have 6 px corners**, like the toggles and the figure boxes. They were square in v0.39.
+- **"Entire Miami Beach" shows frame corners**, the usual "fit to view" symbol, instead of a house, which the owner found misleading.
+- **The compass stays.** On a map you can turn, it's the standard way to show north. FloodLens's 3D view starts turned about 15°, so without it nothing says the map isn't north-up.
+- **Suggested, not changed:** a primary colour other than blue (ink `#1f2937` recommended; deep teal `#0f766e` or deep navy `#1e3a5f` as alternatives). Blue stays until the owner picks one.
+- Tests: 107 unit/component tests and 19 end-to-end tests (new: "0 ft" on the slider, the legend and the card; the frame icon; the new colours on the slider track).
 
 ## v0.39: Figures in boxes (4 Nov 2026)
 
