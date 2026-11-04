@@ -40,8 +40,25 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.34 | 3 Nov 2026 | Review feedback: colour modes, upright slider, map controls at the bottom, floating Insights | [`docs/versions/v0.34/`](docs/versions/v0.34/) |
 | v0.35 | 3 Nov 2026 | Owner's pass on v0.34: Single / Layered beside Sea level, new layered colours, one control column with a dial, no-scroll left panel | [`docs/versions/v0.35/`](docs/versions/v0.35/) |
 | v0.36 | 4 Nov 2026 | Land underwater moves beside the slider; Insights only for the selection | [`docs/versions/v0.36/`](docs/versions/v0.36/) |
+| v0.37 | 4 Nov 2026 | New layered colours with white edges, Overview / Layered, controls in the corner, icon tiles | [`docs/versions/v0.37/`](docs/versions/v0.37/) |
 
 ---
+
+## v0.37: Colours, words, corner controls and icon tiles (4 Nov 2026)
+
+From the owner's notes on v0.36. The words, the unit menu, the control layout and the icon tiles were picked from side-by-side options.
+
+- **New Layered colours, chosen by the owner:** +1 ft `#a9d9f5`, +2 ft `#6fb9e8`, +3 ft `#3593d2`, +4 ft `#1168b2`, +5 ft `#083d77`. Today is a lighter tint, `#ddf0fb`.
+  - Measured at 85% over the land, the closest neighbouring pair is OKLab ΔE 9.6 for normal vision and 8.6 for colour-blind vision (v0.36: 10.0 and 9.1). +1 ft is still close to the map's water (ΔE 2).
+- **A faint white edge round each level** in Layered colours (white at 55%, 0.6 px, from street zoom), the owner's suggestion, so neighbouring levels and the shoreline read apart. Overview colours keep the edge in the fill's colour, since one colour has no levels to separate. Fill opacity stays 85%, inside the suggested 85–95%.
+- **"Overview / Layered"** replace "Single / Layered", the owner's pick.
+- **One word tells the figures apart:** "Underwater at +2 ft" (Overview) and "Newly underwater at +2 ft" (Layered), replacing "Total submerged area" and "Additional submerged area". "Underwater" is the app's word everywhere else and plainer than "submerged". At today's high tide: "At today's high tide · None yet".
+- **The unit is a small menu right after the number** ("0.99 km² ⌄"), replacing the km² / acres switch at the bottom of the column.
+- **Insights is a fixed 380 px**, with no resize handle and no close tab. The left panel still collapses.
+- **All map controls in the bottom-right corner**, 16 px from both edges, in one slim column. The round dial is gone: in 3D, turning and tilting are two pairs of plain buttons, like zoom. The scale bar and credit moved left of the column.
+- **Icons in tinted tiles on the place card:** 36 px for the building or spot, 20 px for the coordinates (now under the title instead of in a chip), 28 px for Height, Footprint and Low spot.
+- **A new Low spot icon:** water drops, for water that pools there. The arrow down to a line looked like a download icon.
+- Tests: 106 unit/component tests in 13 files (the panel-width tests went with the resize handle; new: the icon tiles and the low-spot icon, the unit menu) and 19 end-to-end tests (new: Insights fixed at 380 px with no resize or close; the control column in the corner with the scale bar and credit to its left; replaced: the resize test).
 
 ## v0.36: Land underwater beside the slider (4 Nov 2026)
 

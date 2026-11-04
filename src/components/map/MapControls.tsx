@@ -33,43 +33,25 @@ function Group({ children, label }: { children: ReactNode; label: string }) {
 
 /**
  * A map button with its name in a tooltip on hover and keyboard focus (v0.34), so every
- * control says what it does without a click. The tooltips open to the left of the column,
- * away from the map edge, and never over a neighbouring button (v0.35).
+ * control says what it does without a click. The tooltip opens to the left, away from the map
+ * edge. In a column group: a divider above every button but the first, and the group's corners.
  */
-function Btn({
-  label,
-  onClick,
-  children,
-  pressed,
-  tipGap = 8,
-  className,
-}: {
-  label: string
-  onClick: () => void
-  children: ReactNode
-  pressed?: boolean
-  /** Pixels from the button's left edge to the tooltip, to clear buttons further left. */
-  tipGap?: number
-  /** Replaces the size and shape (the compass dial's round buttons). By default the button sits
-   *  in a column group: a divider above every button but the first, and the group's corners. */
-  className?: string
-}) {
+function Btn({ label, onClick, children, pressed }: { label: string; onClick: () => void; children: ReactNode; pressed?: boolean }) {
   return (
     <button
       type="button"
       aria-label={label}
       aria-pressed={pressed}
       onClick={onClick}
-      className={`group/btn relative grid place-items-center border-line text-fg-muted transition-colors hover:bg-surface-3 hover:text-fg focus-visible:outline-offset-[-2px] ${
-        className ?? 'size-8 not-first:border-t first:rounded-t-xl last:rounded-b-xl'
-      } ${pressed ? 'bg-accent-soft text-accent hover:bg-accent-soft hover:text-accent' : ''}`}
+      className={`group/btn relative grid size-8 place-items-center border-line text-fg-muted transition-colors not-first:border-t first:rounded-t-xl last:rounded-b-xl hover:bg-surface-3 hover:text-fg focus-visible:outline-offset-[-2px] ${
+        pressed ? 'bg-accent-soft text-accent hover:bg-accent-soft hover:text-accent' : ''
+      }`}
     >
       {children}
       {/* Group overflow stays visible so the tooltip isn't clipped; hence the corners above. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute top-1/2 right-full z-20 -translate-y-1/2 rounded-md bg-fg/90 px-2 py-1 text-[12px] leading-4 font-medium whitespace-nowrap text-white opacity-0 transition-opacity delay-150 group-hover/btn:opacity-100 group-focus-visible/btn:opacity-100"
-        style={{ marginRight: tipGap }}
+        className="pointer-events-none absolute top-1/2 right-full z-20 mr-2 -translate-y-1/2 rounded-md bg-fg/90 px-2 py-1 text-[12px] leading-4 font-medium whitespace-nowrap text-white opacity-0 transition-opacity delay-150 group-hover/btn:opacity-100 group-focus-visible/btn:opacity-100"
       >
         {label}
       </span>
@@ -77,6 +59,7 @@ function Btn({
   )
 }
 
+/** The compass needle, turned with the map so it always points north. */
 function Needle({ bearing }: { bearing: number }) {
   return (
     <svg viewBox="0 0 16 16" className="size-4" style={{ transform: `rotate(${-bearing}deg)` }} aria-hidden>
@@ -86,22 +69,16 @@ function Needle({ bearing }: { bearing: number }) {
   )
 }
 
-/** A round button on the compass dial. */
-const DIAL_BTN = 'size-6 rounded-full'
-
 /**
- * Map navigation (v0.35): one slim column in the bottom-right corner, so the rest of the map
- * stays clear. From the top: 2D over 3D (stacked again in v0.36), back to the whole city, the
- * compass, zoom. The column starts 88 px up, 12 px clear of the scale bar (v0.36: at 68 px the
- * zoom-out button covered the bar's top). In 3D the
- * compass becomes a dial with arrows around it to turn and tilt the view (not every trackpad or
- * mouse can); clicking the needle in the middle turns the map back to north. v0.34 had the view
- * buttons top right and a separate Rotate/Tilt card.
+ * Map navigation (v0.37): one slim column in the bottom-right corner of the map, with the scale
+ * bar and credit moved to its left. From the top: 2D over 3D, back to the whole city, then in
+ * 3D two pairs of plain buttons to turn and to tilt (not every trackpad or mouse can), then the
+ * compass and zoom. v0.35–v0.36 had a round dial for turning and tilting; v0.34 a labelled panel.
  */
 export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOut, onResetNorth, onShowAll, onSetMode, onRotate, onTilt }: Props) {
   return (
     <div
-      className="pointer-events-auto absolute right-4 bottom-[88px] z-10 flex w-[72px] flex-col items-center gap-2"
+      className="pointer-events-auto absolute right-4 bottom-4 z-10 flex flex-col gap-2"
       data-pitch={Math.round(pitch)}
       data-bearing={Math.round(bearing)}
       data-zoom={zoom.toFixed(1)}
@@ -119,36 +96,31 @@ export function MapControls({ viewMode, bearing, pitch, zoom, onZoomIn, onZoomOu
           <House className="size-4" aria-hidden />
         </Btn>
       </Group>
-      {viewMode === '3d' ? (
-        // A 3 × 3 grid in a circle: tilt arrows above and below the needle, turn arrows either side.
-        <div
-          role="group"
-          aria-label="Compass, turn and tilt"
-          className="glass grid size-[72px] grid-cols-3 grid-rows-3 place-items-center rounded-full border border-white/80"
-        >
-          <Btn label="Tilt up" tipGap={32} className={`${DIAL_BTN} col-start-2`} onClick={() => onTilt(TILT_STEP)}>
-            <ChevronUp className="size-3.5" aria-hidden />
-          </Btn>
-          <Btn label="Rotate left" className={`${DIAL_BTN} col-start-1 row-start-2`} onClick={() => onRotate(ROTATE_STEP)}>
-            <RotateCcw className="size-3.5" aria-hidden />
-          </Btn>
-          <Btn label="Point north" tipGap={32} className={`${DIAL_BTN} col-start-2 row-start-2`} onClick={onResetNorth}>
-            <Needle bearing={bearing} />
-          </Btn>
-          <Btn label="Rotate right" tipGap={56} className={`${DIAL_BTN} col-start-3 row-start-2`} onClick={() => onRotate(-ROTATE_STEP)}>
-            <RotateCw className="size-3.5" aria-hidden />
-          </Btn>
-          <Btn label="Tilt down" tipGap={32} className={`${DIAL_BTN} col-start-2 row-start-3`} onClick={() => onTilt(-TILT_STEP)}>
-            <ChevronDown className="size-3.5" aria-hidden />
-          </Btn>
-        </div>
-      ) : (
-        <Group label="Compass">
-          <Btn label="Point north" onClick={onResetNorth}>
-            <Needle bearing={bearing} />
-          </Btn>
-        </Group>
+      {viewMode === '3d' && (
+        <>
+          <Group label="Turn">
+            <Btn label="Rotate left" onClick={() => onRotate(ROTATE_STEP)}>
+              <RotateCcw className="size-4" aria-hidden />
+            </Btn>
+            <Btn label="Rotate right" onClick={() => onRotate(-ROTATE_STEP)}>
+              <RotateCw className="size-4" aria-hidden />
+            </Btn>
+          </Group>
+          <Group label="Tilt">
+            <Btn label="Tilt up" onClick={() => onTilt(TILT_STEP)}>
+              <ChevronUp className="size-4" aria-hidden />
+            </Btn>
+            <Btn label="Tilt down" onClick={() => onTilt(-TILT_STEP)}>
+              <ChevronDown className="size-4" aria-hidden />
+            </Btn>
+          </Group>
+        </>
       )}
+      <Group label="Compass">
+        <Btn label="Point north" onClick={onResetNorth}>
+          <Needle bearing={bearing} />
+        </Btn>
+      </Group>
       <Group label="Zoom">
         <Btn label="Zoom in" onClick={onZoomIn}>
           <Plus className="size-4" aria-hidden />

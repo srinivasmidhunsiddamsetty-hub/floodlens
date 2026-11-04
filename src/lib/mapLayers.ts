@@ -1,7 +1,7 @@
 import type { FeatureCollection } from 'geojson'
 import type { DataDrivenPropertyValueSpecification, ExpressionSpecification, GeoJSONSource, Map as MLMap } from 'maplibre-gl'
 import { GROUND_OVERLAY_BEFORE } from './mapStyle'
-import { BAND_COLORS, colors, opacity, SIMPLE_COLOR, type ColorMode } from './theme'
+import { BAND_COLORS, BAND_EDGE, colors, opacity, SIMPLE_COLOR, type ColorMode } from './theme'
 
 export const SRC = {
   flood: 'fl-flood',
@@ -73,11 +73,20 @@ export function bandColorExpr(mode: ColorMode): DataDrivenPropertyValueSpecifica
   ] as unknown as ExpressionSpecification
 }
 
+/** The edge round each flood band: a faint white line with Layered colours, the fill's colour otherwise (v0.37). */
+export function bandEdgePaint(mode: ColorMode) {
+  return mode === 'simple'
+    ? { color: bandColorExpr(mode), opacity: 0.9 }
+    : { color: BAND_EDGE.color as DataDrivenPropertyValueSpecification<string>, opacity: BAND_EDGE.opacity }
+}
+
 /** Recolour the flood bands when the colour mode changes. */
 export function setBandColors(map: MLMap, mode: ColorMode) {
   if (!map.getLayer(LYR.floodFill)) return
+  const edge = bandEdgePaint(mode)
   map.setPaintProperty(LYR.floodFill, 'fill-color', bandColorExpr(mode))
-  map.setPaintProperty(LYR.floodLine, 'line-color', bandColorExpr(mode))
+  map.setPaintProperty(LYR.floodLine, 'line-color', edge.color)
+  map.setPaintProperty(LYR.floodLine, 'line-opacity', edge.opacity)
 }
 
 /**
@@ -116,7 +125,7 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode) {
       type: 'line',
       source: SRC.flood,
       minzoom: 14,
-      paint: { 'line-color': bandColorExpr(mode), 'line-width': 0.6, 'line-opacity': 0.9 },
+      paint: { 'line-color': bandEdgePaint(mode).color, 'line-width': BAND_EDGE.width, 'line-opacity': bandEdgePaint(mode).opacity },
     },
     ground,
   )

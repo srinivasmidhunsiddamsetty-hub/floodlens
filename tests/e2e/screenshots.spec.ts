@@ -36,9 +36,9 @@ test.describe('screenshots', () => {
     await page.screenshot({ path: `${OUT}/04-about-data.png` })
     await page.keyboard.press('Escape')
 
-    // South Beach in 3D at +2 ft in Single colours, with a building selected (Euclid Avenue at this viewport)
+    // South Beach in 3D at +2 ft in Overview colours, with a building selected (Euclid Avenue at this viewport)
     await page.keyboard.press('Escape')
-    await page.getByRole('radio', { name: 'Single' }).click()
+    await page.getByRole('radio', { name: 'Overview' }).click()
     await page.getByRole('slider').focus()
     await page.keyboard.press('ArrowLeft', { delay: 50 })
     await page.keyboard.press('ArrowLeft', { delay: 50 })
@@ -63,7 +63,7 @@ test.describe('screenshots', () => {
 
     // The sea-level figures in acres
     await page.keyboard.press('Escape')
-    await page.getByRole('radio', { name: 'Acres' }).click()
+    await page.getByRole('combobox', { name: 'Area unit' }).selectOption('acres')
     await page.waitForTimeout(800)
     await page.screenshot({ path: `${OUT}/10-sea-level-acres.png` })
   })

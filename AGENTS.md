@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.36 (tag `v0.36`): land underwater beside the slider; Insights only for the selection.
+- **Current version:** v0.37 (tag `v0.37`): new layered colours, clearer sea-level words, controls in one corner column, icon tiles.
 - **Test status at handoff:**
-  - 109 unit and component tests in 14 files pass.
+  - 106 unit and component tests in 13 files pass.
   - 19 end-to-end tests pass, all at 1440×900.
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -83,8 +83,8 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
 - **Legend (v0.34, v0.35):** a slim vertical colour scale, bottom left, shown **only with Layered colours**: only the sea-level colours, today at the bottom, the chosen level in bold. No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. It is a **static key**: nothing in it may be clickable (v0.28). (The chart that spotlighted levels was removed in v0.36.)
-- **Colour modes (v0.34):** a "Single / Layered" toggle beside the "Sea level" title (v0.35), with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Single (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Layered uses `BAND_COLORS`. Everything that shows flood colour takes the mode: map, slider track, chart, "adds" row, Flooding swatch, legend.
-- **Layered ramp (v0.35):** +1 to +5 ft are the owner's colours (`#a6d8ed #6db6db #338ec4 #1766a1 #083b75`); today is a lighter tint, `#dceff5`. Measured at 85% over the land: worst neighbouring pair OKLab ΔE 10.0 (colour-blind 9.1). +1 ft is almost the basemap water colour (ΔE 1). Don't change it without the owner.
+- **Colour modes (v0.34):** an "Overview / Layered" toggle beside the "Sea level" title (v0.37 names), with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Overview (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Layered uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, chart, "adds" row, Flooding swatch, legend.
+- **Layered ramp (v0.37):** +1 to +5 ft are the owner's colours (`#a9d9f5 #6fb9e8 #3593d2 #1168b2 #083d77`); today is a lighter tint, `#ddf0fb`. Measured at 85% over the land: worst neighbouring pair OKLab ΔE 9.6 (colour-blind 8.6). +1 ft is close to the basemap water colour (ΔE 2). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
 **Card typography (as agreed):**
 
@@ -94,17 +94,18 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | Labels (Height, Footprint, Low spot, "Water reaches at") | 14 px medium, sentence case, black (not grey) |
 | Fact values | 20 px medium |
 | The answer ("+2 ft") | 24 px bold |
-| Sea level figure label (v0.36): "Total / Additional submerged area" | 12 px medium, black, one line |
-| Sea level figure: the area | 24 px bold, unit 13 px |
+| Sea level figure label: "Underwater at +2 ft" / "Newly underwater at +2 ft" (v0.37) | 12 px medium, black, one line |
+| Sea level figure: the area | 24 px bold, then the unit menu (13 px) |
+| Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
 **Layout (v0.35): desktop and laptop only.**
 
 - The left panel is docked on the grey canvas, 280 px wide.
-- The Insights cards float over the right of the map with no panel behind them (v0.34, as in v0.27–v0.31). The column is 380 px by default, resizable from 300 to 560 px, and remembered per browser. The map's camera is padded by that width (`rightInset` in `MapView`).
-- Edge tabs collapse each side.
+- The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 380 px wide (v0.37: no resize handle, no close tab; the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
+- The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36): no big "+2 ft". Beside the slider: "Total submerged area" (Single) or "Additional submerged area" (Layered), the area, "N% of the city's land", and the km² / acres switch. The low-spot area sits under the Low spots switch while that layer is on.
-- Map controls (v0.35): one slim column at the bottom right: 2D over 3D (stacked, v0.36), "Entire Miami Beach" (house icon), the compass, zoom. It starts 88 px up so zoom clears the scale bar. In 3D the compass is a dial: tilt arrows above and below the needle, turn arrows either side, the needle faces north. Every map button has a tooltip that opens left of the column.
+- Sea level card (v0.36, v0.37): no big "+2 ft". Beside the slider: "Underwater at +2 ft" (Overview) or "Newly underwater at +2 ft" (Layered), the area with a small km² / acres menu right after it, and "N% of the city's land". The word is "underwater", never "submerged" or "flooded". The low-spot area sits under the Low spots switch while that layer is on.
+- Map controls (v0.37): one slim column in the map's bottom-right corner, 16 px from both edges: 2D over 3D, "Entire Miami Beach" (house icon), in 3D a turn pair and a tilt pair, the compass, zoom. All plain 32 px buttons; no dial (the owner disliked it). The scale bar and credit sit left of the column (`.maplibregl-ctrl-bottom-right` adds 48 px). Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
 - The left panel must fit without scrolling in windows down to about 650 px tall (v0.35). The slider shrinks from 168 to 116 px on short windows to make room (`TRACK_H` in `ScenarioSelector`).
 - One layout, made for screens 1024 px wide and up. A narrower window scrolls sideways (`#root` has `min-width: 1024px`), and the viewport meta is `width=1280`. Don't add phone or tablet layouts; the owner removed them on purpose.
@@ -132,13 +133,13 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 ```
 src/
   App.tsx                     layout: top bar, docked left panel, map with the Insights cards floating over its right side
-  state/reducer.ts            single typed reducer: scenarioFt, layers, viewMode, selection, dialog, panels, areaUnit, colorMode
+  state/reducer.ts            single typed reducer: scenarioFt, layers, viewMode, selection, dialog, panels (left only), areaUnit, colorMode
   components/map/MapView.tsx  owns every MapLibre call: style, layers, picking, camera, credit, chips, controls
   components/map/             MapControls, AreaBookmarks (chips), MapLegend (static vertical colour scale), MapStatus
   components/insights/        InsightPanel (selection card or prompt), InspectionCard (selected place), LevelTrack (D3)
-  components/controls/        ControlPanel (Single / Layered toggle in the Sea level title), ScenarioSelector (upright slider), SubmergedArea (the figures beside it)
+  components/controls/        ControlPanel (Overview / Layered toggle in the Sea level title), ScenarioSelector (upright slider), SubmergedArea (the figures beside it)
   components/dialogs/         AboutDataDialog, DataSourcesDialog
-  hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), usePanelWidth, useMediaQuery (reduced motion)
+  hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), useMediaQuery (reduced motion)
   lib/                        pure, unit-tested: format, geo, manifest, mapStyle, mapLayers, buildingPick, theme, constants
 public/data/noaa/             processed GeoJSON + manifest.json (committed; about 26 MB)
 scripts/prepare_noaa_slr.py   offline data pipeline (Python, Shapely, pyproj, pyogrio)
@@ -155,8 +156,8 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
   - The camera-reset effect sets it.
   - `moveend` clears it.
   - While it is set, no chip is lit as the camera zooms out.
-- **Floating Insights:** `MapView` pads the camera by `rightInset`, and `overviewCamera` subtracts it from the width. Chips, controls and status sit in an overlay that stops at the cards; `.maplibregl-ctrl-bottom-right` uses `--map-inset-right`. The collapse tab must stay below the resize handle (z-10), or it blocks the handle.
-- **Sea level figures:** Single shows `beyondBaselineM2` at the level; Layered shows the difference from the level below (`submergedM2` in `lib/manifest.ts`), never the diff polygons' `areaM2`, so the parts sum to the total. Both shares divide by `censusLandM2`.
+- **Floating Insights:** `MapView` pads the camera by `rightInset`, and `overviewCamera` subtracts it from the width. Chips, controls and status sit in an overlay that stops at the cards; `.maplibregl-ctrl-bottom-right` uses `--map-inset-right` plus 48 px, to sit left of the control column.
+- **Sea level figures:** Overview shows `beyondBaselineM2` at the level; Layered shows the difference from the level below (`submergedM2` in `lib/manifest.ts`), never the diff polygons' `areaM2`, so the parts sum to the total. Both shares divide by `censusLandM2`.
 - **Inspection:** `useInspection` does not depend on the slider. It checks every level, so the slider must not re-run it.
 - **Flood bands:** the `diff_Nft_Mft.geojson` files are differences between neighbouring levels, computed and validated offline (see `manifest.processing.validation`). Low-lying areas (`low_*.geojson`) are a separate layer and are never merged with the ocean-connected extents.
 
@@ -173,7 +174,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 109 tests
+npm test                 # Vitest: 106 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -240,8 +241,9 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.32 | Insights docked in a grey panel again, matching the left (the owner wanted both sides consistent) |
 | v0.33 | Desktop and laptop only: the phone and tablet layout and its tests removed |
 | v0.34 | Review feedback: Simple/Detailed colour modes and a clearer Detailed ramp; upright slider and "Step up to +5 ft"; zoom, rotate and tilt at the bottom; "Entire Miami Beach" with a house icon; vertical colour scale for the legend; Insights cards float again; spot card without Height and Footprint |
-| v0.36 | Land underwater beside the slider (Single: total; Layered: added, as the difference of totals); Insights only for the selection; chart removed; low-spot area under its switch; 2D over 3D; zoom clear of the scale bar |
 | v0.35 | Owner's pass: no play or (i) button; "Single / Layered" beside Sea level; left panel fits without scrolling; legend only in Layered, no low spot, takes the pointer; owner's layered colours; one bottom-right control column with a turn-and-tilt dial |
+| v0.36 | Land underwater beside the slider (Single: total; Layered: added, as the difference of totals); Insights only for the selection; chart removed; low-spot area under its switch; 2D over 3D; zoom clear of the scale bar |
+| v0.37 | Owner's colours with a faint white edge; "Overview / Layered" and "Underwater" / "Newly underwater at +2 ft"; unit menu after the number; Insights fixed at 380 px, no close tab; controls in one corner column without the dial; icons in tinted tiles, water drops for Low spot |
 
 ---
 

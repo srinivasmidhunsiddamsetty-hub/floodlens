@@ -278,8 +278,9 @@
   box-shadow: var(--shadow-panel);
 }
 /* Scale bar and attribution stay left of the floating Insights cards (v0.34, as in v0.27). */
+/* Left of the map's control column (v0.37): the column is 32 px wide, 16 px from the edge. */
 .maplibregl-ctrl-bottom-right {
-  right: var(--map-inset-right, 0px);
+  right: calc(var(--map-inset-right, 0px) + 48px);
 }
 .maplibregl-ctrl-scale {
   background: rgb(255 255 255 / 0.8);

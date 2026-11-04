@@ -63,21 +63,30 @@ export const SIMPLE_COLOR = '#3d84e6'
 
 /**
  * Detailed mode: the level where water first reaches each area, light → dark as the sea
- * rises (more water, darker). +1 ft to +5 ft are the owner's colours (v0.35). Drawn at 85%
- * over the land, the closest neighbouring pair is OKLab ΔE 10.0 for normal vision and 9.1 for
- * colour-blind vision (v0.34's ramp: 10.1 and 9.3). +1 ft is close to the basemap's water
- * colour (ΔE 1). Today is a lighter tint of the same blue.
+ * rises (more water, darker). +1 ft to +5 ft are the owner's colours (v0.37). Drawn at 85%
+ * over the land, the closest neighbouring pair is OKLab ΔE 9.6 for normal vision and 8.6 for
+ * colour-blind vision (v0.35's ramp: 10.0 and 9.1). +1 ft is close to the basemap's water
+ * colour (ΔE 2); the white edge on each level (`BAND_EDGE`) helps there. Today is a lighter
+ * tint of the same blue.
+ * v0.35–v0.36: #dceff5 #a6d8ed #6db6db #338ec4 #1766a1 #083b75.
  * v0.34: #80cffd #4ba3f7 #3672e9 #3a45c8 #31248a #1c0b4d.
  * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#dceff5',
-  1: '#a6d8ed',
-  2: '#6db6db',
-  3: '#338ec4',
-  4: '#1766a1',
-  5: '#083b75',
+  0: '#ddf0fb',
+  1: '#a9d9f5',
+  2: '#6fb9e8',
+  3: '#3593d2',
+  4: '#1168b2',
+  5: '#083d77',
 }
+
+/**
+ * Layered colours only (v0.37): a thin, faint white line round each level, so neighbouring
+ * levels and the shoreline read apart (the owner's suggestion). With one colour it would draw
+ * lines inside the water, so Single colours keep the edge in the fill's colour.
+ */
+export const BAND_EDGE = { color: '#ffffff', opacity: 0.55, width: 0.6 } as const
 
 export const bandColor = (feet: number, mode: ColorMode = 'detailed') =>
   mode === 'simple' ? SIMPLE_COLOR : (BAND_COLORS[feet] ?? BAND_COLORS[2])

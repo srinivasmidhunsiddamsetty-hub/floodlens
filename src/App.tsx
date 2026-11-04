@@ -7,12 +7,16 @@ import { InsightPanel } from './components/insights/InsightPanel'
 import { TopBar } from './components/layout/TopBar'
 import { MapLegend } from './components/map/MapLegend'
 import { MapView } from './components/map/MapView'
-import { ResizeHandle } from './components/ui/ResizeHandle'
 import { useInspection } from './hooks/useInspection'
 import { useManifest } from './hooks/useManifest'
 import { useMapData } from './hooks/useMapData'
-import { INSIGHTS_WIDTH, usePanelWidth } from './hooks/usePanelWidth'
 import { useAppDispatch, useAppState } from './state/AppState'
+
+/**
+ * Insights width (v0.37): fixed, with no resize handle or close tab, at the width long card
+ * titles were measured for (v0.27). The owner wants it simply wide enough.
+ */
+const INSIGHTS_WIDTH = 380
 
 /** Desktop and laptop only (v0.33): a docked panel on the left; the Insights cards float over the right of the map (v0.34). */
 export default function App() {
@@ -22,7 +26,6 @@ export default function App() {
   const manifest = manifestState.manifest
   const mapData = useMapData(manifest, state)
   const inspection = useInspection(state.selection, manifest)
-  const insightsWidth = usePanelWidth('floodlens.insightsWidth', INSIGHTS_WIDTH)
 
   // Esc clears the selection anywhere (dialogs handle their own Esc first).
   useEffect(() => {
@@ -33,7 +36,7 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [dispatch, state.dialog, state.selection])
 
-  const { controls: controlsOpen, insights: insightsOpen } = state.panels
+  const controlsOpen = state.panels.controls
 
   return (
     <div className="flex h-full flex-col">
@@ -55,7 +58,7 @@ export default function App() {
           <MapView
             data={mapData}
             studyBbox={manifest?.studyArea.bbox ?? null}
-            rightInset={insightsOpen ? insightsWidth.width : 0}
+            rightInset={INSIGHTS_WIDTH}
           />
 
           <div className="pointer-events-none absolute bottom-4 left-4 z-10">
@@ -77,36 +80,12 @@ export default function App() {
           >
             {controlsOpen ? <ChevronLeft className="size-3.5" aria-hidden /> : <ChevronRight className="size-3.5" aria-hidden />}
           </button>
-          {/* Sits in the 20 px gutter beside the floating cards, or at the edge when they're hidden. */}
-          <button
-            type="button"
-            onClick={() => dispatch({ type: 'setPanel', panel: 'insights', open: !insightsOpen })}
-            style={{ right: insightsOpen ? insightsWidth.width - 20 : 0 }}
-            className="absolute top-1/2 z-10 grid h-12 w-5 -translate-y-1/2 place-items-center rounded-l border border-r-0 border-line bg-surface text-fg-subtle shadow-panel hover:text-fg"
-            aria-label={insightsOpen ? 'Collapse insights' : 'Expand insights'}
-            aria-expanded={insightsOpen}
-            aria-controls="insight-panel"
-          >
-            {insightsOpen ? <ChevronRight className="size-3.5" aria-hidden /> : <ChevronLeft className="size-3.5" aria-hidden />}
-          </button>
-
           {/* ---------------- Right: insights. The cards float over the map with no panel behind
               them (v0.34, as in v0.27–v0.31; docked in v0.32–v0.33); the map is padded so they never
-              hide the city. */}
-          {insightsOpen && (
-            <aside id="insight-panel" aria-label="Insights" className="pointer-events-none absolute inset-y-0 right-0 z-20" style={{ width: insightsWidth.width }}>
-              <ResizeHandle
-                width={insightsWidth.width}
-                min={insightsWidth.min}
-                max={insightsWidth.max}
-                onChange={insightsWidth.setWidth}
-                onReset={insightsWidth.reset}
-                controls="insight-panel"
-                label="Resize insights panel"
-              />
-              <InsightPanel manifestState={manifestState} inspection={inspection} />
-            </aside>
-          )}
+              hide the city. Always shown, at a fixed width (v0.37). */}
+          <aside id="insight-panel" aria-label="Insights" className="pointer-events-none absolute inset-y-0 right-0 z-20" style={{ width: INSIGHTS_WIDTH }}>
+            <InsightPanel manifestState={manifestState} inspection={inspection} />
+          </aside>
         </main>
       </div>
 

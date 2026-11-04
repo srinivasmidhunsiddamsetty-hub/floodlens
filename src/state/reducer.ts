@@ -38,8 +38,8 @@ export interface AppState {
   cameraResetToken: number
   /** Incremented to inspect the location at the map centre (keyboard alternative to clicking). */
   inspectCenterToken: number
-  /** Side panels; each collapses with its edge tab. */
-  panels: { controls: boolean; insights: boolean }
+  /** The left panel collapses with its edge tab; Insights is always shown (v0.37). */
+  panels: { controls: boolean }
   /** Unit for areas in the Insights panel; remembered in this browser. */
   areaUnit: AreaUnit
   /** One colour for all the water, or a colour for each foot (v0.34); remembered in this browser. */
@@ -72,7 +72,7 @@ export const initialState: AppState = {
   dialog: null,
   cameraResetToken: 0,
   inspectCenterToken: 0,
-  panels: { controls: true, insights: true },
+  panels: { controls: true },
   areaUnit: 'km2',
   colorMode: 'simple',
 }

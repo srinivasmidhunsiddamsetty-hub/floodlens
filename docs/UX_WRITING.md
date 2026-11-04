@@ -177,6 +177,19 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | --- | --- | --- |
 | Card, low spot | Low spot: Yes, from +2 ft / 108,363 m² of it, cut off from the sea | Low spot: Yes, from +2 ft (the caption's area was the whole low spot's, not the building's) |
 
+## Before and after (v0.36 → v0.37)
+
+From the owner's notes. "Underwater" replaces "submerged": it's the app's word everywhere else, and plainer.
+
+| Where | Before | After |
+| --- | --- | --- |
+| Mode toggle | Single / Layered | Overview / Layered |
+| Figure, Overview | Total submerged area | Underwater at +2 ft |
+| Figure, Layered | Additional submerged area | Newly underwater at +2 ft |
+| Figure at today's high tide | Total submerged area · None yet | At today's high tide · None yet |
+| Unit | km² / acres switch under the figure | km² ⌄ menu right after the number |
+| Map controls, 3D | (a round dial with arrows) | Rotate left · Rotate right · Tilt up · Tilt down, as plain buttons |
+
 ## Before and after (v0.35 → v0.36)
 
 From the owner's spec. "Submerged" is the owner's word for the left-panel figures.

@@ -1,4 +1,4 @@
-import { ArrowDownToLine, Building2, Crosshair, LandPlot, Loader2, MapPin, Ruler, Waves, X, type LucideIcon } from 'lucide-react'
+import { Building2, Crosshair, Droplets, LandPlot, Loader2, MapPin, Ruler, Waves, X, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCoord, formatScenario, formatSmallArea } from '../../lib/format'
 import type { InspectionState } from '../../hooks/useInspection'
@@ -14,18 +14,14 @@ interface Props {
 
 const levelName = (ft: number) => (ft === 0 ? 'Today' : formatScenario(ft))
 
-function Chip({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-[3px] text-[12px] leading-4 whitespace-nowrap text-fg-muted tabular">
-      <Icon className="size-3.5 shrink-0 text-fg-subtle" aria-hidden />
-      {children}
-    </span>
-  )
-}
+/** Icon colour and its tile's light fill (v0.37). */
+const TINTS = {
+  blue: { fg: '#1f5fd0', bg: '#e9f0fc' },
+  violet: { fg: '#5b4bd1', bg: '#efedfb' },
+  green: { fg: '#1d7a3e', bg: '#e8f4ec' },
+} as const
 
-const TINTS = { blue: '#1f5fd0', violet: '#5b4bd1', green: '#1d7a3e' } as const
-
-/** One row of the card's single column: tinted icon and label, value on the right, extras underneath. */
+/** One row of the card's single column: icon in a 28 px tinted tile and label, value on the right. */
 function Row({
   icon: Icon,
   tint,
@@ -40,7 +36,9 @@ function Row({
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
       <dt className="flex min-w-0 items-center gap-2.5 text-[14px] leading-5 font-medium text-fg">
-        <Icon className="size-4 shrink-0" style={{ color: TINTS[tint] }} aria-hidden />
+        <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: TINTS[tint].bg, color: TINTS[tint].fg }} aria-hidden>
+          <Icon className="size-4" />
+        </span>
         {label}
       </dt>
       <dd className="text-right text-[20px] leading-7 font-medium text-fg tabular">{value}</dd>
@@ -62,13 +60,25 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
 
   return (
     <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
-      {/* What and where. The vermilion icon matches the selection on the map. */}
-      <div className="flex items-start gap-2">
-        <Icon className="mt-0.5 size-[18px] shrink-0 text-[#d03a22]" aria-hidden />
-        <h3 id="insp-title" className="min-w-0 flex-1 text-[15px] leading-5 font-bold text-fg">
-          {noun}
-          {street && <> near {street.name}</>}
-        </h3>
+      {/* What and where: a 36 px tile for the place (v0.37), its vermilion matching the selection
+          on the map, then the name and, under it, the coordinates with a small tile of their own. */}
+      <div className="flex items-start gap-2.5">
+        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#fdebe7] text-[#d03a22]" aria-hidden>
+          <Icon className="size-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h3 id="insp-title" className="text-[15px] leading-5 font-bold text-fg">
+            {noun}
+            {street && <> near {street.name}</>}
+          </h3>
+          {/* No "N m from street": the title already names the street, and the distance answers nothing about water. */}
+          <p className="mt-1 flex items-center gap-1.5 text-[12px] leading-4 whitespace-nowrap text-fg-muted tabular">
+            <span className="grid size-5 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle" aria-hidden>
+              <Crosshair className="size-3" />
+            </span>
+            {formatCoord(lngLat[0], lngLat[1])}
+          </p>
+        </div>
         <button
           type="button"
           onClick={onClear}
@@ -78,10 +88,6 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
         >
           <X className="size-4" aria-hidden />
         </button>
-      </div>
-      {/* No "N m from street": the title already names the street, and the distance answers nothing about water. */}
-      <div className="mt-1.5 flex">
-        <Chip icon={Crosshair}>{formatCoord(lngLat[0], lngLat[1])}</Chip>
       </div>
 
       {!insideStudyArea && (
@@ -132,8 +138,9 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
               </div>
 
               {/* Facts in one column. Height and footprint only for a building (v0.34): a spot has
-                  neither, so it no longer shows empty rows. Icons (v0.34): a plot of land for the
-                  footprint, and an arrow down to a line for a spot below the water line. */}
+                  neither, so it no longer shows empty rows. Icons in tinted tiles (v0.37): a ruler, a
+                  plot of land for the footprint, and water drops for a low spot, where water pools
+                  (v0.34–v0.36's arrow down to a line read as "download"). */}
               <dl className="mt-1 divide-y divide-line">
                 {building && (
                   <>
@@ -148,7 +155,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                 )}
                 {/* No area caption (v0.31): it showed the whole low-spot area the building touches,
                     not the building's part of it, and the level is what matters. */}
-                <Row icon={ArrowDownToLine} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
+                <Row icon={Droplets} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
               </dl>
             </div>
           )
