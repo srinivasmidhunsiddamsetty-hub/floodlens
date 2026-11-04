@@ -36,14 +36,18 @@ test.describe('FloodLens — core flows', () => {
     await expect(slider).toHaveAttribute('aria-valuetext', '+3 ft above MHHW')
     await expect(figure(page)).toContainText('7.43')
     // The legend is a plain vertical scale, shown with Per foot colours (v0.35): every level listed,
-    // the chosen one marked, nothing a button.
+    // none highlighted (v0.54), and its only button is the minus, which folds it to a square.
     await page.getByRole('radio', { name: 'Per foot' }).click()
     await slider.focus()
     const legendBox = page.getByRole('region', { name: 'Map legend' })
     await expect(legendBox.getByRole('listitem')).toHaveCount(6)
-    await expect(legendBox.getByRole('listitem').filter({ hasText: '+3 ft' })).toContainText('(chosen level)')
-    await expect(legendBox.getByText('(chosen level)')).toHaveCount(1)
-    await expect(legendBox.getByRole('button')).toHaveCount(0)
+    await expect(legendBox.getByText('(chosen level)')).toHaveCount(0)
+    await expect(legendBox.getByRole('button')).toHaveCount(1)
+    await legendBox.getByRole('button', { name: 'Minimise legend' }).click()
+    await expect(legendBox.getByRole('listitem')).toHaveCount(0)
+    await legendBox.getByRole('button', { name: 'Show legend' }).click()
+    await expect(legendBox.getByRole('listitem')).toHaveCount(6)
+    await slider.focus()
 
     await page.keyboard.press('Home')
     await expect(slider).toHaveAttribute('aria-valuetext', 'Current MHHW (0 ft)')
@@ -244,7 +248,7 @@ test.describe('FloodLens — core flows', () => {
     await modes.getByRole('radio', { name: 'Per foot' }).click()
     // Plasma (v0.41): +1 ft orange and +2 ft coral.
     await expect.poll(trackColours).toEqual(['rgb(252, 166, 54)', 'rgb(225, 100, 98)'])
-    await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water first reaches')
+    await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water reaches at')
     await page.reload()
     await waitForMap(page)
     await expect(page.getByRole('radio', { name: 'Per foot' })).toHaveAttribute('aria-checked', 'true')

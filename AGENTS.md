@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.53 (tag `v0.53`): the "Click any building" prompt only until the first click; the share 4 px below the middle.
+- **Current version:** v0.54 (tag `v0.54`): a legend you can minimise, with no highlighted level, titled "Water reaches at".
 - **Test status at handoff:**
-  - 111 unit and component tests in 13 files pass.
+  - 113 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -82,7 +82,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **No blue numbers.** Blue is only for links and selection. Numbers use `text-fg`.
 - **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
-- **Legend (v0.34, v0.35):** a slim vertical colour scale, bottom left, shown **only with Per foot colours**: only the sea-level colours, today at the bottom, the chosen level in bold. No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. It is a **static key**: nothing in it may be clickable (v0.28). (The chart that spotlighted levels was removed in v0.36.)
+- **Legend (v0.34, v0.35, v0.54):** a slim vertical colour scale, bottom left (the owner kept it there in v0.54), shown **only with Per foot colours**: only the sea-level colours, today at the bottom. **No level is highlighted** (v0.54). Title "Water reaches at" (v0.54; keep a title, or "+3 ft" reads as a depth). No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. The rows are a **static key**: nothing in them may be clickable (v0.28). Its only control is a minus that folds it into a 32 px square showing the colours, which opens it again (v0.54, `floodlens.legendMinimised`). (The chart that spotlighted levels was removed in v0.36.)
 - **Colour modes (v0.34):** an "Overall / Per foot" pill toggle beside the "Sea level" title (v0.47; "Total / By level" in v0.41–v0.46). It's "per foot", never "per feet", with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Per foot uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
 - **Per foot ramp (v0.41):** matplotlib's Plasma (`#f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887`, 0 ft to +5 ft), the owner's pick from rendered options: a different colour per level, easy to tell apart. Worst neighbouring pair OKLab ΔE 15.1 (deuteranopia 9.0, protanopia 6.2). +4 ft is close to the low-spot purple; the hatch keeps them apart. v0.40 used the owner's yellow → orange swatches (ΔE 3.9). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
@@ -180,7 +180,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 111 tests
+npm test                 # Vitest: 113 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -266,6 +266,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.51 | Switches without the dark outline (grey knob when off); frosted navy chosen chip without the navy glow; pills matched; the place card's water flows in once and has no dot (it looked draggable); canvas grain fixed |
 | v0.52 | The share's number centred in its box (label resting on it); the water flow-in slowed to 1.8 s |
 | v0.53 | "Click any building" prompt only until the first click; the share 4 px below the middle; label kept off the box edge on the shortest windows |
+| v0.54 | Legend: minus folds it to a square of its colours (remembered), no highlighted level, title "Water reaches at"; stays bottom left |
 
 ---
 

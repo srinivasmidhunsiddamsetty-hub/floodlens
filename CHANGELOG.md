@@ -57,8 +57,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.51 | 4 Nov 2026 | Lighter switches, chip and pills; water that flows in | [`docs/versions/v0.51/`](docs/versions/v0.51/) |
 | v0.52 | 4 Nov 2026 | Centred share figure, slower water | [`docs/versions/v0.52/`](docs/versions/v0.52/) |
 | v0.53 | 4 Nov 2026 | Prompt only until the first click; share 4 px lower | [`docs/versions/v0.53/`](docs/versions/v0.53/) |
+| v0.54 | 4 Nov 2026 | A legend you can minimise, titled "Water reaches at" | [`docs/versions/v0.54/`](docs/versions/v0.54/) |
 
 ---
+
+## v0.54: A legend you can minimise, titled "Water reaches at" (4 Nov 2026)
+
+From the owner's questions on the legend. The options were rendered on the real app, and the owner picked them.
+
+- **The legend stays at the bottom left.** It explains the colours picked in the left panel, and the right side already holds the place card, the map buttons, the scale bar and the credit. Placed on the right, it sat on the scale bar.
+- **It can be minimised** (option B). A minus in its corner folds it into a 32 px frosted square showing a strip of the level colours, and clicking that opens it again. Both buttons have tooltips ("Minimise legend", "Show legend"), and keyboard focus moves to whichever button is shown. The choice is remembered per browser (`floodlens.legendMinimised`). The rows stay a plain key: the minus is the only control.
+- **No level is highlighted.** The slider already shows the chosen level.
+- **Title: "Water reaches at"** (was "Water first reaches"), the same words as the place card's answer. It stays because, without a title, "+3 ft" beside a colour can read as a depth.
+- Tests: 113 unit/component tests (legend: no highlight, the new title, minimise and remember, no focus on load) and 20 end-to-end tests.
 
 ## v0.53: Prompt only until the first click; share 4 px lower (4 Nov 2026)
 

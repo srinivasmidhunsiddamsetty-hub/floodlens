@@ -65,7 +65,6 @@ export default function App() {
           <div className="pointer-events-none absolute bottom-4 left-4 z-10">
             <MapLegend
               bands={mapData.bands}
-              scenarioFt={state.scenarioFt}
               colorMode={state.colorMode}
               showFlood={state.layers.inundation}
             />

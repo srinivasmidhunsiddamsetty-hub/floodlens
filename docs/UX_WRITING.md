@@ -278,3 +278,13 @@ From the review feedback on v0.33.
 | Legend, today | Today's high tide | Today (the scale's labels match the slider's) |
 | Legend, other keys | Water · Building · Selected · City limits | (removed; the "On the map" switches show those swatches) |
 | Card, a spot | Height — / Footprint — / Low spot No | Low spot No |
+
+## Before and after (v0.53 → v0.54)
+
+The owner asked whether the legend needs a title. It does: without one, "+3 ft" beside a colour can read as water 3 ft deep, and FloodLens doesn't map depth. The title now uses the place card's words.
+
+| Where | Before | After |
+| --- | --- | --- |
+| Legend title | Water first reaches | Water reaches at (the same words as the place card's answer) |
+| Legend, chosen level | +3 ft in bold, "(chosen level)" for screen readers | No highlight (the slider shows the chosen level) |
+| Legend buttons | (none) | Minimise legend · Show legend |
