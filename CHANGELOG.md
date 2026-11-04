@@ -52,8 +52,27 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.46 | 4 Nov 2026 | Green selection | [`docs/versions/v0.46/`](docs/versions/v0.46/) |
 | v0.47 | 4 Nov 2026 | "Overall / Per foot", pill toggles, one map toolbar | [`docs/versions/v0.47/`](docs/versions/v0.47/) |
 | v0.48 | 4 Nov 2026 | Shorter outside-the-city message | [`docs/versions/v0.48/`](docs/versions/v0.48/) |
+| v0.49 | 4 Nov 2026 | Premium navy boxes | [`docs/versions/v0.49/`](docs/versions/v0.49/) |
 
 ---
+
+## v0.49: Premium navy boxes (4 Nov 2026)
+
+The owner found the Soft light boxes too subtle and asked to see solid colours. Brand blue, deep navy, ink, a light tint, and navy figures with light facts were rendered on the real app. The owner then set the rules for making a solid look premium: a subtle hairline, layered diffused shadows, and a faint grain or glow. Those were rendered too, and the owner picked **all navy**.
+
+- **Every box is now premium navy** (`.surface-navy`): the two sea-level figure boxes, and the place card's "Water reaches at" and facts boxes. The treatment:
+  - solid `#1e3a5f`;
+  - a faint radial glow from the top left;
+  - a 4.5% grain;
+  - a semi-transparent 1 px hairline with a top highlight;
+  - layered soft shadows.
+- **Everything inside reads on navy:**
+  - The text is white.
+  - The km² / acres switch is a translucent pill, with the chosen unit in white.
+  - The "Water reaches at" track has white labels, baseline and marker.
+  - The facts' coloured icon tiles stay as they are.
+- The figure boxes' border is the 1 px hairline of the new treatment; it was 1.5 px.
+- Tests: 107 unit/component tests and 20 end-to-end tests.
 
 ## v0.48: Shorter outside-the-city message (4 Nov 2026)
 

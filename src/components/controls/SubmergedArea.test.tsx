@@ -46,12 +46,13 @@ describe('<SubmergedArea>', () => {
     expect(boxes(container)).toEqual(['New area covered1.80km²acres', 'Share of city land18%'])
   })
 
-  it('puts each figure in its own centred Soft light box, the share as large as the area (v0.39, v0.42, v0.45)', () => {
+  it('puts each figure in its own centred navy box, white on navy, the share as large as the area (v0.39, v0.45, v0.49)', () => {
     render(<Harness ft={2} mode="simple" />)
     for (const n of ['0.50', '5%']) {
       const value = screen.getByText(n)
       expect(value).toHaveClass('text-[30px]', 'font-bold')
-      expect(value.parentElement).toHaveClass('text-center', 'surface-soft', 'basis-0', 'border-[1.5px]')
+      expect(value).toHaveClass('text-white')
+      expect(value.parentElement).toHaveClass('text-center', 'surface-navy', 'basis-0')
     }
   })
 

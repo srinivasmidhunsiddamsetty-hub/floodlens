@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.48 (tag `v0.48`): a shorter outside-the-city message on the place card.
+- **Current version:** v0.49 (tag `v0.49`): premium navy boxes for the sea-level figures and the place card's answer and facts.
 - **Test status at handoff:**
   - 107 unit and component tests in 13 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
@@ -86,7 +86,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Colour modes (v0.34):** an "Overall / Per foot" pill toggle beside the "Sea level" title (v0.47; "Total / By level" in v0.41–v0.46). It's "per foot", never "per feet", with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Per foot uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
 - **Per foot ramp (v0.41):** matplotlib's Plasma (`#f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887`, 0 ft to +5 ft), the owner's pick from rendered options: a different colour per level, easy to tell apart. Worst neighbouring pair OKLab ΔE 15.1 (deuteranopia 9.0, protanopia 6.2). +4 ft is close to the low-spot purple; the hatch keeps them apart. v0.40 used the owner's yellow → orange swatches (ΔE 3.9). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
-- **Surfaces inside cards (v0.42):** `.surface-soft` in `index.css` ("Soft light": white → `#f2f4f7`, hairline `#e4e7ec`, inner highlight). Used by the sea-level figure boxes and the place card's answer and facts boxes. The owner rejected a pale blue gradient as a cliché.
+- **Surfaces inside cards (v0.49):** `.surface-navy` in `index.css`: solid deep navy `#1e3a5f`, a faint radial glow, 4.5% grain, a 1 px semi-transparent hairline with a top highlight, layered soft shadows; white text. Used by the sea-level figure boxes and the place card's answer and facts boxes. Content inside must be light: `Segmented`/`AreaUnitToggle` take `onDark`, and `LevelTrack` uses white labels, baseline and marker. The owner's premium rules for solid colour: subtle hairline, layered diffused shadows, faint grain or glow, no loud gradients. Before: "Soft light" (v0.42–v0.48); a pale blue gradient was rejected as a cliché.
 
 **Card typography (as agreed):**
 
@@ -97,7 +97,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | Fact values | 20 px semibold (v0.41; medium before) |
 | The answer ("+2 ft") | 24 px bold |
 | Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
-| Sea level figures: the area and the share (equal weight) | 30 px bold (v0.45; 28 px in v0.43–v0.44; 24 px only on windows ≤ 725 px tall), centred in a Soft light box (`.surface-soft`, v0.42) with a 1.5 px hairline (v0.43), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
+| Sea level figures: the area and the share (equal weight) | 30 px bold (v0.45; 28 px in v0.43–v0.44; 24 px only on windows ≤ 725 px tall), white, centred in a premium navy box (`.surface-navy`, v0.49), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
 | Level chips on the slider | 12 px, centred pills (v0.41); light fill at rest, the chosen one accent-tinted and bold |
 | Toggles (Overall / Per foot, km² / acres) | pills (v0.47), the chosen option filled with the accent |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
@@ -108,7 +108,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. No city-wide figures there: the owner wants the right side to be only about the selection.
-- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 254 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a Soft light box (`.surface-soft`: white to cool grey, hairline, inner highlight; v0.42), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 254 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a premium navy box (`.surface-navy`, white text; v0.49), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows use two Tailwind variants (`@custom-variant` in `index.css`): `short` (800 px tall or less) tightens the card padding and layer rows; `tiny` (725 px or less) also compacts the figure boxes, never below 24 px numbers. **Check the figure size on a ~760 px window after any change here**: v0.43 shrank them to 20 px on ordinary laptops. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.47): **one toolbar** (`role="toolbar"`, "Map controls") at the **screen's right edge, under the Insights card**, 16 px from the right and bottom, with thin rules between groups: 2D over 3D | "Entire Miami Beach" (folded-map icon) | in 3D turn and tilt | compass | zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned. At ≤ 800 px window height the four arrows fold into a "Turn and tilt" button that opens them beside it (Escape is caught first, so it doesn't also close the place card); at ≤ 725 px the buttons are 28 px. Never two columns: the owner found that scattered. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
@@ -260,6 +260,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.46 | Selected building green `#3ee67e` (outline `#15803d`); the card's place tile and the spot ring follow it |
 | v0.47 | "Overall / Per foot" (was Total / By level); both toggles as pills; the map controls as one toolbar with dividers, turn and tilt folding into one button on short windows |
 | v0.48 | Outside-the-city card reads just "This spot is outside Miami Beach." |
+| v0.49 | Premium navy surface (glow, grain, hairline, layered shadows) for the sea-level figures and the place card's answer and facts; white text and light switch and track inside |
 
 ---
 

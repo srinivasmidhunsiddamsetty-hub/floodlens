@@ -85,9 +85,9 @@ describe('<InspectionCard>', () => {
     const icon = (label: string) => screen.getAllByRole('term').find((t) => t.textContent === label)!.querySelector('svg')!
     for (const label of ['Height', 'Footprint', 'Low spot']) expect(icon(label).parentElement).toHaveClass('size-7', 'rounded-lg')
     expect(icon('Low spot')).toHaveClass('lucide-low-spot')
-    // Values in semibold (v0.41), the three facts grouped in one Soft light box (v0.42).
+    // Values in semibold (v0.41), the three facts grouped in one box (v0.42), premium navy (v0.49).
     for (const d of screen.getAllByRole('definition')) expect(d).toHaveClass('font-semibold')
-    expect(screen.getAllByRole('term')[0].closest('dl')).toHaveClass('surface-soft')
+    expect(screen.getAllByRole('term')[0].closest('dl')).toHaveClass('surface-navy')
   })
 
   it('explains places outside the city boundary instead of showing results', () => {

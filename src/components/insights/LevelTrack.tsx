@@ -63,13 +63,14 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
           <path d={area ?? ''} fill={`url(#${gradientId})`} />
           <path d={surface ?? ''} fill="none" stroke="#7fb3e6" strokeWidth="1.25" vectorEffect="non-scaling-stroke" />
         </svg>
-        <span className="absolute inset-x-0 bottom-0 h-px bg-[#c3ccd5]" />
+        {/* On the navy answer box (v0.49): a light baseline, marker and labels. */}
+        <span className="absolute inset-x-0 bottom-0 h-px bg-white/40" />
         {first >= 0 && (
           <>
             {/* Where the water first reaches the place: a dashed drop from the surface to the baseline.
                 No circles on the baseline (v0.22): the labels below mark the levels. */}
             <span
-              className="absolute w-0 -translate-x-1/2 border-l-[1.5px] border-dashed border-accent"
+              className="absolute w-0 -translate-x-1/2 border-l-[1.5px] border-dashed border-white"
               style={{ left: `${x(first)}%`, top: FILL - rise(first), height: rise(first) }}
             />
             <span
@@ -83,7 +84,7 @@ export function LevelTrack({ levels, firstFeet, scenarioFt }: Props) {
         {levels.map((l, i) => {
           return (
             <li key={l.feet} className="flex flex-col">
-              <span className={`text-[10px] leading-[14px] tabular ${i === first ? 'font-semibold text-fg' : 'font-medium text-fg'}`}>
+              <span className={`text-[10px] leading-[14px] tabular ${i === first ? 'font-semibold text-white' : 'font-medium text-white'}`}>
                 {levelName(l.feet)}
                 {l.feet === scenarioFt && <span className="sr-only"> (selected level)</span>}
               </span>

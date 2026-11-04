@@ -37,14 +37,14 @@ function Row({
 }) {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
-      <dt className="flex min-w-0 items-center gap-2.5 text-[14px] leading-5 font-medium text-fg">
+      <dt className="flex min-w-0 items-center gap-2.5 text-[14px] leading-5 font-medium text-white">
         <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: TINTS[tint].bg, color: TINTS[tint].fg }} aria-hidden>
           <Icon className="size-4" />
         </span>
         {label}
       </dt>
       {/* Semibold (v0.41; medium before), at the owner's request. */}
-      <dd className="text-right text-[20px] leading-7 font-semibold text-fg tabular">{value}</dd>
+      <dd className="text-right text-[20px] leading-7 font-semibold text-white tabular">{value}</dd>
     </div>
   )
 }
@@ -131,10 +131,11 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
             <div aria-live="polite">
               {/* The answer, emphasised, on the label's row (label left, value right, like the facts
                   below), with every level in context under it. A long answer wraps under the label. */}
-              <div className="surface-soft mt-3 rounded-lg px-3 pt-2 pb-1.5">
+              {/* Premium navy (v0.49), like the sea-level figures; Soft light in v0.42–v0.48. */}
+              <div className="surface-navy mt-3 rounded-lg px-3 pt-2 pb-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <p className="text-[14px] leading-5 font-medium text-fg">{label}</p>
-                  <p className="text-[24px] leading-8 font-bold tracking-[-0.03em] text-fg tabular">{answer}</p>
+                  <p className="text-[14px] leading-5 font-medium text-white">{label}</p>
+                  <p className="text-[24px] leading-8 font-bold tracking-[-0.03em] text-white tabular">{answer}</p>
                 </div>
                 <div className="mt-1">
                   <LevelTrack levels={hits} firstFeet={firstFeet} scenarioFt={scenarioFt} />
@@ -144,8 +145,8 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
               {/* Facts in one column. Height and footprint only for a building (v0.34): a spot has
                   neither, so it no longer shows empty rows. Icons in tinted tiles (v0.37): a ruler, a
                   plot of land for the footprint, and a hollow holding water for a low spot (v0.38). */}
-              {/* Grouped in one box (v0.42; straight on the card before), the same surface as the answer. */}
-              <dl className="surface-soft mt-2.5 divide-y divide-line rounded-lg px-3">
+              {/* Grouped in one box (v0.42; straight on the card before), the same navy surface as the answer (v0.49). */}
+              <dl className="surface-navy mt-2.5 divide-y divide-white/15 rounded-lg px-3">
                 {building && (
                   <>
                     <Row

@@ -15,10 +15,10 @@ interface Props {
 
 /**
  * One figure in a box, centred: label, then the number (30 px bold since v0.45; 28 px in v0.43–v0.44, 24 px before), then
- * anything under it. The box shares the "Soft light" surface (`.surface-soft`, v0.42) with the
- * place card's answer and facts, so the two panels read as one design (v0.41 had a pale blue
- * gradient; v0.39–v0.40 a flat grey-blue fill). These two boxes have a slightly heavier hairline,
- * 1.5 px (v0.43), than the card's boxes. The elements have room to breathe (8 px label to number, 10 px number to switch).
+ * anything under it. The box shares the premium navy surface (`.surface-navy`, v0.49) with the
+ * place card's answer and facts, so the two panels read as one design, with white text and a
+ * light unit switch. Before: "Soft light" (v0.42–v0.48, with a 1.5 px hairline from v0.43), a pale
+ * blue gradient (v0.41), a flat grey-blue fill (v0.39–v0.40). The elements have room to breathe (8 px label to number, 10 px number to switch).
  * Both boxes take an equal share of the column (basis 0), so they're the same height whenever
  * there's room; on the shortest windows the second gives way first. Only on windows 725 px tall
  * or less (the `tiny` variant, v0.44) do they tighten, to 24 px numbers and smaller gaps, so the
@@ -26,9 +26,9 @@ interface Props {
  */
 function Figure({ label, value, children }: { label: string; value: string; children?: ReactNode }) {
   return (
-    <div className="flex flex-1 basis-0 flex-col items-center justify-center surface-soft rounded-lg border-[1.5px] px-2 py-3 text-center tiny:py-0.5">
-      <p className="text-[12px] leading-4 font-medium whitespace-nowrap text-fg tiny:text-[11px] tiny:leading-[14px]">{label}</p>
-      <p className="mt-2 text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-fg tabular tiny:mt-1 tiny:text-[24px] tiny:leading-7">{value}</p>
+    <div className="flex flex-1 basis-0 flex-col items-center justify-center surface-navy rounded-lg px-2 py-3 text-center tiny:py-0.5">
+      <p className="text-[12px] leading-4 font-medium whitespace-nowrap text-white tiny:text-[11px] tiny:leading-[14px]">{label}</p>
+      <p className="mt-2 text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-white tabular tiny:mt-1 tiny:text-[24px] tiny:leading-7">{value}</p>
       {children}
     </div>
   )
@@ -51,7 +51,7 @@ export function SubmergedArea({ manifest, scenarioFt, colorMode, unit, onUnitCha
     <div className="flex h-full flex-col gap-2 tiny:gap-1.5" aria-live="polite">
       <Figure label={colorMode === 'simple' ? 'Total area covered' : 'New area covered'} value={formatArea(m2, unit)}>
         <div className="mt-2.5 tiny:mt-1">
-          <AreaUnitToggle value={unit} onChange={onUnitChange} />
+          <AreaUnitToggle value={unit} onChange={onUnitChange} onDark />
         </div>
       </Figure>
       {landM2 ? <Figure label="Share of city land" value={formatPercent(m2 / landM2, true)} /> : null}

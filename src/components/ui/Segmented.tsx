@@ -16,6 +16,8 @@ interface Props<T extends string | number> {
   label: string
   size?: 'xs' | 'sm' | 'md'
   className?: string
+  /** On a dark (navy) surface (v0.49): a translucent track, light text, the chosen option white. */
+  onDark?: boolean
 }
 
 /**
@@ -24,7 +26,7 @@ interface Props<T extends string | number> {
  * Calcite "solid" look: the checked option is filled with the accent; no shadows. Pill-shaped
  * (v0.47), like the level chips, so every "pick one" control in the panel looks alike.
  */
-export function Segmented<T extends string | number>({ options, value, onChange, label, size = 'md', className = '' }: Props<T>) {
+export function Segmented<T extends string | number>({ options, value, onChange, label, size = 'md', className = '', onDark = false }: Props<T>) {
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   const enabled = options.filter((o) => !o.disabled)
 
@@ -48,7 +50,7 @@ export function Segmented<T extends string | number>({ options, value, onChange,
       role="radiogroup"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={`flex rounded-full border border-line-strong bg-surface p-0.5 ${className}`}
+      className={`flex rounded-full border p-0.5 ${onDark ? 'border-white/30 bg-white/10' : 'border-line-strong bg-surface'} ${className}`}
     >
       {options.map((o, idx) => {
         const checked = o.value === value
@@ -66,7 +68,13 @@ export function Segmented<T extends string | number>({ options, value, onChange,
             tabIndex={checked ? 0 : -1}
             onClick={() => onChange(o.value)}
             className={`${h} flex flex-1 items-center justify-center gap-1.5 rounded-full px-2 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-              checked ? 'bg-accent text-white' : 'text-fg-muted hover:bg-surface-3 hover:text-fg'
+              onDark
+                ? checked
+                  ? 'bg-white text-[#1e3a5f]'
+                  : 'text-white/85 hover:bg-white/15 hover:text-white'
+                : checked
+                  ? 'bg-accent text-white'
+                  : 'text-fg-muted hover:bg-surface-3 hover:text-fg'
             }`}
           >
             {o.label}
