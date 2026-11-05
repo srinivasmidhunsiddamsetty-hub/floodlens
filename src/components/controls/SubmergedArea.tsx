@@ -15,7 +15,8 @@ interface Props {
 
 /**
  * One figure in a box (v0.57, the owner's mockup): label, then the number (30 px bold since v0.45,
- * navy), then anything under it, all aligned left in a light-blue box (`.surface-sky`). Before:
+ * navy), then anything under it, centred in a light-blue box (`.surface-sky`). The owner chose
+ * centred over left (v0.58; left in v0.57) after seeing both as the numbers change. Before:
  * premium navy with white text, centred (v0.49–v0.56), "Soft light" (v0.42–v0.48), a pale blue
  * gradient (v0.41), a flat grey-blue fill (v0.39–v0.40). The area box is as tall as its content and
  * the share takes the rest of the slider's height, as in the mockup (equal heights in v0.41–v0.56).
@@ -31,8 +32,8 @@ function Figure({ label, value, children }: { label: string; value: string; chil
   const centred = !children
   return (
     <div
-      className={`surface-sky rounded-lg px-3 py-2.5 text-left tiny:px-2.5 tiny:py-1 ${
-        centred ? 'grid min-h-0 flex-1 basis-0 grid-rows-[1fr_auto_1fr] justify-items-start' : 'flex flex-none flex-col items-start'
+      className={`surface-sky rounded-lg px-3 py-2.5 text-center tiny:px-2.5 tiny:py-1 ${
+        centred ? 'grid min-h-0 flex-1 basis-0 grid-rows-[1fr_auto_1fr] justify-items-center' : 'flex flex-none flex-col items-center'
       }`}
     >
       <p
@@ -67,8 +68,8 @@ export function SubmergedArea({ manifest, scenarioFt, colorMode, unit, onUnitCha
   return (
     <div className="flex h-full flex-col gap-2 tiny:gap-1.5" aria-live="polite">
       <Figure label={colorMode === 'simple' ? 'Total area covered' : 'New area covered'} value={formatArea(m2, unit)}>
-        <div className="mt-2 w-full tiny:mt-1">
-          <AreaUnitToggle value={unit} onChange={onUnitChange} className="w-full" />
+        <div className="mt-2 tiny:mt-1">
+          <AreaUnitToggle value={unit} onChange={onUnitChange} className="w-max" />
         </div>
       </Figure>
       {landM2 ? <Figure label="Share of city land" value={formatPercent(m2 / landM2, true)} /> : null}

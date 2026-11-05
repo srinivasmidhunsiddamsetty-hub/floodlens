@@ -61,8 +61,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.55 | 4 Nov 2026 | "About the data" and "Sources" brought up to date | [`docs/versions/v0.55/`](docs/versions/v0.55/) |
 | v0.56 | 4 Nov 2026 | Fix: the "Click any building" prompt on every visit | [`docs/versions/v0.56/`](docs/versions/v0.56/) |
 | v0.57 | 5 Nov 2026 | The Sea level card from the owner's mockup | [`docs/versions/v0.57/`](docs/versions/v0.57/) |
+| v0.58 | 5 Nov 2026 | Centred figures, soft-glow boxes, smaller unit toggle | [`docs/versions/v0.58/`](docs/versions/v0.58/) |
 
 ---
+
+## v0.58: Centred figures, soft-glow boxes, smaller unit toggle (5 Nov 2026)
+
+From the owner's notes on v0.57. Each choice was made from renders on the real app.
+
+- **The km² / acres toggle is smaller:** 20 px tall with 11 px text, and only as wide as its text (87 px, from 135 px across the full box). It's the new smallest pill size, `2xs`.
+- **The figure boxes have a premium finish**, "soft glow", picked over a frosted lift and a deeper sky blue. It follows the owner's rule for premium colour: a faint white glow from the top left, a 3% grain, a navy hairline, a top highlight, and layered soft shadows that lift the boxes off the card.
+- **The figures are centred again** (left in v0.57). I recommended left, so the numbers start in the same spot as they change. The owner saw both at 0, +2 and +5 ft and chose centred.
+- The card is still 278 px tall on a 900 px window. The panel fits without scrolling down to 650 px windows, and the figures stay 30 px down to 730 px.
+- Tests: 116 unit/component tests (the figure tests check centring and the smaller toggle) and 20 end-to-end tests.
 
 ## v0.57: The Sea level card from the owner's mockup (5 Nov 2026)
 

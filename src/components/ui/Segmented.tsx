@@ -14,7 +14,7 @@ interface Props<T extends string | number> {
   onChange: (value: T) => void
   /** Accessible group label. */
   label: string
-  size?: 'xs' | 'sm' | 'md'
+  size?: '2xs' | 'xs' | 'sm' | 'md'
   className?: string
   /** On a dark (navy) surface (v0.49): a translucent track, light text, the chosen option white. */
   onDark?: boolean
@@ -44,7 +44,7 @@ export function Segmented<T extends string | number>({ options, value, onChange,
     refs.current[options.indexOf(opt)]?.focus()
   }
 
-  const h = size === 'xs' ? 'h-[22px] min-w-11 text-[12px] leading-none' : size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]'
+  const h = size === '2xs' ? 'h-5 min-w-[38px] text-[11px] leading-none' : size === 'xs' ? 'h-[22px] min-w-11 text-[12px] leading-none' : size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]'
   return (
     <div
       role="radiogroup"
