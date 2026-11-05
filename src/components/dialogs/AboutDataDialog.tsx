@@ -36,10 +36,23 @@ export function AboutDataDialog({ open, onClose, manifest }: Props) {
       <H>How to read the map</H>
       <ul className="list-disc space-y-1 pl-5">
         <li>
-          Colour shows the sea level at which water <em>first</em> reaches a place: light blue at today’s high tide, getting darker with
-          each foot up to +5 ft.
+          <strong className="text-fg">Overall</strong> colours show all the water at the chosen level in one blue.
+        </li>
+        <li>
+          <strong className="text-fg">Per foot</strong> colours show the sea level at which water <em>first</em> reaches a place, one
+          colour per level: yellow at today’s high tide, then orange, coral, magenta and purple, to deep indigo at +5 ft. The legend
+          lists them.
         </li>
         <li>Open water sits on top, so colour only appears where water reaches land.</li>
+        <li>
+          The figures beside the slider count only land that today’s high tide doesn’t reach, so 0 ft reads 0. “Total area covered” is
+          all of it at the chosen level; “New area covered” is only what that foot adds. “Share of city land” compares it with the
+          city’s land area from the US Census.
+        </li>
+        <li>
+          Click a building or any spot to see the first level whose water reaches it. “Doesn’t reach it” only means no level up to
+          +5 ft does on NOAA’s map.
+        </li>
         <li>Areas are measured on the curved Earth, and only inside Miami Beach’s city limits.</li>
         <li>Building heights come from OpenStreetMap. Where a building has no recorded height, the map estimates one.</li>
       </ul>

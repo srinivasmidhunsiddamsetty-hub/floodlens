@@ -58,8 +58,22 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.52 | 4 Nov 2026 | Centred share figure, slower water | [`docs/versions/v0.52/`](docs/versions/v0.52/) |
 | v0.53 | 4 Nov 2026 | Prompt only until the first click; share 4 px lower | [`docs/versions/v0.53/`](docs/versions/v0.53/) |
 | v0.54 | 4 Nov 2026 | A legend you can minimise, titled "Water reaches at" | [`docs/versions/v0.54/`](docs/versions/v0.54/) |
+| v0.55 | 4 Nov 2026 | "About the data" and "Sources" brought up to date | [`docs/versions/v0.55/`](docs/versions/v0.55/) |
 
 ---
+
+## v0.55: "About the data" and "Sources" brought up to date (4 Nov 2026)
+
+The owner asked for a final check of the two dialogs against the app as it is now. Every statement was checked against the code and `manifest.json`. Two were wrong and two features were missing (before/after in `docs/UX_WRITING.md`).
+
+- **About the data, colours (wrong since v0.34).** It still described one blue ramp, "light blue at today's high tide, getting darker". It now describes both modes: Overall (one blue) and Per foot (yellow through orange, coral, magenta and purple to deep indigo, keyed by the legend).
+- **About the data, figures (missing since v0.36).** It now explains the figures beside the slider: they count only land that today's high tide doesn't reach (so 0 ft reads 0). "Total area covered" is all of it at the level, "New area covered" is what that foot adds, and "Share of city land" uses the Census land area.
+- **About the data, place card (missing).** It now says you can click a building or spot to see the first level whose water reaches it, and what "Doesn't reach it" means. Since v0.53 the on-screen prompt goes after the first click, so this is now the only place that explains it.
+- **Sources, figures (missing).** A new "Sea-level figures" section says how they are computed: each level's extent minus the 0 ft extent, measured on the curved Earth inside the city limits; per-foot figures as differences of neighbouring totals; the share over the Census land area.
+- **Sources, colour bands.** It now says the bands each have their own colour with Per foot and share one blue with Overall.
+- **Sources, attribution (wrong since v0.36).** "Charts: D3.js" is now "D3.js for the place card's water track": the chart was removed, and D3 only draws that track now.
+- Also brought up to date: the README feature list (navy figure boxes, the minimisable legend, the prompt only until the first click, the water that flows in) and `docs/LIMITATIONS.md` (no chart table any more).
+- Tests: 115 unit/component tests in 14 files (new: `Dialogs.test.tsx`, which checks both dialogs' wording) and 20 end-to-end tests.
 
 ## v0.54: A legend you can minimise, titled "Water reaches at" (4 Nov 2026)
 

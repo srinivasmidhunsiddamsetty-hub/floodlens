@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.54 (tag `v0.54`): a legend you can minimise, with no highlighted level, titled "Water reaches at".
+- **Current version:** v0.55 (tag `v0.55`): "About the data" and "Sources" brought up to date with the app (colour modes, figures, place card, D3's use).
 - **Test status at handoff:**
-  - 113 unit and component tests in 13 files pass.
+  - 115 unit and component tests in 14 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -180,7 +180,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 113 tests
+npm test                 # Vitest: 115 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -267,6 +267,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.52 | The share's number centred in its box (label resting on it); the water flow-in slowed to 1.8 s |
 | v0.53 | "Click any building" prompt only until the first click; the share 4 px below the middle; label kept off the box edge on the shortest windows |
 | v0.54 | Legend: minus folds it to a square of its colours (remembered), no highlighted level, title "Water reaches at"; stays bottom left |
+| v0.55 | "About the data" and "Sources" checked against the app: both colour modes, the sea-level figures and how they're computed, the place card, D3 credited for the water track (the chart is gone) |
 
 ---
 

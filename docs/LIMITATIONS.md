@@ -27,4 +27,4 @@ FloodLens is an **exploratory screening tool**. It visualizes NOAA's mapped inun
 
 ## Accessibility limits
 
-The WebGL map canvas is not exposed to screen readers. All quantitative results (indicators, chart table, inspection card) are available as text.
+The WebGL map canvas is not exposed to screen readers. All quantitative results (the sea-level figures and the inspection card) are available as text.

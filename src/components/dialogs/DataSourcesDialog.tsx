@@ -82,8 +82,10 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
           <p className="text-xs">
             Each &ldquo;added extent&rdquo; layer is a polygon difference (higher − lower). The pipeline checks that the lower extent lies
             inside the higher one and that the difference area equals the change in total area. The map&rsquo;s colour bands are the
-            differences between neighbouring levels (0→1, 1→2, … 4→5 ft).
+            differences between neighbouring levels (0→1, 1→2, … 4→5 ft): each has its own colour with Per foot colours, and they
+            share one blue with Overall colours.
           </p>
+
           <div className="mt-2 overflow-x-auto">
             <table className="w-full text-left text-xs tabular">
               <thead className="text-fg-subtle">
@@ -116,6 +118,13 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
               </tbody>
             </table>
           </div>
+
+          <H>Sea-level figures</H>
+          <p className="text-xs">
+            &ldquo;Total area covered&rdquo; is a level&rsquo;s extent minus today&rsquo;s high-tide extent (0 ft), measured on the curved
+            Earth inside the city limits. &ldquo;New area covered&rdquo; is the difference between neighbouring totals, so the levels add
+            up to the total. &ldquo;Share of city land&rdquo; divides by the Census land area above.
+          </p>
 
           <H>Processed files</H>
           <div className="overflow-x-auto">
@@ -164,7 +173,7 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
       <H>Attribution</H>
       <p className="text-xs">
         Data: NOAA Office for Coastal Management, Sea Level Rise Viewer (coast.noaa.gov/slr). City boundary: US Census Bureau TIGER/Line.
-        Map: OpenFreeMap © OpenMapTiles, data from OpenStreetMap. Rendering: MapLibre GL JS. Charts: D3.js.
+        Map: OpenFreeMap © OpenMapTiles, data from OpenStreetMap. Rendering: MapLibre GL JS, and D3.js for the place card&rsquo;s water track.
       </p>
     </Dialog>
   )

@@ -288,3 +288,17 @@ The owner asked whether the legend needs a title. It does: without one, "+3 ft" 
 | Legend title | Water first reaches | Water reaches at (the same words as the place card's answer) |
 | Legend, chosen level | +3 ft in bold, "(chosen level)" for screen readers | No highlight (the slider shows the chosen level) |
 | Legend buttons | (none) | Minimise legend · Show legend |
+
+## Before and after (v0.54 → v0.55)
+
+The owner asked for a final check of "About the data" and "Sources" against the app as it is now.
+
+| Where | Before | After |
+| --- | --- | --- |
+| About, colours | Colour shows the sea level at which water first reaches a place: light blue at today's high tide, getting darker with each foot up to +5 ft. | Overall colours show all the water at the chosen level in one blue. · Per foot colours show the sea level at which water first reaches a place, one colour per level: yellow at today's high tide, then orange, coral, magenta and purple, to deep indigo at +5 ft. The legend lists them. |
+| About, figures | (none) | The figures beside the slider count only land that today's high tide doesn't reach, so 0 ft reads 0. "Total area covered" is all of it at the chosen level; "New area covered" is only what that foot adds. "Share of city land" compares it with the city's land area from the US Census. |
+| About, place card | (none) | Click a building or any spot to see the first level whose water reaches it. "Doesn't reach it" only means no level up to +5 ft does on NOAA's map. |
+| Sources, colour bands | The map's colour bands are the differences between neighbouring levels (0→1, 1→2, … 4→5 ft). | … : each has its own colour with Per foot colours, and they share one blue with Overall colours. |
+| Sources, figures | (none) | Sea-level figures: "Total area covered" is a level's extent minus today's high-tide extent (0 ft), measured on the curved Earth inside the city limits. "New area covered" is the difference between neighbouring totals, so the levels add up to the total. "Share of city land" divides by the Census land area above. |
+| Sources, attribution | Rendering: MapLibre GL JS. Charts: D3.js. | Rendering: MapLibre GL JS, and D3.js for the place card's water track. |
+
