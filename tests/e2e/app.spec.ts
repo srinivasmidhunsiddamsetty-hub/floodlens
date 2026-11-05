@@ -141,6 +141,11 @@ test.describe('FloodLens — core flows', () => {
     await page.locator('.maplibregl-canvas').focus()
     await page.keyboard.press('Enter')
     await expect(insights(page).getByRole('list', { name: 'Water at this spot, by sea level' })).toBeVisible()
+    // The answer and facts boxes are a step lighter than the brand navy (v0.59, #2b4c78).
+    const boxColours = await insights(page)
+      .locator('.surface-navy')
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor))
+    expect(boxColours).toEqual(['rgb(43, 76, 120)', 'rgb(43, 76, 120)'])
     // Insights holds only the selection (v0.36).
     await expect(insights(page).getByRole('region', { name: 'Land underwater' })).toHaveCount(0)
     await expect(insights(page)).not.toContainText('of the city’s land')

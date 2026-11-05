@@ -72,6 +72,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Fix: the "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.56).
 - Sea level card from the owner's mockup: light-blue boxes, left-aligned navy figures, plain level labels, a shorter card that still fits without scrolling down to 650 px windows (v0.57).
 - Sea level figures centred again, with a soft-glow finish and a smaller km² / acres toggle (v0.58).
+- The place card's navy boxes a step lighter, `#2b4c78` (v0.59).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

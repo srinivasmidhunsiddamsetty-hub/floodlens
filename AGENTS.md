@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.58 (tag `v0.58`): the Sea level boxes centred again, with a soft-glow premium finish and a smaller km² / acres toggle.
+- **Current version:** v0.59 (tag `v0.59`): the place card's navy boxes a step lighter (`#2b4c78`).
 - **Test status at handoff:**
   - 116 unit and component tests in 14 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
@@ -86,7 +86,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Colour modes (v0.34):** an "Overall / Per foot" pill toggle beside the "Sea level" title (v0.47; "Total / By level" in v0.41–v0.46). It's "per foot", never "per feet", with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Per foot uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
 - **Per foot ramp (v0.41):** matplotlib's Plasma (`#f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887`, 0 ft to +5 ft), the owner's pick from rendered options: a different colour per level, easy to tell apart. Worst neighbouring pair OKLab ΔE 15.1 (deuteranopia 9.0, protanopia 6.2). +4 ft is close to the low-spot purple; the hatch keeps them apart. v0.40 used the owner's yellow → orange swatches (ΔE 3.9). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
-- **Surfaces inside cards (v0.49):** `.surface-navy` in `index.css`: solid deep navy `#1e3a5f`, a faint radial glow, 4.5% grain, a 1 px semi-transparent hairline with a top highlight, layered soft shadows; white text. Used by the sea-level figure boxes and the place card's answer and facts boxes. Content inside must be light: `Segmented`/`AreaUnitToggle` take `onDark`, and `LevelTrack` uses white labels, baseline and marker. The owner's premium rules for solid colour: subtle hairline, layered diffused shadows, faint grain or glow, no loud gradients. Before: "Soft light" (v0.42–v0.48); a pale blue gradient was rejected as a cliché.
+- **Surfaces inside cards (v0.49):** `.surface-navy` in `index.css`: solid navy `#2b4c78` (v0.59, a step lighter than the brand navy `#1e3a5f`, which read too heavy; the owner's pick over slate, steel blue and light), a faint radial glow, 4.5% grain, a 1 px semi-transparent hairline with a top highlight, layered soft shadows; white text. Used by the place card's answer and facts boxes (and the sea-level figure boxes in v0.49–v0.56). Content inside must be light: `Segmented`/`AreaUnitToggle` take `onDark`, and `LevelTrack` uses white labels, baseline and marker. The owner's premium rules for solid colour: subtle hairline, layered diffused shadows, faint grain or glow, no loud gradients. Before: "Soft light" (v0.42–v0.48); a pale blue gradient was rejected as a cliché.
 - **Premium finish everywhere (v0.50):** the owner's rule (hairline, layered diffused shadows, faint grain or glow, never loud gradients) applies to every surface. In `index.css`: `--shadow-card` and `--shadow-glass` carry a white top highlight; `.canvas-grain` (3% grain) on the left panel's canvas; `.track-inset` for pill tracks and switches that are off; `.chip-soft` for level chips; `.tile-soft` for icon tiles. **The map stays flat:** its colours are data, so no glow, grain or shading on flood layers (the owner also declined map lighting in v0.25).
 
 **Card typography (as agreed):**
@@ -271,6 +271,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.56 | Fix: the "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.53 hid it for good once a browser had picked a place) |
 | v0.57 | Sea level card from the owner's mockup: light-blue boxes (`.surface-sky`), left-aligned navy figures, unit pill full width, only the chosen level a pill, slider at most 200 px (card 278 px, was 332), no wave or icons; both card titles 16 px |
 | v0.58 | Figures centred again (the owner's pick after seeing both as the numbers change); "soft glow" premium finish on the boxes; km² / acres toggle at its smallest (20 px, 11 px text, fits its text) |
+| v0.59 | The place card's answer and facts boxes a step lighter: `#2b4c78` (was the brand navy `#1e3a5f`) |
 
 ---
 

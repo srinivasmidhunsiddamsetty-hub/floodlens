@@ -62,8 +62,17 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.56 | 4 Nov 2026 | Fix: the "Click any building" prompt on every visit | [`docs/versions/v0.56/`](docs/versions/v0.56/) |
 | v0.57 | 5 Nov 2026 | The Sea level card from the owner's mockup | [`docs/versions/v0.57/`](docs/versions/v0.57/) |
 | v0.58 | 5 Nov 2026 | Centred figures, soft-glow boxes, smaller unit toggle | [`docs/versions/v0.58/`](docs/versions/v0.58/) |
+| v0.59 | 5 Nov 2026 | A lighter navy in the place card | [`docs/versions/v0.59/`](docs/versions/v0.59/) |
 
 ---
+
+## v0.59: A lighter navy in the place card (5 Nov 2026)
+
+The owner found the blue in the Insights panel slightly too bold and asked to see options. Four were rendered on the real app: a step lighter, slate, steel blue, and light boxes like the Sea level card.
+
+- **The place card's "Water reaches at" and facts boxes are a step lighter**: `#2b4c78`, from the brand navy `#1e3a5f`. The glow, grain, hairline and shadows stay. White text on it is 8.7:1. The brand navy itself is unchanged (logo, toggles, switches, chips).
+- Tidied: the "Premium navy" comment in `index.css` is back above its own rule (v0.57 had left it above the new light-blue one).
+- Tests: 116 unit/component tests and 20 end-to-end tests (the place-card test now checks the boxes' colour).
 
 ## v0.58: Centred figures, soft-glow boxes, smaller unit toggle (5 Nov 2026)
 
