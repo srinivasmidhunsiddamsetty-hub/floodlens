@@ -60,8 +60,21 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.54 | 4 Nov 2026 | A legend you can minimise, titled "Water reaches at" | [`docs/versions/v0.54/`](docs/versions/v0.54/) |
 | v0.55 | 4 Nov 2026 | "About the data" and "Sources" brought up to date | [`docs/versions/v0.55/`](docs/versions/v0.55/) |
 | v0.56 | 4 Nov 2026 | Fix: the "Click any building" prompt on every visit | [`docs/versions/v0.56/`](docs/versions/v0.56/) |
+| v0.57 | 5 Nov 2026 | The Sea level card from the owner's mockup | [`docs/versions/v0.57/`](docs/versions/v0.57/) |
 
 ---
+
+## v0.57: The Sea level card from the owner's mockup (5 Nov 2026)
+
+The owner supplied a mockup of the Sea level card and asked for it without its icons, and slightly shorter. It was rendered on the real app in three versions. The owner picked the mockup's boxes and labels with the toggle kept beside the title, both card titles at 16 px, and the mockup's wave removed (it was decoration only).
+
+- **Light-blue figure boxes** (`.surface-sky`): a flat light blue with a hairline and a top highlight, in place of the premium navy. Labels are 13 px black, numbers 30 px bold **navy**, and everything is aligned left (centred before).
+- **The boxes follow the mockup's proportions.** The area box is as tall as its content: label, number, then the km² / acres pill across the box's full width, now the light pill with the navy choice. The share box takes the rest, with its label and number together in the middle. They were equal heights before.
+- **Only the chosen level is a pill.** The other levels are plain 13 px labels that take a light fill on hover, so they still respond to the pointer (all pills before).
+- **A shorter card:** the slider is at most 200 px (254 before). The card is 278 px tall on a 900 px window (332 before) and 270 px on laptop windows. The left panel still fits without scrolling down to 650 px windows, with and without low spots, and the figures stay 30 px down to 730 px.
+- **Both card titles at 16 px**, "Sea level" and "On the map" (15 px before).
+- No icons, and no wave in the first box.
+- Tests: 116 unit/component tests (updated: the figure boxes; new: only the chosen level is a pill) and 20 end-to-end tests.
 
 ## v0.56: Fix: the "Click any building" prompt on every visit (4 Nov 2026)
 

@@ -129,6 +129,15 @@
      A solid deep navy given depth the owner's way: a faint radial glow from the top left, a very
      light grain (4.5%), a semi-transparent 1 px hairline with a top highlight, and layered soft
      shadows. Text inside is white. v0.42–v0.48 used "Soft light" (white to cool grey). */
+  /* The sea-level figure boxes (v0.57, from the owner's mockup): a flat light blue with a hairline
+     and a top highlight, navy figures. No decoration: the mockup's wave carried no data. */
+  .surface-sky {
+    background-image: linear-gradient(180deg, #f2f6fd, #e8effa);
+    border: 1px solid #dbe5f3;
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      0 1px 2px rgb(16 24 40 / 0.04);
+  }
   .surface-navy {
     background-color: #1e3a5f;
     background-image:

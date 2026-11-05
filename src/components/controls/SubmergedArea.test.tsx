@@ -46,26 +46,28 @@ describe('<SubmergedArea>', () => {
     expect(boxes(container)).toEqual(['New area covered1.80km²acres', 'Share of city land18%'])
   })
 
-  it('puts each figure in its own centred navy box, white on navy, the share as large as the area (v0.39, v0.45, v0.49)', () => {
+  it('puts each figure in a light-blue box, aligned left, navy, the share as large as the area (v0.45, v0.57)', () => {
     render(<Harness ft={2} mode="simple" />)
     for (const n of ['0.50', '5%']) {
       const value = screen.getByText(n)
-      expect(value).toHaveClass('text-[30px]', 'font-bold')
-      expect(value).toHaveClass('text-white')
-      expect(value.parentElement).toHaveClass('text-center', 'surface-navy', 'basis-0')
+      expect(value).toHaveClass('text-[30px]', 'font-bold', 'text-accent')
+      expect(value.parentElement).toHaveClass('surface-sky', 'text-left')
+      expect(value.parentElement).not.toHaveClass('surface-navy', 'text-center')
     }
+    // The unit switch is the light pill, as wide as its box (v0.57; white on navy before).
+    const unit = screen.getByRole('radiogroup', { name: 'Area unit' })
+    expect(unit).toHaveClass('w-full', 'bg-surface')
   })
 
-  it('puts the share in the middle of its box, the label resting on it (v0.52)', () => {
+  it('sizes the area box to its content and gives the share the rest, label resting on its number (v0.52, v0.57)', () => {
     render(<Harness ft={2} mode="simple" />)
-    const share = screen.getByText('5%')
-    // Rows of space, number, space: the number is centred and the label sits above it.
-    expect(share.parentElement).toHaveClass('grid', 'grid-rows-[1fr_auto_1fr]', 'min-h-0')
+    // The area box stacks label, number and unit switch at its own height, as in the mockup.
+    expect(screen.getByText('0.50').parentElement).toHaveClass('flex', 'flex-none', 'flex-col', 'items-start')
+    // The share: rows of space, number, space, so it sits in the middle of what's left. `basis-0`
+    // and `min-h-0` keep it from asking for more height than the slider has.
+    const share = screen.getByText('5%').parentElement!
+    expect(share).toHaveClass('grid', 'grid-rows-[1fr_auto_1fr]', 'flex-1', 'basis-0', 'min-h-0', 'justify-items-start')
     expect(screen.getByText('Share of city land')).toHaveClass('self-end')
-    // Nudged 4 px below the middle, the label staying put (v0.53, the owner's call).
-    expect(share).toHaveClass('relative', 'top-1')
-    // The area box keeps its stack: label, number, unit switch.
-    expect(screen.getByText('0.50').parentElement).toHaveClass('flex', 'flex-col', 'justify-center')
   })
 
   it('shows one unit at a time, switched like Total / By level (v0.39)', async () => {

@@ -70,6 +70,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - A legend that minimises to a square of its colours (remembered), with no highlighted level and the title "Water reaches at" (v0.54).
 - "About the data" and "Sources" brought up to date: both colour modes, how the sea-level figures are computed, the place card, and D3's current use (v0.55).
 - Fix: the "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.56).
+- Sea level card from the owner's mockup: light-blue boxes, left-aligned navy figures, plain level labels, a shorter card that still fits without scrolling down to 650 px windows (v0.57).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -85,7 +86,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **14 files, 115 tests passed** |
+| Unit and component tests | `npm test` | **14 files, 116 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **20 passed** (at 1440×900, some also at 650–800 px tall); 1 screenshot spec skipped by default |
 | Screenshot capture | `npm run screenshots` | 1 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |

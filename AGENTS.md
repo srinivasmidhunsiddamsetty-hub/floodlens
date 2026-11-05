@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.56 (tag `v0.56`): the "Click any building" prompt shows each time FloodLens is opened, until the first pick.
+- **Current version:** v0.57 (tag `v0.57`): the Sea level card from the owner's mockup: light-blue boxes, left-aligned navy figures, plain level labels, a shorter card, 16 px card titles.
 - **Test status at handoff:**
-  - 115 unit and component tests in 14 files pass.
+  - 116 unit and component tests in 14 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -93,13 +93,13 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 
 | Element | Style |
 | --- | --- |
-| Card title | 15 px, bold |
+| Card title ("Sea level", "On the map") | 16 px, bold (v0.57; 15 px before) |
 | Labels (Height, Footprint, Low spot, "Water reaches at") | 14 px medium, sentence case, black (not grey) |
 | Fact values | 20 px semibold (v0.41; medium before) |
 | The answer ("+2 ft") | 24 px bold |
-| Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 12 px medium, black, one line |
-| Sea level figures: the area and the share (equal weight) | 30 px bold (v0.45; 28 px in v0.43–v0.44; 24 px only on windows ≤ 725 px tall), white, centred in a premium navy box (`.surface-navy`, v0.49), boxes equal height; 8 px label → number, 10 px number → switch; 20 px on short windows |
-| Level chips on the slider | 12 px, centred pills (v0.41); light fill at rest, the chosen one accent-tinted and bold |
+| Sea level figure labels: "Total area covered" / "New area covered", "Share of city land" (v0.38) | 13 px medium, black, one line, aligned left (v0.57; 12 px centred before) |
+| Sea level figures: the area and the share (equal weight) | 30 px bold (v0.45; 24 px only on windows ≤ 725 px tall), **navy** (`text-accent`), aligned left in a light-blue box (`.surface-sky`, v0.57, the owner's mockup; premium navy with white text in v0.49–v0.56). The area box is as tall as its content (label, number 4 px below, unit pill 8 px below, full width); the share takes the rest, label resting on its number in the middle. No decoration: the owner dropped the mockup's wave (it carried no data) |
+| Level labels on the slider | 13 px, centred (v0.57). Only the chosen one is a pill, accent-tinted and bold; the others are plain text with a light fill on hover (all pills in v0.41–v0.56) |
 | Toggles (Overall / Per foot, km² / acres) | pills (v0.47), the chosen option filled with the accent |
 | Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
 
@@ -109,7 +109,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
 - Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. The prompt shows **each time FloodLens is opened**, until the first pick; after that, closing the card leaves the right side empty for the rest of the visit (v0.56). It is not remembered between visits: v0.53–v0.55 stored it (`floodlens.clickHintDone`) and hid it for good, so the owner never saw it again.
-- Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 254 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a premium navy box (`.surface-navy`, white text; v0.49), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
+- Sea level card (v0.36–v0.39, v0.57): no big "+2 ft". The "Overall / Per foot" toggle stays beside the title on the right (the owner's call over the mockup's own row). The slider (up to 200 px tall since v0.57; 254 before, so the card is 278 px tall at 900 px, from 332) has clickable level labels with centred names; today's is "0 ft". Beside it, two figures of equal weight in light-blue boxes, aligned left, 8 px apart (v0.57): "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows use two Tailwind variants (`@custom-variant` in `index.css`): `short` (800 px tall or less) tightens the card padding and layer rows; `tiny` (725 px or less) also compacts the figure boxes, never below 24 px numbers. **Check the figure size on a ~760 px window after any change here**: v0.43 shrank them to 20 px on ordinary laptops. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.47): **one toolbar** (`role="toolbar"`, "Map controls") at the **screen's right edge, under the Insights card**, 16 px from the right and bottom, with thin rules between groups: 2D over 3D | "Entire Miami Beach" (folded-map icon) | in 3D turn and tilt | compass | zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned. At ≤ 800 px window height the four arrows fold into a "Turn and tilt" button that opens them beside it (Escape is caught first, so it doesn't also close the place card); at ≤ 725 px the buttons are 28 px. Never two columns: the owner found that scattered. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
 - The sea-level slider is upright: today at the bottom, +5 ft at the top. No play button and no (i) (both removed in v0.35).
@@ -180,7 +180,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 115 tests
+npm test                 # Vitest: 116 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -269,6 +269,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.54 | Legend: minus folds it to a square of its colours (remembered), no highlighted level, title "Water reaches at"; stays bottom left |
 | v0.55 | "About the data" and "Sources" checked against the app: both colour modes, the sea-level figures and how they're computed, the place card, D3 credited for the water track (the chart is gone) |
 | v0.56 | Fix: the "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.53 hid it for good once a browser had picked a place) |
+| v0.57 | Sea level card from the owner's mockup: light-blue boxes (`.surface-sky`), left-aligned navy figures, unit pill full width, only the chosen level a pill, slider at most 200 px (card 278 px, was 332), no wave or icons; both card titles 16 px |
 
 ---
 

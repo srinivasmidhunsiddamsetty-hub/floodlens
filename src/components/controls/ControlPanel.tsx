@@ -46,7 +46,7 @@ export function ControlPanel({ manifest }: Props) {
             Total and Individual in v0.38 (the owner's names), Total and By level in v0.41, Overall and
             Per foot in v0.47 (the owner's pick: names that explain themselves). */}
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 id="sec-level" className="t-title text-[15px] font-bold tracking-[-0.01em]">
+          <h2 id="sec-level" className="t-title text-[16px] font-bold tracking-[-0.01em]">
             Sea level
           </h2>
           <Segmented
@@ -79,7 +79,7 @@ export function ControlPanel({ manifest }: Props) {
       </section>
 
       <section aria-labelledby="sec-layers" className="card p-4 short:p-3">
-        <h2 id="sec-layers" className="t-title mb-2 text-[15px] font-bold tracking-[-0.01em]">
+        <h2 id="sec-layers" className="t-title mb-2 text-[16px] font-bold tracking-[-0.01em]">
           On the map
         </h2>
         {LAYERS.filter((l) => !l.needsLowLying || hasLowLying).map((l) => (

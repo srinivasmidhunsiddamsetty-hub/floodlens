@@ -48,6 +48,16 @@ describe('<ScenarioSelector>', () => {
     expect(onChange).toHaveBeenCalledWith(1)
   })
 
+  it('shows only the chosen level as a pill; the others are plain labels that fill on hover (v0.57)', () => {
+    render(<Harness />)
+    const label = (name: string) => screen.getAllByRole('button', { hidden: true }).find((b) => b.textContent === name)!
+    expect(label('+2 ft')).toHaveClass('bg-accent-soft', 'font-bold', 'ring-1')
+    for (const name of ['0 ft', '+1 ft', '+3 ft']) {
+      expect(label(name)).not.toHaveClass('bg-accent-soft', 'chip-soft', 'bg-canvas')
+      expect(label(name)).toHaveClass('hover:bg-[#eef2f7]', 'text-[13px]')
+    }
+  })
+
   it('has no play or info button (v0.35), and holds what it is given beside the slider (v0.36)', () => {
     render(
       <ScenarioSelector available={[0, 1, 2, 3]} value={2} onChange={() => {}}>
