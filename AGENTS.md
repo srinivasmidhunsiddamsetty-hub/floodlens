@@ -11,9 +11,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.60 (tag `v0.60`): the Sea level card on the 4 px grid, 288 px tall, with the owner's box paddings (16/16 and 16/20).
+- **Current version:** v0.61 (tag `v0.61`): one colour for the place card's icons, with the place itself still green.
 - **Test status at handoff:**
-  - 117 unit and component tests in 14 files pass.
+  - 118 unit and component tests in 14 files pass.
   - 21 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
@@ -102,7 +102,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 | Sea level figures: the area and the share (equal weight) | 30 px bold (v0.45; 24 px only on windows ≤ 725 px tall), **navy** (`text-accent`), **centred** (v0.58, the owner's pick after seeing left and centred as the numbers change) in a light-blue box (`.surface-sky`, v0.57, the owner's mockup; premium navy with white text in v0.49–v0.56). Its premium finish is "soft glow" (v0.58): a faint glow from the top left, 3% grain, a navy hairline, a top highlight and layered soft shadows. Spacing (v0.60, the owner's numbers, all on the 4 px grid): the area box has 16 px above and below (label 12/16, number 4 px under it at 30/32, unit pill 8 px under that, 24 px tall), 116 px in all; the share box 16 px above and 20 px below, 88 px; 8 px between them, 212 px together, the slider's full height. The boxes' hairline is drawn inside, so it adds nothing. No decoration: the owner dropped the mockup's wave (it carried no data) |
 | Level labels on the slider | 12 px in 24 px chips, centred (v0.60; 13 px in 22 px chips in v0.57–v0.59). Only the chosen one is a pill, accent-tinted and bold; the others are plain text with a light fill on hover (all pills in v0.41–v0.56) |
 | Toggles (Overall / Per foot, km² / acres) | pills (v0.47), the chosen option filled with the accent. Toggles have a 1 px inset (v0.60), so Overall / Per foot is 32 px tall and km² / acres 24 px (the smallest size, `Segmented` `2xs`, v0.58: 20 px options, 12 px text since v0.60, only as wide as its text) |
-| Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact; pale tint behind the icon colour |
+| Icon tiles (v0.37) | 36 px for the place, 20 px for the coordinates, 28 px for each fact. **One colour for icons (v0.61):** each takes its surface: white on a faint white tile (`bg-white/14`) in the navy facts box, navy on the light navy tint (`bg-accent-soft text-accent`) on the white card. Only the place tile is green (`#15803d` on `#e9fbf0`), its link to the selection on the map. Don't add a colour per icon. Map-key swatches and status icons keep their colours |
 
 **Layout (v0.35): desktop and laptop only.**
 
@@ -181,7 +181,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 117 tests
+npm test                 # Vitest: 118 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
 npm run build            # tsc -b && vite build → dist/
@@ -274,6 +274,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.58 | Figures centred again (the owner's pick after seeing both as the numbers change); "soft glow" premium finish on the boxes; km² / acres toggle at its smallest (20 px, 11 px text, fits its text) |
 | v0.59 | The place card's answer and facts boxes a step lighter: `#2b4c78` (was the brand navy `#1e3a5f`) |
 | v0.60 | Sea level card on the 4 px grid, 288 px tall: area box 16/16 padding, share box 16 top / 20 bottom; 12 px labels, 30/32 numbers, 32 and 24 px toggles, 24 px level chips, 4 px track; the owner's 4 px grid rule recorded in §3 |
+| v0.61 | One colour for the place card's icons: white on faint white tiles in the navy facts box, navy on a light tint on the card; the place tile stays green |
 
 ---
 

@@ -90,6 +90,21 @@ describe('<InspectionCard>', () => {
     expect(screen.getAllByRole('term')[0].closest('dl')).toHaveClass('surface-navy')
   })
 
+  it('gives every icon one colour, except the place, which keeps the map selection’s green (v0.61)', () => {
+    card(levels(2))
+    // Fact icons are white on a faint white tile inside the navy box: no per-icon colours.
+    for (const t of screen.getAllByRole('term')) {
+      const tile = t.querySelector('svg')!.parentElement!
+      expect(tile).toHaveClass('bg-white/14', 'text-white')
+      expect(tile.getAttribute('style')).toBeNull()
+    }
+    // On the white card, icons are navy on a light tint; the place alone is green, like the building on the map.
+    const coords = screen.getByText('25.77675° N, 80.13466° W').querySelector('span[aria-hidden]')!
+    expect(coords).toHaveClass('bg-accent-soft', 'text-accent')
+    const place = screen.getByRole('heading', { name: 'Building near Euclid Avenue' }).parentElement!.previousElementSibling!
+    expect(place).toHaveClass('text-[#15803d]')
+  })
+
   it('explains places outside the city boundary instead of showing results', () => {
     card(levels(2), { selection: { ...building, insideStudyArea: false } })
     // One short sentence (v0.48; "FloodLens only maps the city itself." followed it before).

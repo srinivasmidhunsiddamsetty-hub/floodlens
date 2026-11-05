@@ -16,29 +16,19 @@ interface Props {
 // Today's level is "0 ft" (v0.40; "Today" before), as on the slider and the legend.
 const levelName = formatScenario
 
-/** Icon colour and its tile's light fill (v0.37). */
-const TINTS = {
-  blue: { fg: '#1f5fd0', bg: '#e9f0fc' },
-  violet: { fg: '#5b4bd1', bg: '#efedfb' },
-  green: { fg: '#1d7a3e', bg: '#e8f4ec' },
-} as const
-
-/** One row of the card's single column: icon in a 28 px tinted tile and label, value on the right. */
-function Row({
-  icon: Icon,
-  tint,
-  label,
-  value,
-}: {
-  icon: LucideIcon
-  tint: keyof typeof TINTS
-  label: string
-  value: ReactNode
-}) {
+/**
+ * One row of the card's single column: icon in a 28 px tile and label, value on the right. One
+ * colour for every icon (v0.61, the owner's call): each takes its surface, so on the navy box it's
+ * white on a faint white tile. Blue, violet and green tiles before (v0.37–v0.60).
+ */
+function Row({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: ReactNode }) {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 py-1.5">
       <dt className="flex min-w-0 items-center gap-2.5 text-[14px] leading-5 font-medium text-white">
-        <span className="tile-soft grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: TINTS[tint].bg, color: TINTS[tint].fg }} aria-hidden>
+        <span
+          className="grid size-7 shrink-0 place-items-center rounded-lg bg-white/14 text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]"
+          aria-hidden
+        >
           <Icon className="size-4" />
         </span>
         {label}
@@ -65,7 +55,9 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
     <section aria-labelledby="insp-title" className="card pointer-events-auto p-3 animate-slide-up">
       {/* What and where: a 36 px tile for the place (v0.37), its green matching the selection on
           the map (v0.46; a deeper green for the icon, since #3ee67e on a pale tile is too faint),
-          then the name and, under it, the coordinates with a small tile of their own. */}
+          then the name and, under it, the coordinates with a small tile of their own. The place
+          keeps its green (v0.61, the owner's pick): it's the card's link to the building on the map.
+          Every other icon is one colour, navy on a light tint on the white card (grey before). */}
       <div className="flex items-start gap-2.5">
         <span className="tile-soft grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#e9fbf0] text-[#15803d]" aria-hidden>
           <Icon className="size-5" />
@@ -77,7 +69,7 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
           </h3>
           {/* No "N m from street": the title already names the street, and the distance answers nothing about water. */}
           <p className="mt-1 flex items-center gap-1.5 text-[12px] leading-4 whitespace-nowrap text-fg-muted tabular">
-            <span className="tile-soft grid size-5 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle" aria-hidden>
+            <span className="tile-soft grid size-5 shrink-0 place-items-center rounded-md bg-accent-soft text-accent" aria-hidden>
               <Crosshair className="size-3" />
             </span>
             {formatCoord(lngLat[0], lngLat[1])}
@@ -151,16 +143,15 @@ export function InspectionCard({ selection, inspection, scenarioFt, onClear }: P
                   <>
                     <Row
                       icon={Ruler}
-                      tint="blue"
                       label="Height"
                       value={building.renderHeightM != null ? `≈ ${Math.round(building.renderHeightM)} m` : '—'}
                     />
-                    <Row icon={LandPlot} tint="violet" label="Footprint" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
+                    <Row icon={LandPlot} label="Footprint" value={`≈ ${formatSmallArea(building.footprintAreaM2)}`} />
                   </>
                 )}
                 {/* No area caption (v0.31): it showed the whole low-spot area the building touches,
                     not the building's part of it, and the level is what matters. */}
-                <Row icon={LowSpot} tint="green" label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
+                <Row icon={LowSpot} label="Low spot" value={lowAt.length ? `Yes, from ${lowAt[0]}` : 'No'} />
               </dl>
             </div>
           )

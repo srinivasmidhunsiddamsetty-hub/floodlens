@@ -64,8 +64,19 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.58 | 5 Nov 2026 | Centred figures, soft-glow boxes, smaller unit toggle | [`docs/versions/v0.58/`](docs/versions/v0.58/) |
 | v0.59 | 5 Nov 2026 | A lighter navy in the place card | [`docs/versions/v0.59/`](docs/versions/v0.59/) |
 | v0.60 | 5 Nov 2026 | The Sea level card on the 4 px grid | [`docs/versions/v0.60/`](docs/versions/v0.60/) |
+| v0.61 | 5 Nov 2026 | One colour for icons | [`docs/versions/v0.61/`](docs/versions/v0.61/) |
 
 ---
+
+## v0.61: One colour for icons (5 Nov 2026)
+
+The owner wanted consistent iconography, with no colour per icon. Three options were rendered on the real place card, and the owner picked C.
+
+- **The fact icons (Height, Footprint, Low spot) are one colour.** They're white on a faint white tile inside the navy box; they were blue, violet and green on pale tints.
+- **On the white card, icons are navy on a light navy tint.** That's the coordinates icon, which was grey.
+- **The place icon keeps its green**, the one exception. It links the card to the building highlighted green on the map.
+- Left as they are: the "Click any building" prompt's tile, which sits where the place tile appears and shares its green. The swatches under "On the map", which key the map's colours. And status icons: the warning, and ✓ and ✗ in Sources.
+- Tests: 118 unit/component tests (new: one icon colour, the place green) and 21 end-to-end tests.
 
 ## v0.60: The Sea level card on the 4 px grid (5 Nov 2026)
 
