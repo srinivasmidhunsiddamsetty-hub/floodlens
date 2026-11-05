@@ -372,6 +372,33 @@ test.describe('FloodLens — core flows', () => {
     expect(await page.locator('#control-panel > div').evaluate((el) => el.scrollHeight <= el.clientHeight)).toBe(true)
   })
 
+  test('the Sea level card sits on the 4 px grid: 288 px tall, with the owner’s box paddings (v0.60)', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const measure = () =>
+      page.evaluate(() => {
+        const r = (el: Element) => el.getBoundingClientRect()
+        const card = document.querySelector('section[aria-labelledby="sec-level"]')!
+        const [area, share] = [...document.querySelectorAll('#control-panel [aria-live="polite"] > div')]
+        const toggle = area.querySelector('[role=radiogroup]')!
+        return {
+          card: r(card).height,
+          area: [r(area).height, r(area.children[0]).top - r(area).top, r(area).bottom - r(toggle).bottom],
+          share: [r(share).height, r(share.children[0]).top - r(share).top, r(share).bottom - r(share.children[1]).bottom],
+        }
+      })
+    // 16 px above and below in the area box; 16 above and 20 below in the share box.
+    expect(await measure()).toEqual({ card: 288, area: [116, 16, 16], share: [88, 16, 20] })
+    // On laptop windows the card's padding tightens to 12 px; the boxes keep theirs.
+    await page.setViewportSize({ width: 1440, height: 760 })
+    await expect.poll(measure).toEqual({ card: 280, area: [116, 16, 16], share: [88, 16, 20] })
+    // On the shortest windows the slider shrinks in 4 px steps, so the card stays on the grid.
+    for (const height of [700, 680, 650]) {
+      await page.setViewportSize({ width: 1440, height })
+      await expect.poll(async () => (await measure()).card % 4).toBe(0)
+    }
+  })
+
   test('Insights has a fixed width, with no resize handle or close tab (v0.37; 360 px in v0.38)', async ({ page }) => {
     // A width saved by an older version is ignored.
     await page.addInitScript(() => localStorage.setItem('floodlens.insightsWidth', '500'))

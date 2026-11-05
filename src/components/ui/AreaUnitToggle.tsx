@@ -15,6 +15,7 @@ export function AreaUnitToggle({
   onDark?: boolean
   className?: string
 }) {
-  // The smallest size (v0.58, the owner's pick): 20 px tall, 11 px text, as wide as its text.
+  // The smallest size (v0.58, the owner's pick): 24 px tall, 12 px text (v0.60, on the grid; 26 px and
+  // 11 px before), as wide as its text.
   return <Segmented label="Area unit" size="2xs" options={OPTIONS} value={value} onChange={onChange} onDark={onDark} className={className} />
 }

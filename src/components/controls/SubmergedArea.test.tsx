@@ -56,10 +56,10 @@ describe('<SubmergedArea>', () => {
       expect(value.parentElement).not.toHaveClass('surface-navy', 'text-left')
     }
     // The unit switch is the light pill (v0.57; white on navy before), at its smallest size and only
-    // as wide as its text (v0.58: 20 px tall, 11 px text).
+    // as wide as its text: a 24 px track around 20 px options, 12 px text (v0.60, on the 4 px grid).
     const unit = screen.getByRole('radiogroup', { name: 'Area unit' })
-    expect(unit).toHaveClass('w-max', 'bg-surface')
-    for (const option of screen.getAllByRole('radio')) expect(option).toHaveClass('h-5', 'text-[11px]')
+    expect(unit).toHaveClass('w-max', 'bg-surface', 'p-px')
+    for (const option of screen.getAllByRole('radio')) expect(option).toHaveClass('h-5', 'text-xs')
   })
 
   it('sizes the area box to its content and gives the share the rest, label resting on its number (v0.52, v0.57)', () => {
@@ -71,6 +71,15 @@ describe('<SubmergedArea>', () => {
     const share = screen.getByText('5%').parentElement!
     expect(share).toHaveClass('grid', 'grid-rows-[1fr_auto_1fr]', 'flex-1', 'basis-0', 'min-h-0', 'justify-items-center')
     expect(screen.getByText('Share of city land')).toHaveClass('self-end')
+  })
+
+  it('keeps every space on the 4 px grid: 16 / 16 for the area, 16 top and 20 bottom for the share (v0.60)', () => {
+    render(<Harness ft={2} mode="simple" />)
+    expect(screen.getByText('0.50').parentElement).toHaveClass('py-4', 'px-3')
+    expect(screen.getByText('5%').parentElement).toHaveClass('pt-4', 'pb-5', 'px-3')
+    // Labels 12/16, numbers 30/32, the number 4 px under its label.
+    for (const label of ['Total area covered', 'Share of city land']) expect(screen.getByText(label)).toHaveClass('text-xs', 'leading-4')
+    for (const n of ['0.50', '5%']) expect(screen.getByText(n)).toHaveClass('text-[30px]', 'leading-8', 'mt-1')
   })
 
   it('shows one unit at a time, switched like Total / By level (v0.39)', async () => {

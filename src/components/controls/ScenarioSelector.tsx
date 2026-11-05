@@ -14,14 +14,16 @@ interface Props {
 }
 
 /**
- * Height of the vertical slider, and the thumb size (the track runs between the thumb's centres).
+ * The thumb size (the track runs between the thumb's centres). The slider's height is `.fl-track-h`
+ * in index.css, rounded down to the 4 px grid (v0.60).
+ * Height of the vertical slider:
  * The slider gives up height on short windows (v0.35), so the left panel fits without scrolling
  * in windows down to about 650 px tall. `--fl-panel-rest` is the rest of the panel and the top
  * bar (set by ControlPanel; it shrinks on short windows), and `--fl-panel-extra` is any line the
  * panel adds (the low-spot area, v0.36). It never goes below the height of the two figure boxes
- * beside it on a short window. At most 200 px since v0.57, so the card is shorter (254 px before).
+ * beside it on a short window. At most 212 px (v0.60): exactly the two figure boxes, so the card is
+ * 288 px tall (200 px in v0.57–v0.59, 254 px before).
  */
-const TRACK_H = 'clamp(144px, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 200px)'
 const THUMB = 20
 
 /**
@@ -51,20 +53,21 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
 
   // The thumb's centre for each level, measured up from the bottom of the slider.
   const pos = (i: number) => `calc(${THUMB / 2}px + ${i / max} * (100% - ${THUMB}px))`
-  // Each level's chip: 22 px tall, or less when a short window squeezes the slider, so chips never overlap.
-  const chipH = `min(22px, calc((100% - ${THUMB}px) / ${max} - 2px))`
+  // Each level's chip: 24 px tall (v0.60, on the grid; 22 px before), or less when a short window
+  // squeezes the slider, so chips never overlap.
+  const chipH = `min(24px, calc((100% - ${THUMB}px) / ${max} - 2px))`
 
   return (
     <div>
-      <div className="flex gap-2.5">
-        <div className="relative flex shrink-0" style={{ height: TRACK_H }}>
+      <div className="flex gap-2">
+        <div className="fl-track-h relative flex shrink-0">
           <label htmlFor={id} className="sr-only">
             Sea-level rise above today’s high tide
           </label>
           <div className="relative w-5">
             {/* Colour-ramp track behind the transparent native track */}
             <div
-              className="pointer-events-none absolute left-1/2 w-1.5 -translate-x-1/2 rounded-full"
+              className="pointer-events-none absolute left-1/2 w-1 -translate-x-1/2 rounded-full"
               style={{ top: THUMB / 2, bottom: THUMB / 2, background: `linear-gradient(to top, ${stops})` }}
             />
             <input
@@ -93,7 +96,7 @@ export function ScenarioSelector({ available, value, onChange, colorMode = 'deta
                 tabIndex={-1}
                 onClick={() => onChange(ft)}
                 style={{ bottom: pos(i), height: chipH }}
-                className={`absolute left-0 flex w-full translate-y-1/2 cursor-pointer items-center justify-center rounded-full px-1 text-center text-[13px] whitespace-nowrap tabular transition-colors ${
+                className={`absolute left-0 flex w-full translate-y-1/2 cursor-pointer items-center justify-center rounded-full px-1 text-center text-xs whitespace-nowrap tabular transition-colors ${
                   ft === value ? 'bg-accent-soft font-bold text-fg ring-1 ring-accent/35 ring-inset' : 'text-fg-muted hover:bg-[#eef2f7] hover:text-fg'
                 }`}
               >

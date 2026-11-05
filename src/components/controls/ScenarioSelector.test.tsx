@@ -54,7 +54,8 @@ describe('<ScenarioSelector>', () => {
     expect(label('+2 ft')).toHaveClass('bg-accent-soft', 'font-bold', 'ring-1')
     for (const name of ['0 ft', '+1 ft', '+3 ft']) {
       expect(label(name)).not.toHaveClass('bg-accent-soft', 'chip-soft', 'bg-canvas')
-      expect(label(name)).toHaveClass('hover:bg-[#eef2f7]', 'text-[13px]')
+      // 12 px labels (v0.60, text on the 2 px scale; 13 px in v0.57–v0.59).
+      expect(label(name)).toHaveClass('hover:bg-[#eef2f7]', 'text-xs')
     }
   })
 

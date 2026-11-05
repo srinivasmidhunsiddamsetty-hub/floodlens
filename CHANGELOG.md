@@ -63,8 +63,34 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.57 | 5 Nov 2026 | The Sea level card from the owner's mockup | [`docs/versions/v0.57/`](docs/versions/v0.57/) |
 | v0.58 | 5 Nov 2026 | Centred figures, soft-glow boxes, smaller unit toggle | [`docs/versions/v0.58/`](docs/versions/v0.58/) |
 | v0.59 | 5 Nov 2026 | A lighter navy in the place card | [`docs/versions/v0.59/`](docs/versions/v0.59/) |
+| v0.60 | 5 Nov 2026 | The Sea level card on the 4 px grid | [`docs/versions/v0.60/`](docs/versions/v0.60/) |
 
 ---
+
+## v0.60: The Sea level card on the 4 px grid (5 Nov 2026)
+
+The owner asked for exact paddings in the figure boxes, a card of at most 288–292 px, and set a standing rule: every padding, gap and size a multiple of 4 px, every text size a multiple of 2 or 4.
+
+- **The owner's paddings, measured on the page:**
+  - Area box: 16 px above and below, 116 px tall.
+  - Share box: 16 px above and 20 px below, 88 px tall (it was 82 px, with 10 px padding).
+- **The card is 288 px tall** on a 900 px window, and 280 px on laptop windows. The boxes and the 8 px gap between them add up to exactly the slider's height, 212 px.
+- **Everything in the card is on the grid:**
+
+  | Element | Before | Now |
+  | --- | --- | --- |
+  | Box labels | 13 px | 12 px on 16 px lines |
+  | Numbers | 30 px on 34 px lines | 30 px on 32 px lines |
+  | Overall / Per foot toggle | 34 px tall | 32 px (1 px inset) |
+  | km² / acres toggle | 26 px tall, 11 px text | 24 px, 12 px text |
+  | Level labels | 13 px in 22 px chips | 12 px in 24 px chips |
+  | Slider track | 6 px | 4 px |
+  | Gap between slider and boxes | 10 px | 8 px |
+
+- **No hidden extra pixels.** The boxes' hairline is now an inset shadow, so it adds no height, and on short windows the slider shrinks in 4 px steps (CSS `round()`, with a fallback). The card stays on the grid at every window height.
+- The left panel still fits without scrolling down to 650 px windows, and the figures stay 30 px down to 730 px.
+- The rule is recorded in `AGENTS.md` §3. Much of the rest of the app is still off the grid (about 70 class uses); that's a separate pass.
+- Tests: 117 unit/component tests (new: the card's spacing classes) and 21 end-to-end tests (new: measures the card's height and the boxes' paddings at 900 and 760 px, and checks the card stays on the grid at 700, 680 and 650 px).
 
 ## v0.59: A lighter navy in the place card (5 Nov 2026)
 

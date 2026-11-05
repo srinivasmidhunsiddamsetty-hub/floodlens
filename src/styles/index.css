@@ -128,15 +128,16 @@
   /* The sea-level figure boxes (v0.57, from the owner's mockup): light blue with navy figures. The
      premium finish is the owner's "soft glow" (v0.58): a faint glow from the top left, a 3% grain,
      a navy hairline, a top highlight and layered soft shadows that lift it off the card. No
-     decoration: the mockup's wave carried no data. */
+     decoration: the mockup's wave carried no data. The hairline is drawn inside (v0.60), so a box
+     is exactly its padding plus content, on the 4 px grid. */
   .surface-sky {
     background-color: #eef4fc;
     background-image:
       url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%201%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%20opacity%3D'.03'%2F%3E%3C%2Fsvg%3E"),
       radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.95), transparent 55%),
       linear-gradient(180deg, #f3f7fd, #e6eefa);
-    border: 1px solid rgb(30 58 95 / 0.1);
     box-shadow:
+      inset 0 0 0 1px rgb(30 58 95 / 0.1),
       inset 0 1px 0 #ffffff,
       0 1px 2px rgb(16 24 40 / 0.05),
       0 4px 10px -4px rgb(30 58 95 / 0.1),
@@ -211,6 +212,13 @@
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 0 0 1px rgb(16 24 40 / 0.06);
   }
   /* Toggle tracks and switches that are off: a soft inset, like a groove. */
+  /* The sea-level slider's height (v0.35; see ScenarioSelector): what the panel can spare, between
+     144 and 212 px, rounded down to the 4 px grid (v0.60) so the card stays on it at every window
+     height. The first line is the fallback for browsers without CSS round(). */
+  .fl-track-h {
+    height: clamp(144px, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 212px);
+    height: clamp(144px, round(down, calc(100vh - var(--fl-panel-rest, 532px) - var(--fl-panel-extra, 0px)), 4px), 212px);
+  }
   .track-inset {
     box-shadow: inset 0 1px 2px rgb(16 24 40 / 0.1);
   }

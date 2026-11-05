@@ -29,22 +29,27 @@ function Figure({ label, value, children }: { label: string; value: string; chil
   // the label's row keeps its height and the number moves down, so the label is never squeezed.
   // `min-h-0 basis-0`: a grid asks for room for both spare rows, which would make the card taller
   // than the slider and the panel scroll.
+  // Spacing on the 4 px grid (v0.60, the owner's numbers): the area box has 16 px above and below;
+  // the share 16 px above and 20 px below. Label 12/16, number 4 px under it at 30/32, unit switch
+  // 8 px under that (24 px tall). That's 116 + 8 + 88 = 212 px, the slider's full height.
   const centred = !children
   return (
     <div
-      className={`surface-sky rounded-lg px-3 py-2.5 text-center tiny:px-2.5 tiny:py-1 ${
-        centred ? 'grid min-h-0 flex-1 basis-0 grid-rows-[1fr_auto_1fr] justify-items-center' : 'flex flex-none flex-col items-center'
+      className={`surface-sky rounded-lg px-3 text-center tiny:px-2 tiny:py-1 ${
+        centred
+          ? 'grid min-h-0 flex-1 basis-0 grid-rows-[1fr_auto_1fr] justify-items-center pt-4 pb-5'
+          : 'flex flex-none flex-col items-center py-4'
       }`}
     >
       <p
-        className={`text-[13px] leading-4 font-medium whitespace-nowrap text-fg tiny:text-[11px] tiny:leading-[14px] ${
-          // tiny:pt-1.5: on the shortest windows the label keeps 8 px from the box's top edge (v0.53).
-          centred ? 'mb-2 self-end tiny:mb-1 tiny:pt-1.5' : ''
+        className={`text-xs leading-4 font-medium whitespace-nowrap text-fg ${
+          // tiny:pt-1: on the shortest windows the label keeps 8 px from the box's top edge (v0.53).
+          centred ? 'self-end tiny:pt-1' : ''
         }`}
       >
         {label}
       </p>
-      <p className="mt-1 text-[30px] leading-[34px] font-bold tracking-[-0.03em] text-accent tabular tiny:mt-0.5 tiny:text-[24px] tiny:leading-7">
+      <p className="mt-1 text-[30px] leading-8 font-bold tracking-[-0.03em] text-accent tabular tiny:text-[24px] tiny:leading-7">
         {value}
       </p>
       {children}
@@ -66,7 +71,7 @@ export function SubmergedArea({ manifest, scenarioFt, colorMode, unit, onUnitCha
   if (m2 === undefined) return null
   const landM2 = manifest?.studyArea.boundary?.censusLandM2
   return (
-    <div className="flex h-full flex-col gap-2 tiny:gap-1.5" aria-live="polite">
+    <div className="flex h-full flex-col gap-2 tiny:gap-1" aria-live="polite">
       <Figure label={colorMode === 'simple' ? 'Total area covered' : 'New area covered'} value={formatArea(m2, unit)}>
         <div className="mt-2 tiny:mt-1">
           <AreaUnitToggle value={unit} onChange={onUnitChange} className="w-max" />

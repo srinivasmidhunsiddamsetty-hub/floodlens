@@ -44,13 +44,14 @@ export function Segmented<T extends string | number>({ options, value, onChange,
     refs.current[options.indexOf(opt)]?.focus()
   }
 
-  const h = size === '2xs' ? 'h-5 min-w-[38px] text-[11px] leading-none' : size === 'xs' ? 'h-[22px] min-w-11 text-[12px] leading-none' : size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]'
+  // Sizes on the 4 px grid with the 1 px inset and border (v0.60): 2xs 24 px, sm 32 px.
+  const h = size === '2xs' ? 'h-5 min-w-10 text-xs leading-none' : size === 'xs' ? 'h-[22px] min-w-11 text-[12px] leading-none' : size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]'
   return (
     <div
       role="radiogroup"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={`flex rounded-full border p-0.5 ${onDark ? 'border-white/30 bg-white/10' : 'track-inset border-line-strong bg-surface'} ${className}`}
+      className={`flex rounded-full border p-px ${onDark ? 'border-white/30 bg-white/10' : 'track-inset border-line-strong bg-surface'} ${className}`}
     >
       {options.map((o, idx) => {
         const checked = o.value === value
