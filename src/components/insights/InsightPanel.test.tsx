@@ -35,15 +35,19 @@ describe('<InsightPanel>', () => {
     expect(screen.getByText('Click any building')).toBeInTheDocument()
   })
 
-  it('drops the prompt for good after the first pick, so nothing shows when the card closes (v0.53)', async () => {
-    const { unmount } = ready({ selection: building })
+  it('shows the prompt on every visit until the first pick, then not again that visit (v0.56)', async () => {
+    const { unmount } = ready()
+    expect(screen.getByText('Click any building')).toBeInTheDocument()
+    unmount()
+    // Pick a place, then close its card: the right side stays empty for the rest of the visit.
+    const visit = ready({ selection: building })
     await userEvent.click(screen.getByRole('button', { name: 'Close (Esc)' }))
     expect(screen.queryByText('Click any building')).toBeNull()
-    expect(localStorage.getItem('floodlens.clickHintDone')).toBe('1')
-    // A later visit in the same browser starts with the right side empty too.
-    unmount()
+    // Nothing is remembered, so the next visit starts with the prompt again (v0.53 hid it for good).
+    expect(localStorage.getItem('floodlens.clickHintDone')).toBeNull()
+    visit.unmount()
     ready()
-    expect(screen.queryByText('Click any building')).toBeNull()
+    expect(screen.getByText('Click any building')).toBeInTheDocument()
   })
 
   it('holds only what you pick on the map: no city-wide figures or chart (v0.36)', () => {

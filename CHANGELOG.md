@@ -59,8 +59,16 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.53 | 4 Nov 2026 | Prompt only until the first click; share 4 px lower | [`docs/versions/v0.53/`](docs/versions/v0.53/) |
 | v0.54 | 4 Nov 2026 | A legend you can minimise, titled "Water reaches at" | [`docs/versions/v0.54/`](docs/versions/v0.54/) |
 | v0.55 | 4 Nov 2026 | "About the data" and "Sources" brought up to date | [`docs/versions/v0.55/`](docs/versions/v0.55/) |
+| v0.56 | 4 Nov 2026 | Fix: the "Click any building" prompt on every visit | [`docs/versions/v0.56/`](docs/versions/v0.56/) |
 
 ---
+
+## v0.56: Fix: the "Click any building" prompt on every visit (4 Nov 2026)
+
+The owner opened FloodLens and the prompt wasn't there. v0.53 saved the first pick in the browser (`floodlens.clickHintDone`) and hid the prompt on every later visit too. Having clicked a building once while testing, the owner never saw it again. That wasn't what was agreed.
+
+- **The prompt now shows each time FloodLens is opened**, until the first building or spot is picked. Closing the card (× or Esc) then leaves the right side empty for the rest of the visit. Nothing is saved between visits, and the old saved value is ignored, so the prompt shows again in browsers that had it hidden.
+- Tests: 115 unit/component tests (the prompt test now checks a new visit shows the prompt again) and 20 end-to-end tests.
 
 ## v0.55: "About the data" and "Sources" brought up to date (4 Nov 2026)
 

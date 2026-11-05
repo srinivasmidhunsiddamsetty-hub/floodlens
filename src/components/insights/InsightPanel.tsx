@@ -10,19 +10,9 @@ interface Props {
   inspection: InspectionState
 }
 
-const HINT_KEY = 'floodlens.clickHintDone'
-
-const readHintDone = (): boolean => {
-  try {
-    return localStorage.getItem(HINT_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
 /**
  * Insights is only about what you pick on the map (v0.36): the selected building or spot, or, until
- * the first pick in this browser (v0.53), a short prompt when nothing is picked. The city-wide "Land underwater" card (figures, chart and
+ * the first pick on each visit (v0.56), a short prompt when nothing is picked. The city-wide "Land underwater" card (figures, chart and
  * what each foot adds) moved to the Sea level card on the left as its two figures.
  */
 export function InsightPanel({ manifestState, inspection }: Props) {
@@ -36,18 +26,12 @@ export function InsightPanel({ manifestState, inspection }: Props) {
     if (selection) scrollRef.current?.scrollTo({ top: 0 })
   }, [selection])
 
-  // The "Click any building" prompt is for first-time visitors (v0.53): once a place has been picked
-  // it has done its job, so it never shows again in this browser and the right side stays empty.
-  const [hintDone, setHintDone] = useState(readHintDone)
+  // The "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.56):
+  // then it has done its job, and closing the card leaves the right side empty for the rest of the
+  // visit. Not remembered between visits: v0.53 kept it hidden in that browser for good, so anyone
+  // who had picked a place once never saw it again.
+  const [hintDone, setHintDone] = useState(false)
   if (selection && !hintDone) setHintDone(true)
-  useEffect(() => {
-    if (!hintDone) return
-    try {
-      localStorage.setItem(HINT_KEY, '1')
-    } catch {
-      /* storage unavailable (private mode): the prompt just shows again on the next visit */
-    }
-  }, [hintDone])
 
   // The selection card and its empty state share the top slot, so the answer always appears in the same place.
   const card = selection ? (

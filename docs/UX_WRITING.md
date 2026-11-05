@@ -35,7 +35,7 @@ FloodLens talks about something frightening (water reaching people's homes) usin
 | Chart | Growth with each foot / Area flooded beyond today's high tide, km² | Each foot adds more / Newly underwater, km² |
 | Low spots note | Plus 0.94 km² low-lying, not ocean-connected (not counted above) | Plus 0.94 km² of low spots cut off from the sea, not counted above |
 | Link | Data sources & limitations | What this map can and can't tell you |
-| Empty state | Click any building to see the water level that first reaches it. | Click any building to see when water would reach it. (Since v0.53, only until the first click; then nothing.) |
+| Empty state | Click any building to see the water level that first reaches it. | Click any building to see when water would reach it. (Since v0.56, each time FloodLens is opened, until the first click; then nothing for the rest of the visit.) |
 | Card label | First reached / at +3 ft | Water reaches it / At +3 ft |
 | Card, today | Today | Already, at high tide |
 | Card, not reached | Above +3 ft | Not by +3 ft |

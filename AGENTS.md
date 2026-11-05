@@ -11,7 +11,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.55 (tag `v0.55`): "About the data" and "Sources" brought up to date with the app (colour modes, figures, place card, D3's use).
+- **Current version:** v0.56 (tag `v0.56`): the "Click any building" prompt shows each time FloodLens is opened, until the first pick.
 - **Test status at handoff:**
   - 115 unit and component tests in 14 files pass.
   - 20 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
@@ -108,7 +108,7 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - The left panel is docked on the grey canvas, 300 px wide (v0.42; 280 before).
 - The Insights card floats over the right of the map with no panel behind it (v0.34, as in v0.27–v0.31). It is a fixed 360 px wide (v0.38; 380 in v0.37; no resize handle, no close tab: the owner wants it simply wide enough). The map's camera is padded by that width (`rightInset` in `MapView`).
 - The left panel collapses with its edge tab; Insights is always shown.
-- Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. The prompt shows only until the first pick in that browser (v0.53, `floodlens.clickHintDone`); after that the right side is empty when nothing is picked. No city-wide figures there: the owner wants the right side to be only about the selection.
+- Insights (v0.36) holds only the selected building or spot's card, or the "Click any building" prompt. The prompt shows **each time FloodLens is opened**, until the first pick; after that, closing the card leaves the right side empty for the rest of the visit (v0.56). It is not remembered between visits: v0.53–v0.55 stored it (`floodlens.clickHintDone`) and hid it for good, so the owner never saw it again.
 - Sea level card (v0.36–v0.39): no big "+2 ft". The slider (up to 254 px tall) has clickable pill chips with centred names; today's is "0 ft". Beside it, two figures of equal weight, each centred in a premium navy box (`.surface-navy`, white text; v0.49), equal heights, 8 px apart: "Total area covered" (Total) or "New area covered" (By level), with a km² / acres switch under the number (one unit at a time, styled like Total / By level, remembered as `floodlens.areaUnit`), and "Share of city land" as a %. Today reads 0 and 0%. **Never leave a figure blank.** The low-spot area ("0.94 km² at +2 ft", in the chosen unit) sits under the Low spots switch while that layer is on.
 - Short windows use two Tailwind variants (`@custom-variant` in `index.css`): `short` (800 px tall or less) tightens the card padding and layer rows; `tiny` (725 px or less) also compacts the figure boxes, never below 24 px numbers. **Check the figure size on a ~760 px window after any change here**: v0.43 shrank them to 20 px on ordinary laptops. `--fl-panel-rest` on the panel feeds the slider height (see `ScenarioSelector`).
 - Map controls (v0.47): **one toolbar** (`role="toolbar"`, "Map controls") at the **screen's right edge, under the Insights card**, 16 px from the right and bottom, with thin rules between groups: 2D over 3D | "Entire Miami Beach" (folded-map icon) | in 3D turn and tilt | compass | zoom. All plain 32 px buttons; no dial (the owner disliked it). The compass stays: the city view starts turned. At ≤ 800 px window height the four arrows fold into a "Turn and tilt" button that opens them beside it (Escape is caught first, so it doesn't also close the place card); at ≤ 725 px the buttons are 28 px. Never two columns: the owner found that scattered. The scale bar and credit sit at the bottom right of the visible map. Every map button has a tooltip that opens left of the column.
@@ -268,6 +268,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.53 | "Click any building" prompt only until the first click; the share 4 px below the middle; label kept off the box edge on the shortest windows |
 | v0.54 | Legend: minus folds it to a square of its colours (remembered), no highlighted level, title "Water reaches at"; stays bottom left |
 | v0.55 | "About the data" and "Sources" checked against the app: both colour modes, the sea-level figures and how they're computed, the place card, D3 credited for the water track (the chart is gone) |
+| v0.56 | Fix: the "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.53 hid it for good once a browser had picked a place) |
 
 ---
 

@@ -69,6 +69,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The "Click any building" prompt only until the first click; the share 4 px below the middle (v0.53).
 - A legend that minimises to a square of its colours (remembered), with no highlighted level and the title "Water reaches at" (v0.54).
 - "About the data" and "Sources" brought up to date: both colour modes, how the sea-level figures are computed, the place card, and D3's current use (v0.55).
+- Fix: the "Click any building" prompt shows each time FloodLens is opened, until the first pick (v0.56).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
