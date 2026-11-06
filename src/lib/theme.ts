@@ -38,7 +38,7 @@ export const colors = {
   lowLying: '#6b35aa',
   accent: '#1e3a5f', // navy since v0.50 (#0069b0 before), as --color-accent
   // Bright green (v0.46, the owner's colour), with a deep green outline. Against the Per foot ramp
-  // (v0.63) its nearest levels are gold and teal, at OKLab ΔE 20, but gold falls to 5 for
+  // (v0.65) its nearest level is gold, at OKLab ΔE 20, but gold falls to 5 for
   // deuteranopia, about as close as its nearest colour was before v0.63. Before: vermilion `#e8452c`
   // (v0.42–v0.45, v0.20–v0.37) and charcoal `#1f2937` (v0.38–v0.41).
   selection: '#3ee67e',
@@ -71,12 +71,13 @@ export const SIMPLE_BUILDING_COLOR = '#2563c7'
 /**
  * Detailed mode ("Per foot"): the level where water first reaches each area and building.
  * 0 ft is today's high tide, which is simply the sea, so it takes the sea's colour (v0.64, the owner's
- * call; red in v0.63). From +1 ft up, the owner's colours (v0.63): orange, gold, teal, periwinkle,
- * violet, picked after seeing palettes rendered on the real map once buildings carried the colours
- * too. Nothing is near-black, because a building's walls are shaded darker than its roof; the most common levels, +3 and +4 ft (73% of the city's buildings), are the calmest; there's
- * no green, which could read as "safe", and nothing sandy like a plain building. The closest
- * neighbouring pair is +1 and +2 ft at OKLab ΔE 14.4; for colour-blind readers, +3 and +4 ft at 8.4
- * (deuteranopia). +5 ft's violet is close to the low-spot purple (ΔE 6.3); the hatch keeps them apart.
+ * call; red in v0.63). From +1 ft up, the owner's colours (v0.63): orange, gold, pink (v0.65; teal
+ * `#36a7a0` in v0.63–v0.64), periwinkle, violet, picked after seeing palettes rendered on the real
+ * map once buildings carried the colours too. Nothing is near-black, because a building's walls are shaded darker than its roof; the most common levels, +3 and +4 ft (73% of the city's buildings), are the calmest; there's
+ * no green, which could read as "safe", and nothing sandy like a plain building. The closest pairs
+ * are +1 and +3 ft at OKLab ΔE 13.1, +3 and +4 ft at 13.9, and +1 and +2 ft at 14.4. For colour-blind
+ * readers, +3 and +4 ft come closest, at 6.7 (protanopia), so the legend and the place card carry the
+ * level too. +5 ft's violet is close to the low-spot purple (ΔE 6.3); the hatch keeps them apart.
  * v0.41–v0.62: #f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887 (matplotlib's Plasma).
  * v0.40: #f3f351 #f0dd4a #f0b33f #ec9a38 #e77631 #e7612a (the owner's yellow → orange, ΔE 3.9).
  * v0.38–v0.39: #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #8c2d04 (yellow → red-brown, ΔE 7.3 / 6.8).
@@ -89,7 +90,7 @@ export const BAND_COLORS: Record<number, string> = {
   0: colors.water,
   1: '#e07942',
   2: '#e9b44c',
-  3: '#36a7a0',
+  3: '#d97aa8',
   4: '#898bd4',
   5: '#6451a5',
 }

@@ -70,7 +70,7 @@ test.describe('FloodLens — core flows', () => {
     await page.getByRole('switch', { name: 'Flooding' }).click()
 
     /** Share of the map in a colour, read from the screen. */
-    const share = async (kind: 'teal' | 'deepBlue') => {
+    const share = async (kind: 'pink' | 'deepBlue') => {
       await page.mouse.move(700, 30)
       await page.waitForTimeout(2000)
       const shot = (await page.screenshot({ clip: { x: 320, y: 140, width: 760, height: 560 } })).toString('base64')
@@ -88,7 +88,7 @@ test.describe('FloodLens — core flows', () => {
           let hits = 0
           for (let i = 0; i < data.length; i += 4) {
             const [r, g, b] = [data[i], data[i + 1], data[i + 2]]
-            if (kind === 'teal' ? r < 90 && g > 110 && b > 100 && g >= b : r < 70 && g < 120 && b > 120) hits++
+            if (kind === 'pink' ? r >= 150 && r - g >= 50 && b - g >= 20 && r > b : r < 70 && g < 120 && b > 120) hits++
           }
           return hits / (data.length / 4)
         },
@@ -107,15 +107,15 @@ test.describe('FloodLens — core flows', () => {
     // Far more of the view turns blue at +3 ft, the level that reaches most of South Beach.
     expect(blueAt3).toBeGreaterThan(blueAt2 * 3)
     expect(blueAt3).toBeGreaterThan(0.05)
-    expect(await share('teal')).toBeLessThan(0.01)
+    expect(await share('pink')).toBeLessThan(0.01)
 
-    // Per foot: the key comes back, for the buildings alone, and +3 ft's teal follows the slider.
+    // Per foot: the key comes back, for the buildings alone, and +3 ft's pink follows the slider.
     await page.getByRole('radio', { name: 'Per foot' }).click()
     await expect(legend).toBeVisible()
-    expect(await share('teal')).toBeGreaterThan(0.1)
+    expect(await share('pink')).toBeGreaterThan(0.1)
     await slider.focus()
     await page.keyboard.press('ArrowLeft')
-    expect(await share('teal')).toBeLessThan(0.01)
+    expect(await share('pink')).toBeLessThan(0.01)
 
     // The Buildings switch takes the colours, and the key they need, with it.
     await page.getByRole('switch', { name: 'Buildings' }).click()

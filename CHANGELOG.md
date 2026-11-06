@@ -68,8 +68,17 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.62 | 6 Nov 2026 | Buildings in the colour of the level that reaches them | [`docs/versions/v0.62/`](docs/versions/v0.62/) |
 | v0.63 | 6 Nov 2026 | One blue for Overall, a new Per foot palette | [`docs/versions/v0.63/`](docs/versions/v0.63/) |
 | v0.64 | 6 Nov 2026 | Today's high tide in the sea's colour | [`docs/versions/v0.64/`](docs/versions/v0.64/) |
+| v0.65 | 6 Nov 2026 | Pink for +3 ft | [`docs/versions/v0.65/`](docs/versions/v0.65/) |
 
 ---
+
+## v0.65: Pink for +3 ft (6 Nov 2026)
+
+The owner's change: +3 ft is now pink, `#d97aa8` (teal `#36a7a0` in v0.63–v0.64), on the water and on buildings. It's the level that first reaches the most buildings, so it sets the look of the Per foot map.
+
+- **Measured** (OKLab ΔE; the targets are 15 for normal vision and 8 for colour-blind readers): +1 and +3 ft 13.1, +3 and +4 ft 13.9, +1 and +2 ft 14.4. For colour-blind readers, +3 and +4 ft are the closest at 6.7 (protanopia), down from 8.4 with teal, so some red-blind readers may find pink and periwinkle hard to tell apart; the legend and the place card still give the level. The green selection is now far from the most common level (ΔE 34; 20 with teal).
+- "About the data" names the colours in order: orange, gold, pink, periwinkle, violet.
+- Tests: 130 unit/component tests in 15 files and 23 end-to-end tests (the colour test now reads +3 ft's pink from the screen).
 
 ## v0.64: Today's high tide in the sea's colour (6 Nov 2026)
 

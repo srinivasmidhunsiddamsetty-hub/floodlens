@@ -78,6 +78,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - Buildings change colour as the slider reaches the level that first touches them, in 3D and 2D (v0.62).
 - With Overall, reached buildings in one deeper blue and the legend Per foot only again; the owner's new Per foot palette, made for buildings (v0.63).
 - Today's high tide in the sea's colour, in both modes (v0.64).
+- Pink for +3 ft, the owner's hex (v0.65).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).

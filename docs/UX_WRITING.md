@@ -332,3 +332,9 @@ The owner asked why 0 ft needs a colour. Today's high tide is simply the sea, so
 | --- | --- | --- |
 | About, Per foot | … one colour per level: red at today's high tide, then orange, gold, teal and periwinkle, to violet at +5 ft. | … one colour per level: orange at +1 ft, then gold, teal and periwinkle, to violet at +5 ft. |
 | About, open water | Open water sits on top, so colour only appears where water reaches land. | … Today's high tide (0 ft) is simply the sea, so it's the sea's colour. |
+
+## Before and after (v0.64 → v0.65)
+
+| Where | Before | After |
+| --- | --- | --- |
+| About, Per foot | … orange at +1 ft, then gold, teal and periwinkle, to violet at +5 ft. | … orange at +1 ft, then gold, pink and periwinkle, to violet at +5 ft. |
