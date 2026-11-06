@@ -66,8 +66,27 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.60 | 5 Nov 2026 | The Sea level card on the 4 px grid | [`docs/versions/v0.60/`](docs/versions/v0.60/) |
 | v0.61 | 5 Nov 2026 | One colour for icons | [`docs/versions/v0.61/`](docs/versions/v0.61/) |
 | v0.62 | 6 Nov 2026 | Buildings in the colour of the level that reaches them | [`docs/versions/v0.62/`](docs/versions/v0.62/) |
+| v0.63 | 6 Nov 2026 | One blue for Overall, a new Per foot palette | [`docs/versions/v0.63/`](docs/versions/v0.63/) |
 
 ---
+
+## v0.63: One blue for Overall, a new Per foot palette (6 Nov 2026)
+
+The owner wanted every reached building in blue with Overall, and a Per foot palette made for buildings rather than ground. Four palettes and three blues were rendered on the real app. The owner chose the deeper blue and supplied their own palette, based on the options.
+
+- **Overall: reached buildings are one blue,** `#2563c7`, a step deeper than the water (`#3d84e6`), so roofs don't melt into it. They still follow the slider: at +3 ft, buildings reached at +3 ft or lower are blue and the rest stay plain.
+- **The legend is back to Per foot only.** With one colour there's nothing to decode (v0.35; it also showed with Overall in v0.62). With Per foot it stays while either the water or the buildings show the colours.
+- **New Per foot palette,** for the water and buildings alike:
+
+  | 0 ft | +1 ft | +2 ft | +3 ft | +4 ft | +5 ft |
+  | --- | --- | --- | --- | --- | --- |
+  | red `#ba3e38` | orange `#e07942` | gold `#e9b44c` | teal `#36a7a0` | periwinkle `#898bd4` | violet `#6451a5` |
+
+  The owner gave +1 ft to +5 ft. 0 ft keeps the red of option B, the palette theirs builds on (Plasma before).
+- **Why a new palette:** a building's walls are shaded darker than its roof, so Plasma's +4 and +5 ft went nearly black, and 73% of the city's buildings first get water at +3 or +4 ft, so Plasma's magenta and purple set the whole look. Nothing is near-black now, those two levels are the calmest, and there's no green, which could read as "safe".
+- **Measured** (OKLab ΔE; the targets are 15 for normal vision and 8 for colour-blind readers): closest neighbours +1 and +2 ft at 14.4, just under the target, and +1 ft holds only 7 buildings. Colour-blind readers: +3 and +4 ft at 8.4 (deuteranopia), up from Plasma's 7.8. +5 ft's violet is close to the low-spot purple (6.3), and the hatch keeps them apart. The green selection is 5 from gold for deuteranopia, about as close as it came to its nearest colour before.
+- "About the data" describes both: the deeper blue, and the new colours in order.
+- Tests: 128 unit/component tests in 15 files (new: the colour for each mode) and 23 end-to-end tests (the colour test now reads the deep blue with Overall and +3 ft's teal with Per foot from the screen, with Flooding off so only buildings can show them).
 
 ## v0.62: Buildings in the colour of the level that reaches them (6 Nov 2026)
 

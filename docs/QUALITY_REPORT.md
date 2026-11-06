@@ -75,7 +75,8 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The place card's navy boxes a step lighter, `#2b4c78` (v0.59).
 - The Sea level card on the 4 px grid, 288 px tall, with the owner's box paddings; an end-to-end test measures them (v0.60).
 - One colour for the place card's icons, the place still green (v0.61).
-- Buildings take the colour of the level that first reaches them, following the slider, in both colour modes and in 2D; the legend shows whenever those colours are on the map (v0.62).
+- Buildings change colour as the slider reaches the level that first touches them, in 3D and 2D (v0.62).
+- With Overall, reached buildings in one deeper blue and the legend Per foot only again; the owner's new Per foot palette, made for buildings (v0.63).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -91,7 +92,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **15 files, 127 tests passed** |
+| Unit and component tests | `npm test` | **15 files, 128 tests passed** |
 | End-to-end (production build, Chrome) | `npm run test:e2e` | **23 passed** (at 1440×900, some also at 650–800 px tall); 1 screenshot spec skipped by default |
 | Screenshot capture | `npm run screenshots` | 1 passed; images in `docs/screenshots/` |
 | Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 29 MB raw across 20 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |

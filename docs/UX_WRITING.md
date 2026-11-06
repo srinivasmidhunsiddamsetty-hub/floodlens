@@ -313,3 +313,13 @@ Buildings now take their level's colour, so the app has to say what that means. 
 | Legend | Shown with Per foot colours | Same words, shown whenever level colours are on the map. The title "Water reaches at" now also keeps a coloured building from reading as a flooded one. |
 
 The "Buildings" row under "On the map" keeps its wording ("Shapes and heights from OpenStreetMap"): still true, and the legend explains the colours.
+
+## Before and after (v0.62 → v0.63)
+
+With Overall, reached buildings are now one blue, and Per foot has new colours.
+
+| Where | Before | After |
+| --- | --- | --- |
+| About, Overall | Overall colours show all the water at the chosen level in one blue. | … in one blue, and the buildings it reaches in a deeper blue. |
+| About, Per foot | … yellow at today's high tide, then orange, coral, magenta and purple, to deep indigo at +5 ft. The legend lists them. | … red at today's high tide, then orange, gold, teal and periwinkle, to violet at +5 ft. Buildings take the same colours, and the legend lists them. |
+| About, buildings | Buildings take the colour of the level that first reaches them, in either colour mode, once the slider gets there. | Buildings change colour once the slider reaches the first level whose water touches them. |

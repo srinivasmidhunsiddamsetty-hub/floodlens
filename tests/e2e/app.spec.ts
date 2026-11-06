@@ -56,36 +56,44 @@ test.describe('FloodLens — core flows', () => {
     expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1)
   })
 
-  test('buildings take their level’s colour as the slider reaches it, in either colour mode (v0.62)', async ({ page }) => {
+  test('buildings change colour as the slider reaches them: one blue with Overall, each level’s own with Per foot (v0.62, v0.63)', async ({ page }) => {
+    test.setTimeout(120_000)
     await page.goto('/')
     await waitForMap(page)
     const legend = page.getByRole('region', { name: 'Map legend' })
     const slider = page.getByRole('slider')
-    // The whole city, in one blue: no buildings on screen yet, so nothing for a key to explain.
-    await expect(legend).toHaveCount(0)
     await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
-    await expect(legend).toBeVisible({ timeout: 10_000 })
     await page.waitForTimeout(4000)
+    // One blue has nothing for a key to explain, even with buildings on screen.
+    await expect(legend).toHaveCount(0)
+    // With Flooding off, only buildings can show these colours.
+    await page.getByRole('switch', { name: 'Flooding' }).click()
 
-    /** Share of the map showing +3 ft's magenta. With one blue water, only buildings can show it. */
-    const magenta = async () => {
+    /** Share of the map in a colour, read from the screen. */
+    const share = async (kind: 'teal' | 'deepBlue') => {
       await page.mouse.move(700, 30)
       await page.waitForTimeout(2000)
       const shot = (await page.screenshot({ clip: { x: 320, y: 140, width: 760, height: 560 } })).toString('base64')
-      return page.evaluate(async (png) => {
-        const img = new Image()
-        img.src = `data:image/png;base64,${png}`
-        await img.decode()
-        const canvas = document.createElement('canvas')
-        canvas.width = img.width
-        canvas.height = img.height
-        const ctx = canvas.getContext('2d', { willReadFrequently: true })!
-        ctx.drawImage(img, 0, 0)
-        const { data } = ctx.getImageData(0, 0, img.width, img.height)
-        let hits = 0
-        for (let i = 0; i < data.length; i += 4) if (data[i] > 120 && data[i + 1] < 80 && data[i + 2] > 90 && data[i] > data[i + 2]) hits++
-        return hits / (data.length / 4)
-      }, shot)
+      return page.evaluate(
+        async ({ png, kind }) => {
+          const img = new Image()
+          img.src = `data:image/png;base64,${png}`
+          await img.decode()
+          const canvas = document.createElement('canvas')
+          canvas.width = img.width
+          canvas.height = img.height
+          const ctx = canvas.getContext('2d', { willReadFrequently: true })!
+          ctx.drawImage(img, 0, 0)
+          const { data } = ctx.getImageData(0, 0, img.width, img.height)
+          let hits = 0
+          for (let i = 0; i < data.length; i += 4) {
+            const [r, g, b] = [data[i], data[i + 1], data[i + 2]]
+            if (kind === 'teal' ? r < 90 && g > 110 && b > 100 && g >= b : r < 70 && g < 120 && b > 120) hits++
+          }
+          return hits / (data.length / 4)
+        },
+        { png: shot, kind },
+      )
     }
 
     await slider.focus()
@@ -93,14 +101,21 @@ test.describe('FloodLens — core flows', () => {
     await page.keyboard.press('ArrowRight')
     await page.keyboard.press('ArrowRight')
     await expect(slider).toHaveAttribute('aria-valuetext', '+2 ft above MHHW')
-    const before = await magenta()
+    const blueAt2 = await share('deepBlue')
     await page.keyboard.press('ArrowRight')
-    const reached = await magenta()
+    const blueAt3 = await share('deepBlue')
+    // Far more of the view turns blue at +3 ft, the level that reaches most of South Beach.
+    expect(blueAt3).toBeGreaterThan(blueAt2 * 3)
+    expect(blueAt3).toBeGreaterThan(0.05)
+    expect(await share('teal')).toBeLessThan(0.01)
+
+    // Per foot: the key comes back, for the buildings alone, and +3 ft's teal follows the slider.
+    await page.getByRole('radio', { name: 'Per foot' }).click()
+    await expect(legend).toBeVisible()
+    expect(await share('teal')).toBeGreaterThan(0.1)
+    await slider.focus()
     await page.keyboard.press('ArrowLeft')
-    const back = await magenta()
-    expect(before).toBeLessThan(0.01)
-    expect(reached).toBeGreaterThan(0.1)
-    expect(back).toBeLessThan(0.01)
+    expect(await share('teal')).toBeLessThan(0.01)
 
     // The Buildings switch takes the colours, and the key they need, with it.
     await page.getByRole('switch', { name: 'Buildings' }).click()
@@ -320,8 +335,8 @@ test.describe('FloodLens — core flows', () => {
     await expect(page.getByRole('region', { name: 'Map legend' })).toHaveCount(0)
 
     await modes.getByRole('radio', { name: 'Per foot' }).click()
-    // Plasma (v0.41): +1 ft orange and +2 ft coral.
-    await expect.poll(trackColours).toEqual(['rgb(252, 166, 54)', 'rgb(225, 100, 98)'])
+    // The Per foot ramp (v0.63): +1 ft orange and +2 ft gold.
+    await expect.poll(trackColours).toEqual(['rgb(224, 121, 66)', 'rgb(233, 180, 76)'])
     await expect(page.getByRole('region', { name: 'Map legend' })).toContainText('Water reaches at')
     await page.reload()
     await waitForMap(page)

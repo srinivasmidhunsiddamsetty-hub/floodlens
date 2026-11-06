@@ -13,6 +13,7 @@ import {
   INTERACTIVE_LAYERS,
   LYR,
   setBandColors,
+  setBuildingColors,
   setBuildingLevel,
   setBuildingLevelsVisible,
   setLabelsVisible,
@@ -426,10 +427,12 @@ export function MapView({ data, studyBbox, rightInset = 0, onBuildingsShownChang
 
   const colorMode = state.colorMode
   useEffect(() => {
-    if (ready && mapRef.current) setBandColors(mapRef.current, colorMode)
+    if (!ready || !mapRef.current) return
+    setBandColors(mapRef.current, colorMode)
+    setBuildingColors(mapRef.current, colorMode)
   }, [ready, colorMode])
 
-  // Buildings take their level's colour once the slider reaches it (v0.62).
+  // Buildings change colour once the slider reaches their level (v0.62).
   const scenarioFt = state.scenarioFt
   useEffect(() => {
     if (ready && mapRef.current) setBuildingLevel(mapRef.current, scenarioFt)

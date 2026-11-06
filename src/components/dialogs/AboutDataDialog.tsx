@@ -36,17 +36,18 @@ export function AboutDataDialog({ open, onClose, manifest }: Props) {
       <H>How to read the map</H>
       <ul className="list-disc space-y-1 pl-5">
         <li>
-          <strong className="text-fg">Overall</strong> colours show all the water at the chosen level in one blue.
+          <strong className="text-fg">Overall</strong> colours show all the water at the chosen level in one blue, and the buildings it
+          reaches in a deeper blue.
         </li>
         <li>
           <strong className="text-fg">Per foot</strong> colours show the sea level at which water <em>first</em> reaches a place, one
-          colour per level: yellow at today’s high tide, then orange, coral, magenta and purple, to deep indigo at +5 ft. The legend
-          lists them.
+          colour per level: red at today’s high tide, then orange, gold, teal and periwinkle, to violet at +5 ft. Buildings take the same
+          colours, and the legend lists them.
         </li>
         <li>Open water sits on top, so colour only appears where water reaches land.</li>
         <li>
-          <strong className="text-fg">Buildings</strong> take the colour of the level that first reaches them, in either colour mode, once
-          the slider gets there. That means NOAA’s mapped water touches the building’s footprint at that level, even at one corner. It
+          <strong className="text-fg">Buildings</strong> change colour once the slider reaches the first level whose water touches them.
+          That means NOAA’s mapped water touches the building’s footprint at that level, even at one corner. It
           doesn’t mean the building is underwater, or say how deep the water gets. Buildings stay plain if no level reaches them, if the
           slider hasn’t got there yet, or if they’re outside the city limits. Low spots don’t colour buildings.
         </li>

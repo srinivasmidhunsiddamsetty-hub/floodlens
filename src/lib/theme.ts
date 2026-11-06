@@ -37,11 +37,10 @@ export const colors = {
   // data
   lowLying: '#6b35aa',
   accent: '#1e3a5f', // navy since v0.50 (#0069b0 before), as --color-accent
-  // Bright green (v0.46, the owner's colour), with a deep green outline. Against the Plasma By
-  // level ramp, water, buildings, parks, low spots and land its worst-case OKLab ΔE is 18 for
-  // normal vision but 5 for deuteranopia and 8 for protanopia, so some red-green colour-blind
-  // readers may find it closer to the map's colours than vermilion was. Before: vermilion
-  // `#e8452c` (v0.42–v0.45, v0.20–v0.37) and charcoal `#1f2937` (v0.38–v0.41).
+  // Bright green (v0.46, the owner's colour), with a deep green outline. Against the Per foot ramp
+  // (v0.63) its nearest levels are gold and teal, at OKLab ΔE 20, but gold falls to 5 for
+  // deuteranopia, about as close as its nearest colour was before v0.63. Before: vermilion `#e8452c`
+  // (v0.42–v0.45, v0.20–v0.37) and charcoal `#1f2937` (v0.38–v0.41).
   selection: '#3ee67e',
   selectionLine: '#15803d',
   studyArea: '#3d4655',
@@ -64,14 +63,21 @@ export type ColorMode = 'simple' | 'detailed'
 export const SIMPLE_COLOR = '#3d84e6'
 
 /**
- * Detailed mode ("By level"): the level where water first reaches each area, light → dark as the
- * sea rises (more water, darker). v0.41: matplotlib's Plasma, six steps, yellow → orange → coral
- * → magenta → purple → indigo. The owner wanted a different colour for each level that's easy to
- * tell apart on the map without looking improvised; Plasma is a standard, perceptually even
- * science palette. Drawn at 85% over the land, the closest neighbouring pair is OKLab ΔE 15.1 for
- * normal vision (6.2 for protanopia, 9.0 for deuteranopia), and every band is far from the water,
- * parks and buildings (ΔE 15+). +4 ft's purple is close to the low-spot hatch colour; the hatch
- * pattern keeps low spots apart.
+ * Simple mode's buildings (v0.63, the owner's pick): every building the chosen level has reached, in
+ * one blue a step deeper than the water, so roofs don't melt into it.
+ */
+export const SIMPLE_BUILDING_COLOR = '#2563c7'
+
+/**
+ * Detailed mode ("Per foot"): the level where water first reaches each area and building.
+ * v0.63: red, orange, gold, teal, periwinkle, violet. The owner's colours from +1 ft up, picked after
+ * seeing palettes rendered on the real map once buildings carried the colours too (0 ft keeps the red
+ * of the option they started from). Nothing is near-black, because a building's walls are shaded darker than its
+ * roof; the most common levels, +3 and +4 ft (73% of the city's buildings), are the calmest; there's
+ * no green, which could read as "safe", and nothing sandy like a plain building. The closest
+ * neighbouring pair is +1 and +2 ft at OKLab ΔE 14.4; for colour-blind readers, +3 and +4 ft at 8.4
+ * (deuteranopia). +5 ft's violet is close to the low-spot purple (ΔE 6.3); the hatch keeps them apart.
+ * v0.41–v0.62: #f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887 (matplotlib's Plasma).
  * v0.40: #f3f351 #f0dd4a #f0b33f #ec9a38 #e77631 #e7612a (the owner's yellow → orange, ΔE 3.9).
  * v0.38–v0.39: #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #8c2d04 (yellow → red-brown, ΔE 7.3 / 6.8).
  * v0.37: #ddf0fb #a9d9f5 #6fb9e8 #3593d2 #1168b2 #083d77 (the owner's blues).
@@ -80,12 +86,12 @@ export const SIMPLE_COLOR = '#3d84e6'
  * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#f0f921',
-  1: '#fca636',
-  2: '#e16462',
-  3: '#b12a90',
-  4: '#6a00a8',
-  5: '#0d0887',
+  0: '#ba3e38',
+  1: '#e07942',
+  2: '#e9b44c',
+  3: '#36a7a0',
+  4: '#898bd4',
+  5: '#6451a5',
 }
 
 /**
@@ -97,6 +103,9 @@ export const BAND_EDGE = { color: '#ffffff', opacity: 0.55, width: 0.6 } as cons
 
 export const bandColor = (feet: number, mode: ColorMode = 'detailed') =>
   mode === 'simple' ? SIMPLE_COLOR : (BAND_COLORS[feet] ?? BAND_COLORS[2])
+
+/** A reached building's colour: one blue with Overall colours (v0.63), its level's with Per foot. */
+export const buildingColor = (feet: number, mode: ColorMode) => (mode === 'simple' ? SIMPLE_BUILDING_COLOR : BAND_COLORS[feet])
 
 export const opacity = {
   band: 0.85,

@@ -12,7 +12,8 @@ describe('About the data and Sources (v0.55)', () => {
     const text = document.body.textContent!
     // Two colour modes since v0.34; the old one-blue ramp description is gone.
     expect(text).toMatch(/Overall colours show all the water at the chosen level in one blue/)
-    expect(text).toMatch(/yellow at today’s high tide, then orange, coral, magenta and purple, to deep indigo at \+5 ft/)
+    expect(text).toMatch(/and the buildings it\s+reaches in a deeper blue/)
+    expect(text).toMatch(/red at today’s high tide, then orange, gold, teal and periwinkle, to violet at \+5 ft/)
     expect(text).not.toMatch(/light blue|getting darker/)
     // The figures count only land beyond today's high tide (v0.36), so 0 ft reads 0.
     expect(text).toMatch(/count only land that today’s high tide doesn’t reach, so 0 ft reads 0/)
@@ -24,7 +25,7 @@ describe('About the data and Sources (v0.55)', () => {
   it('says what a building’s colour means, and what it doesn’t (v0.62)', () => {
     render(<AboutDataDialog open onClose={() => {}} manifest={manifest} />)
     const text = document.body.textContent!
-    expect(text).toMatch(/take the colour of the level that first reaches them, in either colour mode/)
+    expect(text).toMatch(/change colour once the slider reaches the first level whose water touches them/)
     expect(text).toMatch(/touches the building’s footprint at that level, even at one corner/)
     expect(text).toMatch(/doesn’t mean the building is underwater/)
     expect(text).toMatch(/Low spots don’t colour buildings/)

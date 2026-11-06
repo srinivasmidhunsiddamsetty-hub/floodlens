@@ -37,20 +37,15 @@ describe('<MapLegend>', () => {
     for (const b of bands) expect(swatchOf(name(b)).style.background).toBe(rgb(bandColor(b.feet)))
   })
 
-  it('shows only when level colours are on the map: the water with Per foot, or the buildings (v0.35, v0.62)', () => {
-    const { container, rerender } = render(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings={false} />)
+  it('shows only with Per foot colours, while the water or the buildings show them (v0.35, v0.63)', () => {
+    const { container, rerender } = render(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings />)
     expect(container).toBeEmptyDOMElement()
     rerender(<MapLegend bands={bands} colorMode="detailed" showFlood={false} showBuildings={false} />)
     expect(container).toBeEmptyDOMElement()
-    rerender(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings />)
+    rerender(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     expect(screen.getAllByRole('listitem')).toHaveLength(6)
-    rerender(<MapLegend bands={bands} colorMode="simple" showFlood={false} showBuildings />)
+    rerender(<MapLegend bands={bands} colorMode="detailed" showFlood={false} showBuildings />)
     expect(screen.getAllByRole('listitem')).toHaveLength(6)
-  })
-
-  it('keeps the level colours with one blue water, because they describe the buildings (v0.62)', () => {
-    render(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings />)
-    for (const b of bands) expect(swatchOf(name(b))).toHaveStyle({ background: rgb(bandColor(b.feet)) })
   })
 
   it('is a plain key: its only control is the minus, and it takes the pointer from the map (v0.28, v0.35, v0.54)', () => {

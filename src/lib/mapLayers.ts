@@ -3,7 +3,7 @@ import type { DataDrivenPropertyValueSpecification, ExpressionSpecification, Geo
 import { BUILDING_LEVELS_FILE, BUILDINGS_MIN_ZOOM } from './constants'
 import { fileUrl } from './manifest'
 import { GROUND_OVERLAY_BEFORE } from './mapStyle'
-import { BAND_COLORS, BAND_EDGE, colors, opacity, SIMPLE_COLOR, type ColorMode } from './theme'
+import { BAND_COLORS, BAND_EDGE, buildingColor, colors, opacity, SIMPLE_COLOR, type ColorMode } from './theme'
 
 export const SRC = {
   flood: 'fl-flood',
@@ -90,6 +90,14 @@ export function bandEdgePaint(mode: ColorMode) {
   return mode === 'simple'
     ? { color: bandColorExpr(mode), opacity: 0.9 }
     : { color: BAND_EDGE.color as DataDrivenPropertyValueSpecification<string>, opacity: BAND_EDGE.opacity }
+}
+
+/** Recolour the reached buildings when the colour mode changes: one blue with Overall, each level's own with Per foot (v0.63). */
+export function setBuildingColors(map: Pick<MLMap, 'getLayer' | 'setPaintProperty'>, mode: ColorMode) {
+  for (const feet of LEVELS) {
+    if (map.getLayer(buildingLevel3dId(feet))) map.setPaintProperty(buildingLevel3dId(feet), 'fill-extrusion-color', buildingColor(feet, mode))
+    if (map.getLayer(buildingLevelFlatId(feet))) map.setPaintProperty(buildingLevelFlatId(feet), 'fill-color', buildingColor(feet, mode))
+  }
 }
 
 /**
@@ -221,7 +229,7 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode, options: { reduc
           source: SRC.buildingLevels,
           minzoom: BUILDINGS_MIN_ZOOM,
           filter: ['==', ['get', 'r'], feet],
-          paint: { 'fill-color': BAND_COLORS[feet], 'fill-opacity': 0, 'fill-opacity-transition': fade },
+          paint: { 'fill-color': buildingColor(feet, mode), 'fill-opacity': 0, 'fill-opacity-transition': fade },
         },
         labels,
       )
@@ -255,7 +263,7 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode, options: { reduc
       },
       labels,
     )
-    // A copy of each reached building, a touch larger and taller, in its level's colour (v0.62). The
+    // A copy of each reached building, a touch larger and taller, in the colour mode's colour (v0.62). The
     // map's own building stays underneath: it's the one you click, and it's what shows until the
     // slider reaches this level, so buildings outside the data simply stay as they are.
     for (const feet of LEVELS) {
@@ -267,7 +275,7 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode, options: { reduc
           minzoom: BUILDINGS_MIN_ZOOM,
           filter: ['all', ['==', ['get', 'r'], feet], ['!=', ['get', 'x'], 1]],
           paint: {
-            'fill-extrusion-color': BAND_COLORS[feet],
+            'fill-extrusion-color': buildingColor(feet, mode),
             'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 13.6, ['+', ['get', 'h'], BUILDING_LEVEL_LIFT_M]],
             'fill-extrusion-base': ['get', 'b'],
             'fill-extrusion-opacity': 0,
