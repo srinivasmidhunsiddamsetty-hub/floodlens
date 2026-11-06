@@ -302,3 +302,14 @@ The owner asked for a final check of "About the data" and "Sources" against the 
 | Sources, figures | (none) | Sea-level figures: "Total area covered" is a level's extent minus today's high-tide extent (0 ft), measured on the curved Earth inside the city limits. "New area covered" is the difference between neighbouring totals, so the levels add up to the total. "Share of city land" divides by the Census land area above. |
 | Sources, attribution | Rendering: MapLibre GL JS. Charts: D3.js. | Rendering: MapLibre GL JS, and D3.js for the place card's water track. |
 
+## Before and after (v0.61 → v0.62)
+
+Buildings now take their level's colour, so the app has to say what that means. The risk is a painted tower reading as a flooded tower, so the copy says what the colour is and isn't.
+
+| Where | Before | After |
+| --- | --- | --- |
+| About, how to read the map | (none) | **Buildings** take the colour of the level that first reaches them, in either colour mode, once the slider gets there. That means NOAA's mapped water touches the building's footprint at that level, even at one corner. It doesn't mean the building is underwater, or say how deep the water gets. Buildings stay plain if no level reaches them, if the slider hasn't got there yet, or if they're outside the city limits. Low spots don't colour buildings. |
+| Sources, Building colours | (none) | FloodLens works these out in advance (`scripts/prepare_buildings.ts`): for each OpenStreetMap building whose centre is inside the city limits, the lowest NOAA level whose mapped extent touches its footprint, as on the place card. The result is `building_levels.geojson`, derived from OpenStreetMap and NOAA data. It's a snapshot, so a building added to OpenStreetMap later stays plain until the file is regenerated. |
+| Legend | Shown with Per foot colours | Same words, shown whenever level colours are on the map. The title "Water reaches at" now also keeps a coloured building from reading as a flooded one. |
+
+The "Buildings" row under "On the map" keeps its wording ("Shapes and heights from OpenStreetMap"): still true, and the legend explains the colours.

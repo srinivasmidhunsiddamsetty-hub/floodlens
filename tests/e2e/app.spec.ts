@@ -56,6 +56,75 @@ test.describe('FloodLens — core flows', () => {
     expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1)
   })
 
+  test('buildings take their level’s colour as the slider reaches it, in either colour mode (v0.62)', async ({ page }) => {
+    await page.goto('/')
+    await waitForMap(page)
+    const legend = page.getByRole('region', { name: 'Map legend' })
+    const slider = page.getByRole('slider')
+    // The whole city, in one blue: no buildings on screen yet, so nothing for a key to explain.
+    await expect(legend).toHaveCount(0)
+    await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
+    await expect(legend).toBeVisible({ timeout: 10_000 })
+    await page.waitForTimeout(4000)
+
+    /** Share of the map showing +3 ft's magenta. With one blue water, only buildings can show it. */
+    const magenta = async () => {
+      await page.mouse.move(700, 30)
+      await page.waitForTimeout(2000)
+      const shot = (await page.screenshot({ clip: { x: 320, y: 140, width: 760, height: 560 } })).toString('base64')
+      return page.evaluate(async (png) => {
+        const img = new Image()
+        img.src = `data:image/png;base64,${png}`
+        await img.decode()
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width
+        canvas.height = img.height
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })!
+        ctx.drawImage(img, 0, 0)
+        const { data } = ctx.getImageData(0, 0, img.width, img.height)
+        let hits = 0
+        for (let i = 0; i < data.length; i += 4) if (data[i] > 120 && data[i + 1] < 80 && data[i + 2] > 90 && data[i] > data[i + 2]) hits++
+        return hits / (data.length / 4)
+      }, shot)
+    }
+
+    await slider.focus()
+    await page.keyboard.press('Home')
+    await page.keyboard.press('ArrowRight')
+    await page.keyboard.press('ArrowRight')
+    await expect(slider).toHaveAttribute('aria-valuetext', '+2 ft above MHHW')
+    const before = await magenta()
+    await page.keyboard.press('ArrowRight')
+    const reached = await magenta()
+    await page.keyboard.press('ArrowLeft')
+    const back = await magenta()
+    expect(before).toBeLessThan(0.01)
+    expect(reached).toBeGreaterThan(0.1)
+    expect(back).toBeLessThan(0.01)
+
+    // The Buildings switch takes the colours, and the key they need, with it.
+    await page.getByRole('switch', { name: 'Buildings' }).click()
+    await expect(legend).toHaveCount(0)
+    await page.getByRole('switch', { name: 'Buildings' }).click()
+    await expect(legend).toBeVisible()
+    // Clicking still works: the map's own building is under the colour.
+    await page.mouse.click(632, 470)
+    await expect(insights(page).getByText('Water reaches at')).toBeVisible()
+  })
+
+  test('if the building colours don’t load, buildings stay plain and everything else works (v0.62)', async ({ page }) => {
+    const crashes: string[] = []
+    page.on('pageerror', (e) => crashes.push(e.message))
+    await page.route('**/building_levels.geojson', (r) => r.fulfill({ status: 404, body: 'missing' }))
+    await page.goto('/')
+    await waitForMap(page)
+    await page.getByRole('navigation', { name: 'Go to area' }).getByRole('button', { name: 'South Beach' }).click()
+    await page.waitForTimeout(4000)
+    await page.mouse.click(632, 470)
+    await expect(insights(page).getByText('Water reaches at')).toBeVisible()
+    expect(crashes).toEqual([])
+  })
+
   test('the left panel fits without scrolling, with no play or info button (v0.35)', async ({ page }) => {
     // 650 px is about the browser window of a 1366 × 768 laptop. The low-spot line (v0.36) adds a row.
     for (const height of [900, 650]) {

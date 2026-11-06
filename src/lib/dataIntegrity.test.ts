@@ -5,8 +5,13 @@
  */
 import { describe, expect, it } from 'vitest'
 import { realCollection, realManifestJson } from '../test/fixtures'
-import { collectionAreaM2, featureAtPoint } from './geo'
+import type { Feature, MultiPolygon, Polygon } from 'geojson'
+import type { ExtentCollection } from '../types/data'
+import { expandFootprint, LEVEL_OVERLAY_GROW_M } from './buildingPick'
+import { BUILDING_LEVELS_FILE } from './constants'
+import { collectionAreaM2, featureAtPoint, isInsideArea, probeScenarios, type LngLat } from './geo'
 import { parseManifest } from './manifest'
+import turfCentroid from '@turf/centroid'
 
 const manifest = parseManifest(realManifestJson())
 const rel = (a: number, b: number) => Math.abs(a - b) / Math.max(a, b)
@@ -95,4 +100,46 @@ describe('processed NOAA data integrity', () => {
     expect(featureAtPoint(realCollection('slr_1ft.geojson'), pt!)).toBeNull()
     expect(featureAtPoint(realCollection('slr_2ft.geojson'), pt!)).not.toBeNull()
   })
+})
+
+describe('building levels (v0.62)', () => {
+  type Building = Feature<Polygon | MultiPolygon, { r: number; h: number; b: number; x?: number }>
+  const file = realCollection(BUILDING_LEVELS_FILE) as unknown as ExtentCollection & {
+    metadata: { buildingsInCity: number; counts: Record<string, number>; growM: number }
+  }
+  const buildings = file.features as unknown as Building[]
+
+  it('lists a real level, height and base for each building, and adds up to the file’s own counts', () => {
+    const { counts, buildingsInCity, growM } = file.metadata
+    expect(growM).toBe(LEVEL_OVERLAY_GROW_M)
+    for (const ft of [0, 1, 2, 3, 4, 5]) {
+      expect(buildings.filter((b) => b.properties.r === ft)).toHaveLength(counts[ft])
+    }
+    expect(buildings).toHaveLength(buildingsInCity - counts.notReached)
+    for (const b of buildings) {
+      expect(b.properties.h).toBeGreaterThanOrEqual(b.properties.b)
+    }
+  })
+
+  it('only holds buildings inside the city limits', () => {
+    const area = realCollection(manifest.studyArea.file).features[0]
+    const outside = buildings.filter((_, i) => i % 40 === 0).filter((b) => !isInsideArea(turfCentroid(b).geometry.coordinates as LngLat, area))
+    expect(outside).toHaveLength(0)
+  })
+
+  it(
+    'gives each building the level the place card would, on the card’s own rule',
+    () => {
+      const extents = new Map(manifest.scenarios.map((s) => [s.feet, realCollection(s.file)]))
+      const point: LngLat = [0, 0] // unused: a footprint takes priority
+      for (const ft of [0, 1, 2, 3, 4, 5]) {
+        const atLevel = buildings.filter((b) => b.properties.r === ft)
+        for (const b of [atLevel[0], atLevel[atLevel.length >> 1]]) {
+          const footprint = expandFootprint(b, -LEVEL_OVERLAY_GROW_M)
+          expect(probeScenarios(extents, { point, footprint }).firstFeet).toBe(ft)
+        }
+      }
+    },
+    60_000,
+  )
 })

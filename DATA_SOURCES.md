@@ -116,7 +116,29 @@ The unit tests (`src/lib/dataIntegrity.test.ts`) recompute every area in the bro
 | Label glyphs | Roboto Regular / Medium / Italic SDF glyph ranges self-hosted in `public/fonts/` (from [openmaptiles/fonts](https://github.com/openmaptiles/fonts) v2.0; Roboto is Apache-2.0). OpenFreeMap serves only Noto Sans glyphs. |
 | Buildings | `building` layer, `render_height` / `render_min_height`. Values come from OSM `height` / `building:levels` where present; otherwise the tile generator estimates them. Treat them as approximate. |
 
-## 7. Assumptions
+## 7. Building levels (FloodLens, from OpenStreetMap and NOAA)
+
+`public/data/noaa/building_levels.geojson` holds, for each building the sea can reach, the lowest level whose mapped extent touches its footprint. The map colours buildings from it (v0.62). It's made in advance by `npm run data:buildings` (`scripts/prepare_buildings.ts`):
+
+1. Read every building from the OpenFreeMap vector tiles over the city, at zoom 14 (tile set `20261101_080013_pt`, 1 Nov 2026). The tiles merge many buildings into one feature, so each polygon is taken on its own.
+2. Join pieces of the same height that overlap by more than 1 m²: neighbouring tiles each hold a copy of a building near their shared edge.
+3. Keep buildings whose footprint's centre is inside the city limits (10,724).
+4. For each one, find the first ocean-connected extent (`slr_0ft` to `slr_5ft`) that touches any part of the footprint. Low spots don't count. This is the place card's rule (`probeScenarios`), done faster; `src/lib/dataIntegrity.test.ts` checks a sample against the card's own function.
+5. Write the buildings some level reaches (9,880), each grown 0.4 m so it can be drawn over the map's own building without the surfaces coinciding, with its level (`r`), height (`h`), base (`b`) and, for outlines the map hides in 3D, `x`. The file's `metadata` records the tile set and these counts.
+
+| Level first reaching it | Buildings | Reached by this level or lower | Share of the city's buildings |
+| --- | --- | --- | --- |
+| 0 ft | 194 | 194 | 1.8% |
+| +1 ft | 7 | 201 | 1.9% |
+| +2 ft | 782 | 983 | 9.2% |
+| +3 ft | 5,009 | 5,992 | 55.9% |
+| +4 ft | 2,839 | 8,831 | 82.3% |
+| +5 ft | 1,049 | 9,880 | 92.1% |
+| No level | 844 | | |
+
+These count the buildings in OpenStreetMap, which may miss some, and a building counts if the water touches even one corner. They aren't shown in the app. The building shapes are OpenStreetMap data under the ODbL, so the file carries the same credit as the basemap. It's a snapshot: a building added to OpenStreetMap later stays plain until the file is regenerated.
+
+## 8. Assumptions
 
 - The bulk GeoPackage (2023) is the same product shown in NOAA's Sea Level Rise Viewer for this area.
 - The Census place boundary represents the City of Miami Beach. Polygons are cut at the city limits, which the dashed boundary and the outside mask disclose.

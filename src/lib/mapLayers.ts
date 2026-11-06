@@ -1,5 +1,7 @@
 import type { FeatureCollection } from 'geojson'
 import type { DataDrivenPropertyValueSpecification, ExpressionSpecification, GeoJSONSource, Map as MLMap } from 'maplibre-gl'
+import { BUILDING_LEVELS_FILE, BUILDINGS_MIN_ZOOM } from './constants'
+import { fileUrl } from './manifest'
 import { GROUND_OVERLAY_BEFORE } from './mapStyle'
 import { BAND_COLORS, BAND_EDGE, colors, opacity, SIMPLE_COLOR, type ColorMode } from './theme'
 
@@ -10,6 +12,7 @@ export const SRC = {
   mask: 'fl-mask',
   selectedPoint: 'fl-selected-point',
   selectedBuilding: 'fl-selected-building',
+  buildingLevels: 'fl-building-levels',
   basemap: 'openmaptiles',
 } as const
 
@@ -34,6 +37,15 @@ export const LYR = {
 export const INTERACTIVE_LAYERS = [LYR.buildings3d, LYR.buildingsFlat, LYR.lowFill, LYR.floodFill] as const
 
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] }
+
+/** The sea levels, lowest first. Each has its own pair of coloured-building layers (v0.62). */
+const LEVELS = Object.keys(BAND_COLORS).map(Number)
+export const buildingLevel3dId = (feet: number) => `fl-building-level-3d-${feet}`
+export const buildingLevelFlatId = (feet: number) => `fl-building-level-flat-${feet}`
+/** Roofs of the coloured buildings sit this far above the map's own, and under the selection's (+0.6 m). */
+const BUILDING_LEVEL_LIFT_M = 0.3
+/** Coloured footprints in 2D: strong enough to read over the plain footprint beneath. */
+const BUILDING_LEVEL_FLAT_OPACITY = 0.9
 const HATCH = 'fl-hatch'
 
 /** Diagonal hatch for low-lying (hydrologically unconnected) areas — distinguishable without colour. */
@@ -80,6 +92,28 @@ export function bandEdgePaint(mode: ColorMode) {
     : { color: BAND_EDGE.color as DataDrivenPropertyValueSpecification<string>, opacity: BAND_EDGE.opacity }
 }
 
+/**
+ * Colours the buildings that the chosen sea level reaches (v0.62). A building that level doesn't reach
+ * yet keeps the map's plain colour; its coloured copy waits at opacity 0. Each level has its own
+ * layers, so moving the slider only changes a layer's opacity: the map doesn't re-read any data, and
+ * the colours fade in at once.
+ */
+export function setBuildingLevel(map: Pick<MLMap, 'getLayer' | 'setPaintProperty'>, level: number) {
+  for (const feet of LEVELS) {
+    const on = feet <= level
+    if (map.getLayer(buildingLevel3dId(feet))) map.setPaintProperty(buildingLevel3dId(feet), 'fill-extrusion-opacity', on ? 1 : 0)
+    if (map.getLayer(buildingLevelFlatId(feet))) map.setPaintProperty(buildingLevelFlatId(feet), 'fill-opacity', on ? BUILDING_LEVEL_FLAT_OPACITY : 0)
+  }
+}
+
+/** Show the coloured buildings' 3D or flat layers, with the map's own buildings of the same kind. */
+export function setBuildingLevelsVisible(map: MLMap, view: { extruded: boolean; flat: boolean }) {
+  for (const feet of LEVELS) {
+    setVisible(map, buildingLevel3dId(feet), view.extruded)
+    setVisible(map, buildingLevelFlatId(feet), view.flat)
+  }
+}
+
 /** Recolour the flood bands when the colour mode changes. */
 export function setBandColors(map: MLMap, mode: ColorMode) {
   if (!map.getLayer(LYR.floodFill)) return
@@ -94,13 +128,13 @@ export function setBandColors(map: MLMap, mode: ColorMode) {
  * Flood bands sit beneath basemap water (so they read as "water reaching land"),
  * buildings sit above the overlays, and labels stay on top of everything.
  */
-export function addFloodLensLayers(map: MLMap, mode: ColorMode) {
+export function addFloodLensLayers(map: MLMap, mode: ColorMode, options: { reducedMotion?: boolean } = {}) {
   const ground = before(map, GROUND_OVERLAY_BEFORE)
   const labels = firstSymbolLayer(map)
   const hasBasemap = !!map.getSource(SRC.basemap)
 
   for (const id of Object.values(SRC)) {
-    if (id === SRC.basemap || map.getSource(id)) continue
+    if (id === SRC.basemap || id === SRC.buildingLevels || map.getSource(id)) continue
     map.addSource(id, { type: 'geojson', data: EMPTY, generateId: id !== SRC.selectedBuilding })
   }
   if (!map.hasImage(HATCH)) map.addImage(HATCH, hatchImage())
@@ -160,17 +194,38 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode) {
 
   // --- buildings (OpenMapTiles render_height from OpenStreetMap) -------------------------
   if (hasBasemap) {
+    // The level that first reaches each building, from scripts/prepare_buildings.ts. Loaded and read
+    // off the main thread; no simplification, so a coloured footprint never cuts inside the plain one.
+    map.addSource(SRC.buildingLevels, {
+      type: 'geojson',
+      data: new URL(fileUrl(BUILDING_LEVELS_FILE), window.location.href).href,
+      tolerance: 0,
+    })
+    const fade = { duration: options.reducedMotion ? 0 : 300, delay: 0 }
     map.addLayer(
       {
         id: LYR.buildingsFlat,
         type: 'fill',
         source: SRC.basemap,
         'source-layer': 'building',
-        minzoom: 13,
+        minzoom: BUILDINGS_MIN_ZOOM,
         paint: { 'fill-color': colors.buildingFlat, 'fill-opacity': 0.75 },
       },
       labels,
     )
+    for (const feet of LEVELS) {
+      map.addLayer(
+        {
+          id: buildingLevelFlatId(feet),
+          type: 'fill',
+          source: SRC.buildingLevels,
+          minzoom: BUILDINGS_MIN_ZOOM,
+          filter: ['==', ['get', 'r'], feet],
+          paint: { 'fill-color': BAND_COLORS[feet], 'fill-opacity': 0, 'fill-opacity-transition': fade },
+        },
+        labels,
+      )
+    }
     map.addLayer(
       {
         id: LYR.buildingsOutline,
@@ -188,7 +243,7 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode) {
         type: 'fill-extrusion',
         source: SRC.basemap,
         'source-layer': 'building',
-        minzoom: 13,
+        minzoom: BUILDINGS_MIN_ZOOM,
         filter: ['!=', ['get', 'hide_3d'], true],
         paint: {
           'fill-extrusion-color': ['interpolate', ['linear'], buildingHeight, 0, colors.building, 60, colors.buildingTall],
@@ -200,6 +255,29 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode) {
       },
       labels,
     )
+    // A copy of each reached building, a touch larger and taller, in its level's colour (v0.62). The
+    // map's own building stays underneath: it's the one you click, and it's what shows until the
+    // slider reaches this level, so buildings outside the data simply stay as they are.
+    for (const feet of LEVELS) {
+      map.addLayer(
+        {
+          id: buildingLevel3dId(feet),
+          type: 'fill-extrusion',
+          source: SRC.buildingLevels,
+          minzoom: BUILDINGS_MIN_ZOOM,
+          filter: ['all', ['==', ['get', 'r'], feet], ['!=', ['get', 'x'], 1]],
+          paint: {
+            'fill-extrusion-color': BAND_COLORS[feet],
+            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 13.6, ['+', ['get', 'h'], BUILDING_LEVEL_LIFT_M]],
+            'fill-extrusion-base': ['get', 'b'],
+            'fill-extrusion-opacity': 0,
+            'fill-extrusion-opacity-transition': fade,
+            'fill-extrusion-vertical-gradient': true,
+          },
+        },
+        labels,
+      )
+    }
   }
 
   // --- selection (drawn slightly larger than the building so faces never coincide) -------

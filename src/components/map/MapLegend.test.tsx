@@ -20,7 +20,7 @@ describe('<MapLegend>', () => {
   afterEach(() => localStorage.clear())
 
   it('is a vertical scale, today at the bottom and the top level at the top, with no level highlighted (v0.34, v0.54)', () => {
-    render(<MapLegend bands={bands} colorMode="detailed" showFlood />)
+    render(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     const rows = screen.getAllByRole('listitem')
     // Today's level reads "0 ft" (v0.40), like the rest of the scale.
     expect(rows.map((li) => li.textContent)).toEqual(['+5 ft', '+4 ft', '+3 ft', '+2 ft', '+1 ft', '0 ft'])
@@ -31,27 +31,36 @@ describe('<MapLegend>', () => {
   })
 
   it('shows every level in its own colour under the place card’s words, "Water reaches at" (v0.54)', () => {
-    render(<MapLegend bands={bands} colorMode="detailed" showFlood />)
+    render(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     expect(screen.getByText('Water reaches at')).toBeInTheDocument()
     expect(screen.queryByText('Water first reaches')).toBeNull()
     for (const b of bands) expect(swatchOf(name(b)).style.background).toBe(rgb(bandColor(b.feet)))
   })
 
-  it('shows only with Per foot colours and while the flood layer is on (v0.35)', () => {
-    const { container, rerender } = render(<MapLegend bands={bands} colorMode="simple" showFlood />)
+  it('shows only when level colours are on the map: the water with Per foot, or the buildings (v0.35, v0.62)', () => {
+    const { container, rerender } = render(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings={false} />)
     expect(container).toBeEmptyDOMElement()
-    rerender(<MapLegend bands={bands} colorMode="detailed" showFlood={false} />)
+    rerender(<MapLegend bands={bands} colorMode="detailed" showFlood={false} showBuildings={false} />)
     expect(container).toBeEmptyDOMElement()
+    rerender(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings />)
+    expect(screen.getAllByRole('listitem')).toHaveLength(6)
+    rerender(<MapLegend bands={bands} colorMode="simple" showFlood={false} showBuildings />)
+    expect(screen.getAllByRole('listitem')).toHaveLength(6)
+  })
+
+  it('keeps the level colours with one blue water, because they describe the buildings (v0.62)', () => {
+    render(<MapLegend bands={bands} colorMode="simple" showFlood showBuildings />)
+    for (const b of bands) expect(swatchOf(name(b))).toHaveStyle({ background: rgb(bandColor(b.feet)) })
   })
 
   it('is a plain key: its only control is the minus, and it takes the pointer from the map (v0.28, v0.35, v0.54)', () => {
-    render(<MapLegend bands={bands} colorMode="detailed" showFlood />)
+    render(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Minimise legend'])
     expect(screen.getByRole('region', { name: 'Map legend' })).toHaveClass('pointer-events-auto', 'cursor-default')
   })
 
   it('minimises to a small square of its colours, opens again, and remembers it (v0.54)', async () => {
-    const { unmount } = render(<MapLegend bands={bands} colorMode="detailed" showFlood />)
+    const { unmount } = render(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     await userEvent.click(screen.getByRole('button', { name: 'Minimise legend' }))
     expect(screen.queryByRole('list')).toBeNull()
     const show = screen.getByRole('button', { name: 'Show legend' })
@@ -60,7 +69,7 @@ describe('<MapLegend>', () => {
     expect(localStorage.getItem('floodlens.legendMinimised')).toBe('1')
     // Still minimised on the next visit in this browser.
     unmount()
-    render(<MapLegend bands={bands} colorMode="detailed" showFlood />)
+    render(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     await userEvent.click(screen.getByRole('button', { name: 'Show legend' }))
     expect(screen.getAllByRole('listitem')).toHaveLength(6)
     expect(screen.getByRole('button', { name: 'Minimise legend' })).toHaveFocus()
@@ -69,7 +78,7 @@ describe('<MapLegend>', () => {
 
   it('takes no focus on page load', () => {
     localStorage.setItem('floodlens.legendMinimised', '1')
-    render(<MapLegend bands={bands} colorMode="detailed" showFlood />)
+    render(<MapLegend bands={bands} colorMode="detailed" showFlood showBuildings={false} />)
     expect(screen.getByRole('button', { name: 'Show legend' })).not.toHaveFocus()
   })
 })

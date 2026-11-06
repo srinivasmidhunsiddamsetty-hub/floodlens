@@ -8,6 +8,8 @@ interface Props {
   bands: FloodBand[]
   colorMode: ColorMode
   showFlood: boolean
+  /** Buildings are on the map, in their levels' colours, so the key is needed in either colour mode (v0.62). */
+  showBuildings: boolean
 }
 
 const MIN_KEY = 'floodlens.legendMinimised'
@@ -58,12 +60,14 @@ function LegendButton({
  * colour whatever the slider shows, because the colour says where water first reaches; no level
  * is highlighted (v0.54), since the slider already shows the chosen one. Its title matches the
  * place card's answer, "Water reaches at" (v0.54; "Water first reaches" before), and keeps "+3 ft"
- * from reading as a depth. Shown only with Per foot colours (v0.35): with one colour there is
- * nothing to decode. The rows are a plain key (v0.28): the only control is the minus that folds it
+ * from reading as a depth. Shown whenever those colours are on the map: the water with Per foot
+ * colours (v0.35), and the buildings once you're zoomed in far enough to see them (v0.62). In the
+ * whole-city view with one blue there is nothing to decode, so it stays away. The rows are a plain
+ * key (v0.28): the only control is the minus that folds it
  * into a small square showing the colours, which opens it again (v0.54, remembered per browser).
  * It takes the pointer (v0.35) so the map's hand cursor and hover labels don't show through it.
  */
-export function MapLegend({ bands, colorMode, showFlood }: Props) {
+export function MapLegend({ bands, colorMode, showFlood, showBuildings }: Props) {
   const [minimised, setMinimised] = useState(readMinimised)
   // Set by the user's own click, so the swapped-in button takes focus then and never on page load.
   const [toggled, setToggled] = useState(false)
@@ -79,9 +83,10 @@ export function MapLegend({ bands, colorMode, showFlood }: Props) {
     }
   }, [minimised])
 
-  if (colorMode !== 'detailed' || !showFlood || bands.length === 0) return null
+  const waterInLevelColours = colorMode === 'detailed' && showFlood
+  if ((!waterInLevelColours && !showBuildings) || bands.length === 0) return null
   const levels = [...bands].reverse()
-  const strip = levels.map((b, i) => `${bandColor(b.feet, colorMode)} ${(i / levels.length) * 100}% ${((i + 1) / levels.length) * 100}%`).join(', ')
+  const strip = levels.map((b, i) => `${bandColor(b.feet)} ${(i / levels.length) * 100}% ${((i + 1) / levels.length) * 100}%`).join(', ')
 
   if (minimised) {
     return (
@@ -117,7 +122,7 @@ export function MapLegend({ bands, colorMode, showFlood }: Props) {
             <span
               aria-hidden
               className={`h-[18px] w-2.5 shrink-0 ${i === 0 ? 'rounded-t-full' : ''} ${i === levels.length - 1 ? 'rounded-b-full' : ''}`}
-              style={{ background: bandColor(b.feet, colorMode) }}
+              style={{ background: bandColor(b.feet) }}
             />
             <span className="text-[12px] leading-[18px] text-fg-muted tabular">{formatScenario(b.feet)}</span>
           </li>

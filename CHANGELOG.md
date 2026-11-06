@@ -65,8 +65,26 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.59 | 5 Nov 2026 | A lighter navy in the place card | [`docs/versions/v0.59/`](docs/versions/v0.59/) |
 | v0.60 | 5 Nov 2026 | The Sea level card on the 4 px grid | [`docs/versions/v0.60/`](docs/versions/v0.60/) |
 | v0.61 | 5 Nov 2026 | One colour for icons | [`docs/versions/v0.61/`](docs/versions/v0.61/) |
+| v0.62 | 6 Nov 2026 | Buildings in the colour of the level that reaches them | [`docs/versions/v0.62/`](docs/versions/v0.62/) |
 
 ---
+
+## v0.62: Buildings in the colour of the level that reaches them (6 Nov 2026)
+
+The owner wanted to look at the 3D map and see which foot of rise reaches which building, without clicking anything. Four options were rendered on the real app with real data, and the owner picked B.
+
+- **Buildings take their level's colour once the slider reaches it.** At +3 ft, every building reached at +3 ft or below is in its level's colour and the rest stay plain. At +5 ft every reached building shows its colour; lowering the slider returns them to plain. It works in 3D and 2D, and the colours fade in over 0.3 s (at once with reduced motion).
+- **In both colour modes.** The colours are the Per foot ramp (Plasma). With Overall, the blue water lets the buildings stand out; with Per foot, the water shares their colours. The toggle now describes the water only.
+- **The legend shows whenever level colours are on the map:** the water with Per foot, as before, and now the buildings too once you're zoomed in far enough to see them. In the whole-city view with Overall nothing uses those colours, so it stays away. Turning Buildings off takes it away too.
+- **The meaning is the place card's.** A building's level is the first one whose mapped, ocean-connected extent touches its footprint, even at one corner. Low spots don't count. Buildings no level reaches, or outside the city limits, stay plain. "About the data" says what the colour does and doesn't mean, and "Sources" says how it's worked out.
+- **New file:** `public/data/noaa/building_levels.geojson`, 3.2 MB (0.5 MB compressed), made in advance by `npm run data:buildings` (`scripts/prepare_buildings.ts`). The map's tiles merge up to about a thousand buildings into one feature, so a building can't be coloured on its own from them. Of the 10,724 buildings in the city: 194 at 0 ft, 7 at +1 ft, 782 at +2 ft, 5,009 at +3 ft, 2,839 at +4 ft, 1,049 at +5 ft, and 844 that no level reaches.
+- **How it's drawn:** a slightly larger, slightly taller copy of each reached building sits over the map's own, one layer per level. The map's own buildings stay underneath, so clicking works as before and buildings outside the file are untouched. Moving the slider only changes a layer's opacity, so nothing is re-read.
+- **Fixes this needed:**
+  - The place card now re-joins a building's tile pieces by height and overlap, not by id, the same rule the colours use. About 60 buildings on tile edges could otherwise have read a different level on the card than their colour.
+  - Selected and coloured buildings now grow along each wall's own direction, not away from the building's centre, which let the building underneath show through notches (seen as grey patches in the first test render).
+- Checked in the running app: 81 clicks on real buildings, 29 of them on tile edges, all gave the same level as the file. 2 more landed on a neighbouring building and weren't counted.
+- Not measured: speed on a normal laptop's graphics card. The tests use software rendering, where switching the building colours takes under 1 ms of main-thread work.
+- Tests: 127 unit/component tests in 15 files (new: which layers follow the slider, each wall moves outward, the file's levels against the card's own rule, the legend in both modes, the copy) and 23 end-to-end tests (new: colours follow the slider, measured from the screen; a missing file leaves plain buildings).
 
 ## v0.61: One colour for icons (5 Nov 2026)
 

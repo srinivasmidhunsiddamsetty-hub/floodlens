@@ -4,8 +4,8 @@ import turfCentroid from '@turf/centroid'
 import type { LineString, MultiLineString, Position } from 'geojson'
 import maplibregl, { type MapGeoJSONFeature, type Map as MLMap, type PointLike, type StyleSpecification } from 'maplibre-gl'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { expandFootprint, firstPrismHit, rejoinTileSplit, unionPieces, type Prism } from '../../lib/buildingPick'
-import { AREA_BOOKMARKS, BOOKMARK_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
+import { expandFootprint, firstPrismHit, rejoinTileSplit, SELECTION_GROW_M, unionPieces, type Prism } from '../../lib/buildingPick'
+import { AREA_BOOKMARKS, BOOKMARK_ZOOM, BUILDINGS_MIN_ZOOM, INITIAL_CAMERA, MAX_BOUNDS, MAX_ZOOM, MIN_ZOOM, OBLIQUE, TOP_DOWN, type CameraState } from '../../lib/constants'
 import { formatScenario } from '../../lib/format'
 import { distanceToLineM, isInsideArea, nearestBookmark, outsideMask, type LngLat } from '../../lib/geo'
 import {
@@ -13,6 +13,8 @@ import {
   INTERACTIVE_LAYERS,
   LYR,
   setBandColors,
+  setBuildingLevel,
+  setBuildingLevelsVisible,
   setLabelsVisible,
   setSourceData,
   setVisible,
@@ -35,6 +37,8 @@ interface Props {
       The camera is padded by it, so the city overview, fly-tos and "the middle of the map" use the
       uncovered part. */
   rightInset?: number
+  /** Called with whether buildings are on the map right now: switched on and zoomed in far enough (v0.62). */
+  onBuildingsShownChange?: (shown: boolean) => void
 }
 
 interface HoverInfo {
@@ -125,17 +129,23 @@ function pickBuilding(map: MLMap, point: maplibregl.Point, clicked: LngLat): Bui
   const chosen = owners[idx]
   if (!chosen) return null
 
-  // Re-join pieces of the same building split across tiles (same feature id, overlapping strip).
-  const id = chosen.feature.id
-  const pool =
-    id === undefined
-      ? []
-      : map
-          .querySourceFeatures(SRC.basemap, { sourceLayer: 'building', filter: ['==', ['id'], id] })
-          .flatMap(partsOf)
+  // Re-join pieces of the same building split across tiles: the same height, overlapping by a strip.
+  // Not by id: the same building usually has a different id in each tile. It's the rule the building
+  // colours are worked out with (scripts/prepare_buildings.ts), so the card and the colour agree.
+  const props = chosen.feature.properties ?? {}
+  const pool = map
+    .querySourceFeatures(SRC.basemap, {
+      sourceLayer: 'building',
+      filter: [
+        'all',
+        ['==', ['coalesce', ['get', 'render_height'], 0], Number(props.render_height) || 0],
+        ['==', ['coalesce', ['get', 'render_min_height'], 0], Number(props.render_min_height) || 0],
+        ['==', ['coalesce', ['get', 'hide_3d'], false], props.hide_3d === true],
+      ],
+    })
+    .flatMap(partsOf)
   const pieces = rejoinTileSplit(chosen.rings, pool)
   const footprint = unionPieces(pieces)
-  const props = chosen.feature.properties ?? {}
   return {
     renderHeightM: typeof props.render_height === 'number' ? props.render_height : null,
     renderMinHeightM: typeof props.render_min_height === 'number' ? props.render_min_height : null,
@@ -215,7 +225,7 @@ function overviewCamera(map: MLMap, bbox: [number, number, number, number] | nul
 
 type StudyFeature = Feature<Polygon | MultiPolygon>
 
-export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
+export function MapView({ data, studyBbox, rightInset = 0, onBuildingsShownChange }: Props) {
   const state = useAppState()
   const dispatch = useAppDispatch()
   const reduced = useReducedMotion()
@@ -325,7 +335,7 @@ export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
 
       map.on('load', () => {
         if (!map) return
-        addFloodLensLayers(map, live.current.state.colorMode)
+        addFloodLensLayers(map, live.current.state.colorMode, { reducedMotion: live.current.reduced })
         setReady(true)
       })
       map.on('error', (e) => {
@@ -419,6 +429,12 @@ export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
     if (ready && mapRef.current) setBandColors(mapRef.current, colorMode)
   }, [ready, colorMode])
 
+  // Buildings take their level's colour once the slider reaches it (v0.62).
+  const scenarioFt = state.scenarioFt
+  useEffect(() => {
+    if (ready && mapRef.current) setBuildingLevel(mapRef.current, scenarioFt)
+  }, [ready, scenarioFt])
+
   const lowData = state.layers.lowLying ? data.lowLying.data : null
   useEffect(() => {
     if (ready && mapRef.current) setSourceData(mapRef.current, SRC.low, lowData)
@@ -454,6 +470,7 @@ export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
     setVisible(map, LYR.buildings3d, extruded)
     setVisible(map, LYR.buildingsFlat, layers.buildings && !extruded)
     setVisible(map, LYR.buildingsOutline, layers.buildings && !extruded)
+    setBuildingLevelsVisible(map, { extruded, flat: layers.buildings && !extruded })
     setVisible(map, LYR.selectedBuilding3d, extruded)
     setVisible(map, LYR.selectedBuildingFill, !extruded)
     setVisible(map, LYR.selectedBuildingLine, !extruded)
@@ -462,6 +479,11 @@ export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
     setVisible(map, LYR.studyLine, layers.studyArea)
     setVisible(map, LYR.mask, layers.studyArea)
   }, [ready, layers, viewMode])
+
+  const buildingsShown = ready && layers.buildings && camera.zoom >= BUILDINGS_MIN_ZOOM
+  useEffect(() => {
+    onBuildingsShownChange?.(buildingsShown)
+  }, [buildingsShown, onBuildingsShownChange])
 
   // ---------------------------------------------------------------- camera
   // Showing, hiding or resizing the floating cards shifts the camera's centre with them.
@@ -518,7 +540,7 @@ export function MapView({ data, studyBbox, rightInset = 0 }: Props) {
     setSourceData(
       map,
       SRC.selectedBuilding,
-      b ? { ...expandFootprint(b.footprint, 0.4), properties: { height: b.renderHeightM ?? 0, base: b.renderMinHeightM ?? 0 } } : null,
+      b ? { ...expandFootprint(b.footprint, SELECTION_GROW_M), properties: { height: b.renderHeightM ?? 0, base: b.renderMinHeightM ?? 0 } } : null,
     )
   }, [ready, selection])
 

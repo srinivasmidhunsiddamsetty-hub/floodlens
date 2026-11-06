@@ -21,6 +21,8 @@ FloodLens is an **exploratory screening tool**. It visualizes NOAA's mapped inun
 - **Total extent includes open water.** NOAA maps the bay and ocean as inundated at MHHW. The headline metric (extent beyond 0 ft) removes that baseline.
 - **"Within the mapped extent" ≠ "will flood".** Inspection results are a geometric test against NOAA polygons, nothing more.
 - **Building heights are approximate** (OpenStreetMap via OpenMapTiles; estimated where OSM lacks height). Footprints come from vector tiles and can be merged or clipped at tile edges.
+- **A building's colour is the same geometric test (v0.62).** It means NOAA's mapped water touches the footprint at that level, even at one corner. It doesn't mean the building is underwater, or how deep the water is. A tall building is painted top to bottom only because a colour per building is the easiest thing to read.
+- **Building colours are a snapshot of OpenStreetMap.** A building missing from OpenStreetMap has no colour. One added later stays plain, and one removed can stay coloured, until `npm run data:buildings` is run again.
 - **Low-lying (unconnected) areas** are a separate NOAA product, shown separately and never merged with ocean-connected extents.
 - **Simplification:** 0.75 m topology-preserving simplification and 6-decimal coordinates (about 0.1 m), far below the ~3 m source resolution.
 - **No exposure counts.** FloodLens does not estimate homes, people, value or damage. Those require datasets and methods it does not have.

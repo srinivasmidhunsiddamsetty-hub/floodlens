@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "data:prepare": "python3 scripts/prepare_noaa_slr.py",
+    "data:buildings": "vite-node scripts/prepare_buildings.ts",
     "test:e2e": "playwright test",
     "screenshots": "SCREENSHOTS=1 playwright test screenshots --project=desktop",
     "test:all": "npm run typecheck && npm run test && npm run test:e2e"
@@ -31,6 +32,7 @@
     "react-dom": "~19.2"
   },
   "devDependencies": {
+    "@mapbox/vector-tile": "^2.0.5",
     "@playwright/test": "~1.55",
     "@tailwindcss/vite": "~4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -43,6 +45,7 @@
     "@types/react-dom": "~19.2",
     "@vitejs/plugin-react": "^5.2.0",
     "jsdom": "^26.1.0",
+    "pbf": "^4.0.2",
     "tailwindcss": "~4.1",
     "typescript": "~5.9",
     "vite": "^7.3.7",

@@ -21,6 +21,16 @@ describe('About the data and Sources (v0.55)', () => {
     expect(text).not.toMatch(/\bsafe\b|\bdry\b/i)
   })
 
+  it('says what a building’s colour means, and what it doesn’t (v0.62)', () => {
+    render(<AboutDataDialog open onClose={() => {}} manifest={manifest} />)
+    const text = document.body.textContent!
+    expect(text).toMatch(/take the colour of the level that first reaches them, in either colour mode/)
+    expect(text).toMatch(/touches the building’s footprint at that level, even at one corner/)
+    expect(text).toMatch(/doesn’t mean the building is underwater/)
+    expect(text).toMatch(/Low spots don’t colour buildings/)
+    expect(text).not.toMatch(/\bsafe\b|\bdry\b/i)
+  })
+
   it('explains how the sea-level figures are computed, and credits D3 for what it draws now', () => {
     render(<DataSourcesDialog open onClose={() => {}} manifest={manifest} manifestError={null} />)
     expect(screen.getByRole('heading', { name: 'Sea-level figures' })).toBeInTheDocument()
@@ -29,5 +39,7 @@ describe('About the data and Sources (v0.55)', () => {
     // The chart went in v0.36; D3 now draws only the place card's water track.
     expect(text).not.toMatch(/Charts: D3/)
     expect(text).toMatch(/D3\.js for the place card’s water track/)
+    expect(screen.getByRole('heading', { name: 'Building colours' })).toBeInTheDocument()
+    expect(text).toMatch(/building_levels\.geojson, derived from OpenStreetMap and NOAA data/)
   })
 })

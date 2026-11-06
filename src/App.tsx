@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ControlPanel } from './components/controls/ControlPanel'
 import { AboutDataDialog } from './components/dialogs/AboutDataDialog'
 import { DataSourcesDialog } from './components/dialogs/DataSourcesDialog'
@@ -27,6 +27,7 @@ export default function App() {
   const manifest = manifestState.manifest
   const mapData = useMapData(manifest, state)
   const inspection = useInspection(state.selection, manifest)
+  const [buildingsShown, setBuildingsShown] = useState(false)
 
   // Esc clears the selection anywhere (dialogs handle their own Esc first).
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function App() {
             data={mapData}
             studyBbox={manifest?.studyArea.bbox ?? null}
             rightInset={INSIGHTS_WIDTH}
+            onBuildingsShownChange={setBuildingsShown}
           />
 
           <div className="pointer-events-none absolute bottom-4 left-4 z-10">
@@ -67,6 +69,7 @@ export default function App() {
               bands={mapData.bands}
               colorMode={state.colorMode}
               showFlood={state.layers.inundation}
+              showBuildings={buildingsShown}
             />
           </div>
 

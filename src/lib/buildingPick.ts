@@ -130,35 +130,57 @@ export function unionPieces(pieces: Position[][][]): Feature<Polygon | MultiPoly
   return (u as Feature<Polygon | MultiPolygon> | null) ?? asPolygon(pieces[0])
 }
 
+/** How much bigger the coloured buildings are drawn than the map's own, so their walls never coincide (v0.62). */
+export const LEVEL_OVERLAY_GROW_M = 0.4
+/** The selection goes round the coloured building too, so it needs to be bigger still. */
+export const SELECTION_GROW_M = 0.6
+
 /**
- * Push every vertex ~`meters` away from the ring centre. The selection
- * highlight is drawn slightly larger (and taller) than the building so the two
- * surfaces never coincide — coincident faces z-fight and flicker while zooming.
+ * Move every wall of a closed ring `meters` outward (negative: inward), along the wall's own normal.
+ * Used to draw a building slightly larger than the map's own (and taller), so the two surfaces never
+ * coincide: coincident faces z-fight and flicker while zooming. Each wall moves by the full distance,
+ * including the walls of a notch, which a push away from the ring's centre moved the wrong way and
+ * left the building underneath showing through (v0.62).
  */
 export function expandRing(ring: Position[], meters: number): Position[] {
-  const n = ring.length - 1 || 1
-  let cx = 0
-  let cy = 0
-  for (let i = 0; i < n; i++) {
-    cx += ring[i][0]
-    cy += ring[i][1]
-  }
-  cx /= n
-  cy /= n
-  const kx = 111_320 * Math.cos((cy * Math.PI) / 180)
+  const n = ring.length - 1
+  if (n < 3) return ring
+  const lat0 = ring.reduce((sum, p) => sum + p[1], 0) / ring.length
+  const kx = 111_320 * Math.cos((lat0 * Math.PI) / 180)
   const ky = 110_540
-  return ring.map(([x, y]) => {
-    const dx = (x - cx) * kx
-    const dy = (y - cy) * ky
-    const r = Math.hypot(dx, dy) || 1
-    const f = (r + meters) / r
-    return [cx + (dx * f) / kx, cy + (dy * f) / ky]
+  const pts = ring.slice(0, n).map(([x, y]) => [x * kx, y * ky])
+  let area = 0
+  pts.forEach((p, i) => {
+    const q = pts[(i + 1) % n]
+    area += p[0] * q[1] - q[0] * p[1]
   })
+  // Counter-clockwise rings have their outside on the right of each wall.
+  const side = area >= 0 ? 1 : -1
+  const normal = (a: number[], b: number[]) => {
+    const dx = b[0] - a[0]
+    const dy = b[1] - a[1]
+    const len = Math.hypot(dx, dy) || 1
+    return [(side * dy) / len, (-side * dx) / len]
+  }
+  const moved = pts.map((p, i) => {
+    const n1 = normal(pts[(i + n - 1) % n], p)
+    const n2 = normal(p, pts[(i + 1) % n])
+    const mx = n1[0] + n2[0]
+    const my = n1[1] + n2[1]
+    const len = Math.hypot(mx, my)
+    if (len < 1e-6) return [(p[0] + n1[0] * meters) / kx, (p[1] + n1[1] * meters) / ky]
+    // Mitre the corner so both walls move the full distance; capped for very sharp corners.
+    const f = meters / Math.max((mx / len) * n1[0] + (my / len) * n1[1], 0.5)
+    return [(p[0] + (mx / len) * f) / kx, (p[1] + (my / len) * f) / ky]
+  })
+  return [...moved, moved[0]]
 }
 
+/** The footprint grown by `meters`: outer walls move out, and courtyards get smaller. */
 export function expandFootprint(f: Feature<Polygon | MultiPolygon>, meters: number): Feature<Polygon | MultiPolygon> {
+  const grow = (rings: Position[][]) => rings.map((r, i) => expandRing(r, i === 0 ? meters : -meters))
   const g = f.geometry
   return g.type === 'Polygon'
-    ? { ...f, geometry: { type: 'Polygon', coordinates: g.coordinates.map((r) => expandRing(r, meters)) } }
-    : { ...f, geometry: { type: 'MultiPolygon', coordinates: g.coordinates.map((p) => p.map((r) => expandRing(r, meters))) } }
+    ? { ...f, geometry: { type: 'Polygon', coordinates: grow(g.coordinates) } }
+    : { ...f, geometry: { type: 'MultiPolygon', coordinates: g.coordinates.map(grow) } }
 }

@@ -40,6 +40,10 @@ export const AREA_BOOKMARKS = [
 export const BOOKMARK_ZOOM = 15.2
 
 export const MIN_ZOOM = 11.5
+/** Buildings appear from this zoom; the whole-city view is too far out for them. */
+export const BUILDINGS_MIN_ZOOM = 13
+/** The level that first reaches each building (scripts/prepare_buildings.ts). */
+export const BUILDING_LEVELS_FILE = 'building_levels.geojson'
 export const MAX_ZOOM = 19
 
 export const CITY_NAME = 'City of Miami Beach'

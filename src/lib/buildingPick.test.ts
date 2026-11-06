@@ -1,6 +1,7 @@
 import type { Position } from 'geojson'
 import { describe, expect, it } from 'vitest'
-import { expandRing, firstPrismHit, pointInRings, rejoinTileSplit, unionPieces, type Prism } from './buildingPick'
+import turfArea from '@turf/area'
+import { expandFootprint, expandRing, firstPrismHit, pointInRings, rejoinTileSplit, unionPieces, type Prism } from './buildingPick'
 
 const square = (x: number, y: number, s: number): Position[][] => [
   [
@@ -70,13 +71,52 @@ describe('rejoinTileSplit — re-joins tile-split buildings without swallowing n
 })
 
 describe('expandRing', () => {
-  it('moves vertices outward by roughly the requested distance', () => {
+  const kx = 111_320 * Math.cos((25.7801 * Math.PI) / 180)
+  const ky = 110_540
+
+  it('moves every wall outward by the requested distance', () => {
     const ring = square(-80.13, 25.78, 0.0002)[0]
     const out = expandRing(ring, 0.5)
-    const kx = 111_320 * Math.cos((25.7801 * Math.PI) / 180)
-    const grow = (out[1][0] - out[0][0] - (ring[1][0] - ring[0][0])) * kx
-    // Diagonal push of 0.5 m adds ≈ 2 · 0.5 / √2 ≈ 0.71 m of width
-    expect(grow).toBeGreaterThan(0.6)
-    expect(grow).toBeLessThan(0.8)
+    // Both opposite walls move 0.5 m, so the width grows by 1 m.
+    expect((out[1][0] - out[0][0] - (ring[1][0] - ring[0][0])) * kx).toBeCloseTo(1, 1)
+    expect((out[2][1] - out[1][1] - (ring[2][1] - ring[1][1])) * ky).toBeCloseTo(1, 1)
+    expect(out[0]).toEqual(out[out.length - 1])
+  })
+
+  it('moves the walls of a notch outward too, whichever way the ring runs (v0.62)', () => {
+    // A square with a notch cut into its top edge: the notch's walls face the ring's centre, so a
+    // push away from the centre would move them into the building.
+    const [x, y, s] = [-80.13, 25.78, 0.0002]
+    const notched: Position[] = [
+      [x, y],
+      [x + s, y],
+      [x + s, y + s],
+      [x + s * 0.6, y + s],
+      [x + s * 0.6, y + s * 0.5],
+      [x + s * 0.4, y + s * 0.5],
+      [x + s * 0.4, y + s],
+      [x, y + s],
+      [x, y],
+    ]
+    for (const ring of [notched, [...notched].reverse()]) {
+      const out = expandRing(ring, 0.5)
+      for (const [i, p] of out.slice(0, -1).entries()) {
+        // Every new corner lies outside the original building.
+        expect(pointInRings(p[0], p[1], [ring]), `corner ${i}`).toBe(false)
+      }
+    }
+    // The notch's floor rises 0.5 m, as the building grows into it.
+    const floor = expandRing(notched, 0.5)[4][1]
+    expect((floor - notched[4][1]) * ky).toBeCloseTo(0.5, 1)
+  })
+
+  it('makes the whole footprint larger, with courtyards smaller', () => {
+    const donut = [...square(-80.13, 25.78, 0.0004), ...square(-80.1299, 25.7801, 0.0002).map((r) => [...r].reverse())]
+    const f = { type: 'Feature' as const, properties: {}, geometry: { type: 'Polygon' as const, coordinates: donut } }
+    const grown = expandFootprint(f, 0.5)
+    expect(turfArea(grown)).toBeGreaterThan(turfArea(f))
+    const courtyard = { ...f, geometry: { type: 'Polygon' as const, coordinates: [donut[1]] } }
+    const grownCourtyard = { ...f, geometry: { type: 'Polygon' as const, coordinates: [(grown.geometry.coordinates as Position[][])[1]] } }
+    expect(turfArea(grownCourtyard)).toBeLessThan(turfArea(courtyard))
   })
 })

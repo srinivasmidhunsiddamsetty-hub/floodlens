@@ -11,10 +11,10 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **Live site:** https://floodlens-five.vercel.app
   - Note: floodlens.vercel.app is a different project that belongs to someone else.
 - **Repo:** https://github.com/srinivasmidhunsiddamsetty-hub/floodlens (public). The remote is `origin` and the branch is `main`.
-- **Current version:** v0.61 (tag `v0.61`): one colour for the place card's icons, with the place itself still green.
+- **Current version:** v0.62 (tag `v0.62`): buildings take the colour of the level that first reaches them, following the slider, in both colour modes.
 - **Test status at handoff:**
-  - 118 unit and component tests in 14 files pass.
-  - 21 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
+  - 127 unit and component tests in 15 files pass.
+  - 23 end-to-end tests pass, at 1440×900 (some also check shorter windows, 650–800 px).
   - There is also 1 screenshot spec. It runs only with `SCREENSHOTS=1`.
 
 ---
@@ -83,8 +83,9 @@ FloodLens is a portfolio web app by a product designer. It shows real NOAA sea-l
 - **No blue numbers.** Blue is only for links and selection. Numbers use `text-fg`.
 - **Cards:** `.card` has 16 px corners, a white background, and a soft ring plus shadow (`--shadow-card`). The left panel's cards sit on the grey canvas; the Insights cards float over the map (v0.34).
 - **Glass:** `.glass` is 88% white with a blur. It is used only for things that float over the map (area chips, map controls and the vertical colour scale). It falls back to solid when the user prefers reduced transparency.
-- **Legend (v0.34, v0.35, v0.54):** a slim vertical colour scale, bottom left (the owner kept it there in v0.54), shown **only with Per foot colours**: only the sea-level colours, today at the bottom. **No level is highlighted** (v0.54). Title "Water reaches at" (v0.54; keep a title, or "+3 ft" reads as a depth). No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. The rows are a **static key**: nothing in them may be clickable (v0.28). Its only control is a minus that folds it into a 32 px square showing the colours, which opens it again (v0.54, `floodlens.legendMinimised`). (The chart that spotlighted levels was removed in v0.36.)
-- **Colour modes (v0.34):** an "Overall / Per foot" pill toggle beside the "Sea level" title (v0.47; "Total / By level" in v0.41–v0.46). It's "per foot", never "per feet", with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Per foot uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows flood colour takes the mode: map, slider track, Flooding swatch, legend.
+- **Legend (v0.34, v0.35, v0.54, v0.62):** a slim vertical colour scale, bottom left (the owner kept it there in v0.54), shown **whenever level colours are on the map**: the water with Per foot, or the buildings once they're on screen (Buildings on, zoom 13 or closer; v0.62). Not in the whole-city view with Overall, where nothing uses those colours. Only the sea-level colours, today at the bottom. **No level is highlighted** (v0.54). Title "Water reaches at" (v0.54; keep a title, or "+3 ft" reads as a depth). No low-spot row. It takes the pointer, so the map's cursor and hover labels don't show through it. The rows are a **static key**: nothing in them may be clickable (v0.28). Its only control is a minus that folds it into a 32 px square showing the colours, which opens it again (v0.54, `floodlens.legendMinimised`). (The chart that spotlighted levels was removed in v0.36.)
+- **Colour modes (v0.34):** an "Overall / Per foot" pill toggle beside the "Sea level" title (v0.47; "Total / By level" in v0.41–v0.46). It's "per foot", never "per feet", with no label or caption, remembered per browser (`floodlens.colorMode`). In code the modes are still `'simple'` and `'detailed'`. Total (the default) is one blue, `SIMPLE_COLOR` `#3d84e6`. Per foot uses `BAND_COLORS`, edged with `BAND_EDGE` (a faint white line). Everything that shows the water's colour takes the mode: the water, slider track and Flooding swatch. Buildings and the legend always use the Per foot ramp (v0.62).
+- **Building colours (v0.62, the owner's option B over always-on and Per-foot-only):** a building takes the colour of the level that first reaches it once the slider gets there, and stays plain otherwise. Same in Overall and Per foot, 3D and 2D. Same meaning as the card: mapped ocean-connected water touches the footprint, even at one corner. So it doesn't mean the building is underwater: keep the legend title and the wording "water reaches", never "gets flooded". Low spots don't colour buildings. Buildings no level reaches, and buildings outside the city, stay plain.
 - **Per foot ramp (v0.41):** matplotlib's Plasma (`#f0f921 #fca636 #e16462 #b12a90 #6a00a8 #0d0887`, 0 ft to +5 ft), the owner's pick from rendered options: a different colour per level, easy to tell apart. Worst neighbouring pair OKLab ΔE 15.1 (deuteranopia 9.0, protanopia 6.2). +4 ft is close to the low-spot purple; the hatch keeps them apart. v0.40 used the owner's yellow → orange swatches (ΔE 3.9). Fill opacity stays 85% (the owner's range is 85–95%). Don't change it without the owner.
 
 - **Surfaces inside cards (v0.49):** `.surface-navy` in `index.css`: solid navy `#2b4c78` (v0.59, a step lighter than the brand navy `#1e3a5f`, which read too heavy; the owner's pick over slate, steel blue and light), a faint radial glow, 4.5% grain, a 1 px semi-transparent hairline with a top highlight, layered soft shadows; white text. Used by the place card's answer and facts boxes (and the sea-level figure boxes in v0.49–v0.56). Content inside must be light: `Segmented`/`AreaUnitToggle` take `onDark`, and `LevelTrack` uses white labels, baseline and marker. The owner's premium rules for solid colour: subtle hairline, layered diffused shadows, faint grain or glow, no loud gradients. Before: "Soft light" (v0.42–v0.48); a pale blue gradient was rejected as a cliché.
@@ -148,8 +149,9 @@ src/
   components/dialogs/         AboutDataDialog, DataSourcesDialog
   hooks/                      useManifest, useCollection, useMapData, useInspection(selection, manifest), useMediaQuery (reduced motion)
   lib/                        pure, unit-tested: format, geo, manifest, mapStyle, mapLayers, buildingPick, theme, constants
-public/data/noaa/             processed GeoJSON + manifest.json (committed; about 26 MB)
+public/data/noaa/             processed GeoJSON + manifest.json + building_levels.geojson (committed; about 29 MB)
 scripts/prepare_noaa_slr.py   offline data pipeline (Python, Shapely, pyproj, pyogrio)
+scripts/prepare_buildings.ts  offline: the level that first reaches each building (Node, npm run data:buildings)
 tests/e2e/                    Playwright: app.spec, screenshots.spec
 ```
 
@@ -166,6 +168,7 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 - **Floating Insights:** `MapView` pads the camera by `rightInset`, and `overviewCamera` subtracts it from the width. Chips, controls and status sit in an overlay that stops at the cards; `.maplibregl-ctrl-bottom-right` uses `--map-inset-right`. The map controls are outside that overlay, at the screen's right edge (v0.38).
 - **Sea level figures:** Overall shows `beyondBaselineM2` at the level; Per foot shows the difference from the level below (`submergedM2` in `lib/manifest.ts`), never the diff polygons' `areaM2`, so the parts sum to the total. Both shares divide by `censusLandM2`.
 - **Inspection:** `useInspection` does not depend on the slider. It checks every level, so the slider must not re-run it.
+- **Building colours (`lib/mapLayers.ts`, v0.62):** the map's own building layers stay as they were, underneath: they're what you click and what shows when a building isn't coloured. `building_levels.geojson` adds a copy of each reached building, 0.4 m wider (`LEVEL_OVERLAY_GROW_M`, already in the file) and 0.3 m taller, so the surfaces never coincide. The selection must stay bigger (`SELECTION_GROW_M` 0.6 m, +0.6 m tall). One layer per level, 3D and flat, each one colour: the slider only changes each layer's opacity (`setBuildingLevel`), so no data is re-read. Don't merge them into one data-driven layer: every slider step would then reload the source. The source has `tolerance: 0`, so a coloured footprint is never simplified inside the plain one. The tiles merge many buildings into one feature with different ids per tile, so both the script and `pickBuilding` join pieces by same height and real overlap: **keep those two rules the same**, or the card and the colour can disagree. The file is a snapshot of the tiles: rerun `npm run data:buildings` to refresh it (a building added to OSM later stays plain until then).
 - **Flood bands:** the `diff_Nft_Mft.geojson` files are differences between neighbouring levels, computed and validated offline (see `manifest.processing.validation`). Low-lying areas (`low_*.geojson`) are a separate layer and are never merged with the ocean-connected extents.
 
 **Data docs:**
@@ -181,9 +184,10 @@ tests/e2e/                    Playwright: app.spec, screenshots.spec
 npm install
 npm run dev              # Vite dev server (the owner uses http://localhost:5173)
 npm run typecheck
-npm test                 # Vitest: 118 tests
+npm test                 # Vitest: 127 tests
 npm run test:e2e         # Playwright on the production build, port 4179, system Google Chrome
 npm run screenshots      # regenerates docs/screenshots/ 01–04 and 08–10 (02 Per foot colours at +5 ft, 10 today's zeros) (SCREENSHOT_DIR overrides the folder)
+npm run data:buildings   # regenerates public/data/noaa/building_levels.geojson from the tiles and NOAA files (needs the network, a few seconds)
 npm run build            # tsc -b && vite build → dist/
 ```
 
@@ -275,6 +279,7 @@ Each change the owner accepts becomes the next version, v0.33 and so on.
 | v0.59 | The place card's answer and facts boxes a step lighter: `#2b4c78` (was the brand navy `#1e3a5f`) |
 | v0.60 | Sea level card on the 4 px grid, 288 px tall: area box 16/16 padding, share box 16 top / 20 bottom; 12 px labels, 30/32 numbers, 32 and 24 px toggles, 24 px level chips, 4 px track; the owner's 4 px grid rule recorded in §3 |
 | v0.61 | One colour for the place card's icons: white on faint white tiles in the navy facts box, navy on a light tint on the card; the place tile stays green |
+| v0.62 | Buildings take the colour of the level that first reaches them, following the slider, in both colour modes and in 2D; legend shows whenever those colours are on the map; `building_levels.geojson`; card re-joins tile pieces by height and overlap |
 
 ---
 

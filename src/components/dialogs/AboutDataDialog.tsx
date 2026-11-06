@@ -45,6 +45,12 @@ export function AboutDataDialog({ open, onClose, manifest }: Props) {
         </li>
         <li>Open water sits on top, so colour only appears where water reaches land.</li>
         <li>
+          <strong className="text-fg">Buildings</strong> take the colour of the level that first reaches them, in either colour mode, once
+          the slider gets there. That means NOAA’s mapped water touches the building’s footprint at that level, even at one corner. It
+          doesn’t mean the building is underwater, or say how deep the water gets. Buildings stay plain if no level reaches them, if the
+          slider hasn’t got there yet, or if they’re outside the city limits. Low spots don’t colour buildings.
+        </li>
+        <li>
           The figures beside the slider count only land that today’s high tide doesn’t reach, so 0 ft reads 0. “Total area covered” is
           all of it at the chosen level; “New area covered” is only what that foot adds. “Share of city land” compares it with the
           city’s land area from the US Census.

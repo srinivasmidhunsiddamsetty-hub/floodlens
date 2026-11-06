@@ -75,6 +75,7 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 - The place card's navy boxes a step lighter, `#2b4c78` (v0.59).
 - The Sea level card on the 4 px grid, 288 px tall, with the owner's box paddings; an end-to-end test measures them (v0.60).
 - One colour for the place card's icons, the place still green (v0.61).
+- Buildings take the colour of the level that first reaches them, following the slider, in both colour modes and in 2D; the legend shows whenever those colours are on the map (v0.62).
 - The "See it at +N ft" link removed; the answer box shortened from 277 × 140 to 277 × 104 px, with the answer on the label's row and text sizes unchanged (v0.15).
 - The answer box shortened again, to 277 × 92 px (v0.16).
 - Legend, About the data dialog, Data sources dialog (provenance, steps, validation table, file list).
@@ -90,10 +91,11 @@ Status as of 27 Oct 2026 (v0.3). Every "passed" below was actually executed in t
 | Check | Command | Result |
 | --- | --- | --- |
 | TypeScript | `npm run typecheck` | No errors |
-| Unit and component tests | `npm test` | **14 files, 118 tests passed** |
-| End-to-end (production build, Chrome) | `npm run test:e2e` | **21 passed** (at 1440×900, some also at 650–800 px tall); 1 screenshot spec skipped by default |
+| Unit and component tests | `npm test` | **15 files, 127 tests passed** |
+| End-to-end (production build, Chrome) | `npm run test:e2e` | **23 passed** (at 1440×900, some also at 650–800 px tall); 1 screenshot spec skipped by default |
 | Screenshot capture | `npm run screenshots` | 1 passed; images in `docs/screenshots/` |
-| Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 26 MB raw across 19 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |
+| Production build | `npm run build` | Succeeds; JS ≈ 415 KB gzip (MapLibre 285 KB); data 29 MB raw across 20 files, lazy-loaded per state (the opening +2 ft view needs 2.4 MB raw, ≈ 0.26 MB gzip; the +3, +4 and +5 ft bands add 4.3, 6.1 and 4.8 MB raw and load only when the slider reaches them) |
+| Building levels | `npm run data:buildings`, then clicks in the running app | 10,724 buildings in the city, 9,880 reached. 81 clicks on real buildings (29 on tile edges) gave the same level on the card as in the file; 2 more landed on a neighbouring building and weren't counted. The file's levels are also checked against the card's own function in `dataIntegrity.test.ts` |
 | Data pipeline | `scripts/prepare_noaa_slr.py` | Ran end to end on the real 4.1 GB GeoPackage for 0–5 ft; all 5 neighbouring-band validations passed |
 | Contrast (computed) | WCAG formula on design tokens | All text tokens ≥ 4.7:1 on every surface (accent blue 5.0–5.8:1); unselected switch border 3.5:1; map place labels 9.5:1, road labels 5.9:1 |
 

@@ -170,6 +170,14 @@ export function DataSourcesDialog({ open, onClose, manifest, manifestError }: Pr
         above land-side overlays, and replaces flat buildings with extrusions from the tiles&rsquo; <code className="text-fg">render_height</code>.
       </p>
 
+      <H>Building colours</H>
+      <p>
+        FloodLens works these out in advance (<code className="text-fg">scripts/prepare_buildings.ts</code>): for each OpenStreetMap
+        building whose centre is inside the city limits, the lowest NOAA level whose mapped extent touches its footprint, as on the place
+        card. The result is <code className="text-fg">building_levels.geojson</code>, derived from OpenStreetMap and NOAA data. It’s a
+        snapshot, so a building added to OpenStreetMap later stays plain until the file is regenerated.
+      </p>
+
       <H>Attribution</H>
       <p className="text-xs">
         Data: NOAA Office for Coastal Management, Sea Level Rise Viewer (coast.noaa.gov/slr). City boundary: US Census Bureau TIGER/Line.
