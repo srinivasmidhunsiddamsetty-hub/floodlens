@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { buildingLevel3dId, buildingLevelFlatId, setBuildingColors, setBuildingLevel } from './mapLayers'
-import { BAND_COLORS, SIMPLE_BUILDING_COLOR } from './theme'
+import { bandColorExpr, buildingLevel3dId, buildingLevelFlatId, setBuildingColors, setBuildingLevel } from './mapLayers'
+import { BAND_COLORS, colors, SIMPLE_BUILDING_COLOR, SIMPLE_COLOR } from './theme'
 
 /** A stand-in for the map that records each layer's latest paint values. */
 function fakeMap() {
@@ -61,5 +61,19 @@ describe('setBuildingColors (v0.63)', () => {
       expect(map.paint.get(`${buildingLevel3dId(ft)} fill-extrusion-color`)).toBe(BAND_COLORS[ft])
       expect(map.paint.get(`${buildingLevelFlatId(ft)} fill-color`)).toBe(BAND_COLORS[ft])
     }
+  })
+})
+
+describe('today’s high tide (v0.64)', () => {
+  it('is the sea’s own colour with Per foot colours, on the water and on buildings', () => {
+    expect(BAND_COLORS[0]).toBe(colors.water)
+    const map = fakeMap()
+    setBuildingColors(map, 'detailed')
+    expect(map.paint.get(`${buildingLevel3dId(0)} fill-extrusion-color`)).toBe(colors.water)
+    expect(JSON.stringify(bandColorExpr('detailed'))).toContain(colors.water)
+  })
+
+  it('is the sea’s own colour with Overall too, and every higher level is one blue', () => {
+    expect(bandColorExpr('simple')).toEqual(['case', ['==', ['get', 'band'], 0], colors.water, SIMPLE_COLOR])
   })
 })

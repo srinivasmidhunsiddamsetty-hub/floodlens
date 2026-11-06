@@ -41,10 +41,10 @@ export function AboutDataDialog({ open, onClose, manifest }: Props) {
         </li>
         <li>
           <strong className="text-fg">Per foot</strong> colours show the sea level at which water <em>first</em> reaches a place, one
-          colour per level: red at today’s high tide, then orange, gold, teal and periwinkle, to violet at +5 ft. Buildings take the same
-          colours, and the legend lists them.
+          colour per level: orange at +1 ft, then gold, teal and periwinkle, to violet at +5 ft. Buildings take the same colours, and the
+          legend lists them.
         </li>
-        <li>Open water sits on top, so colour only appears where water reaches land.</li>
+        <li>Open water sits on top, so colour only appears where water reaches land. Today’s high tide (0 ft) is simply the sea, so it’s the sea’s colour.</li>
         <li>
           <strong className="text-fg">Buildings</strong> change colour once the slider reaches the first level whose water touches them.
           That means NOAA’s mapped water touches the building’s footprint at that level, even at one corner. It

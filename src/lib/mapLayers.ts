@@ -76,7 +76,8 @@ const buildingBase: ExpressionSpecification = ['coalesce', ['get', 'render_min_h
 
 /** `band` (ft) → ramp colour in Detailed mode; one blue for every band in Simple mode. */
 export function bandColorExpr(mode: ColorMode): DataDrivenPropertyValueSpecification<string> {
-  if (mode === 'simple') return SIMPLE_COLOR
+  // Today's high tide is simply the sea, in either mode (v0.64).
+  if (mode === 'simple') return ['case', ['==', ['get', 'band'], 0], BAND_COLORS[0], SIMPLE_COLOR] as unknown as ExpressionSpecification
   return [
     'match',
     ['get', 'band'],
@@ -155,8 +156,8 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode, options: { reduc
       source: SRC.flood,
       paint: {
         'fill-color': bandColorExpr(mode),
-        'fill-opacity': opacity.band,
-        'fill-opacity-transition': { duration: 300, delay: 0 },
+        // Solid at 0 ft, so today's high tide meets the sea with no seam (v0.64).
+        'fill-opacity': ['case', ['==', ['get', 'band'], 0], 1, opacity.band],
       },
     },
     ground,
@@ -167,6 +168,8 @@ export function addFloodLensLayers(map: MLMap, mode: ColorMode, options: { reduc
       type: 'line',
       source: SRC.flood,
       minzoom: 14,
+      // No line round today's high tide: it's the sea (v0.64).
+      filter: ['!=', ['get', 'band'], 0],
       paint: { 'line-color': bandEdgePaint(mode).color, 'line-width': BAND_EDGE.width, 'line-opacity': bandEdgePaint(mode).opacity },
     },
     ground,

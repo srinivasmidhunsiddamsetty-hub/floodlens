@@ -323,3 +323,12 @@ With Overall, reached buildings are now one blue, and Per foot has new colours.
 | About, Overall | Overall colours show all the water at the chosen level in one blue. | … in one blue, and the buildings it reaches in a deeper blue. |
 | About, Per foot | … yellow at today's high tide, then orange, coral, magenta and purple, to deep indigo at +5 ft. The legend lists them. | … red at today's high tide, then orange, gold, teal and periwinkle, to violet at +5 ft. Buildings take the same colours, and the legend lists them. |
 | About, buildings | Buildings take the colour of the level that first reaches them, in either colour mode, once the slider gets there. | Buildings change colour once the slider reaches the first level whose water touches them. |
+
+## Before and after (v0.63 → v0.64)
+
+The owner asked why 0 ft needs a colour. Today's high tide is simply the sea, so it now looks like the sea, and the copy says so.
+
+| Where | Before | After |
+| --- | --- | --- |
+| About, Per foot | … one colour per level: red at today's high tide, then orange, gold, teal and periwinkle, to violet at +5 ft. | … one colour per level: orange at +1 ft, then gold, teal and periwinkle, to violet at +5 ft. |
+| About, open water | Open water sits on top, so colour only appears where water reaches land. | … Today's high tide (0 ft) is simply the sea, so it's the sea's colour. |

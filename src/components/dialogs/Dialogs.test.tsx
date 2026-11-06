@@ -13,7 +13,8 @@ describe('About the data and Sources (v0.55)', () => {
     // Two colour modes since v0.34; the old one-blue ramp description is gone.
     expect(text).toMatch(/Overall colours show all the water at the chosen level in one blue/)
     expect(text).toMatch(/and the buildings it\s+reaches in a deeper blue/)
-    expect(text).toMatch(/red at today’s high tide, then orange, gold, teal and periwinkle, to violet at \+5 ft/)
+    expect(text).toMatch(/orange at \+1 ft, then gold, teal and periwinkle, to violet at \+5 ft/)
+    expect(text).toMatch(/Today’s high tide \(0 ft\) is simply the sea, so it’s the sea’s colour/)
     expect(text).not.toMatch(/light blue|getting darker/)
     // The figures count only land beyond today's high tide (v0.36), so 0 ft reads 0.
     expect(text).toMatch(/count only land that today’s high tide doesn’t reach, so 0 ft reads 0/)

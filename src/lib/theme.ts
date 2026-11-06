@@ -70,10 +70,10 @@ export const SIMPLE_BUILDING_COLOR = '#2563c7'
 
 /**
  * Detailed mode ("Per foot"): the level where water first reaches each area and building.
- * v0.63: red, orange, gold, teal, periwinkle, violet. The owner's colours from +1 ft up, picked after
- * seeing palettes rendered on the real map once buildings carried the colours too (0 ft keeps the red
- * of the option they started from). Nothing is near-black, because a building's walls are shaded darker than its
- * roof; the most common levels, +3 and +4 ft (73% of the city's buildings), are the calmest; there's
+ * 0 ft is today's high tide, which is simply the sea, so it takes the sea's colour (v0.64, the owner's
+ * call; red in v0.63). From +1 ft up, the owner's colours (v0.63): orange, gold, teal, periwinkle,
+ * violet, picked after seeing palettes rendered on the real map once buildings carried the colours
+ * too. Nothing is near-black, because a building's walls are shaded darker than its roof; the most common levels, +3 and +4 ft (73% of the city's buildings), are the calmest; there's
  * no green, which could read as "safe", and nothing sandy like a plain building. The closest
  * neighbouring pair is +1 and +2 ft at OKLab ΔE 14.4; for colour-blind readers, +3 and +4 ft at 8.4
  * (deuteranopia). +5 ft's violet is close to the low-spot purple (ΔE 6.3); the hatch keeps them apart.
@@ -86,7 +86,7 @@ export const SIMPLE_BUILDING_COLOR = '#2563c7'
  * v0.33 and before: #9ec5f4 #67a3ea #3d80d2 #1f5fae #104180 #022555.
  */
 export const BAND_COLORS: Record<number, string> = {
-  0: '#ba3e38',
+  0: colors.water,
   1: '#e07942',
   2: '#e9b44c',
   3: '#36a7a0',

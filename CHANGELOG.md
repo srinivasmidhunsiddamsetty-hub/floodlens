@@ -67,8 +67,18 @@ Every version is tagged in git (`git checkout v0.3`) and has a screenshot set in
 | v0.61 | 5 Nov 2026 | One colour for icons | [`docs/versions/v0.61/`](docs/versions/v0.61/) |
 | v0.62 | 6 Nov 2026 | Buildings in the colour of the level that reaches them | [`docs/versions/v0.62/`](docs/versions/v0.62/) |
 | v0.63 | 6 Nov 2026 | One blue for Overall, a new Per foot palette | [`docs/versions/v0.63/`](docs/versions/v0.63/) |
+| v0.64 | 6 Nov 2026 | Today's high tide in the sea's colour | [`docs/versions/v0.64/`](docs/versions/v0.64/) |
 
 ---
+
+## v0.64: Today's high tide in the sea's colour (6 Nov 2026)
+
+The owner asked why 0 ft needs a colour at all. It doesn't: today's high tide is simply the sea, so it should look like the sea.
+
+- **0 ft is now the sea's colour,** `#a8dcea` (red in v0.63), in both colour modes. It's drawn solid, with no edge line, so it meets the sea with no seam. At 0 ft the map shows no flood colour, which matches the figures, which read 0.
+- **Buildings at 0 ft (194):** with Per foot they take the sea's colour too, and the legend's 0 ft row shows it. With Overall they stay the deeper blue like every other reached building, because the owner wants one colour there.
+- "About the data" says that today's high tide is the sea's colour.
+- Tests: 130 unit/component tests in 15 files (new: 0 ft is the sea's colour in both modes) and 23 end-to-end tests.
 
 ## v0.63: One blue for Overall, a new Per foot palette (6 Nov 2026)
 
